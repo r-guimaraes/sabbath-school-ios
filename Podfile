@@ -16,7 +16,8 @@ target 'Sabbath School' do
   pod 'SwiftEntryKit'
   pod 'SwiftMessages'
   pod 'SwiftDate'
-  pod 'Texture'
+  pod 'Texture', :git => 'https://github.com/TextureGroup/Texture.git', :branch => 'master'
+
   pod 'Zip'
   pod 'Wormholy', :configurations => ['Debug']
 end

@@ -86,7 +86,7 @@ DEPENDENCIES:
   - SwiftDate
   - SwiftEntryKit
   - SwiftMessages
-  - Texture
+  - Texture (from `https://github.com/TextureGroup/Texture.git`, branch `master`)
   - Wormholy
   - Zip
 
@@ -113,13 +113,20 @@ SPEC REPOS:
     - SwiftDate
     - SwiftEntryKit
     - SwiftMessages
-    - Texture
     - Wormholy
     - Zip
 
 EXTERNAL SOURCES:
   PSPDFKit:
     :podspec: https://customers.pspdfkit.com/pspdfkit-ios/10.4.2.podspec
+  Texture:
+    :branch: master
+    :git: https://github.com/TextureGroup/Texture.git
+
+CHECKOUT OPTIONS:
+  Texture:
+    :commit: 923901a1cebf0b6c51627aca2a6748dee84af143
+    :git: https://github.com/TextureGroup/Texture.git
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
@@ -148,6 +155,6 @@ SPEC CHECKSUMS:
   Wormholy: 3252bc3e55a1847ef9a0976c1377bd77bf3635fa
   Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
 
-PODFILE CHECKSUM: c5f23ca7fa97a774176c6348f848720dad6f29ef
+PODFILE CHECKSUM: 1083c154ae12e46b55478ceb07886977f2d96412
 
 COCOAPODS: 1.15.2

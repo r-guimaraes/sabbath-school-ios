@@ -39,6 +39,8 @@ protocol LessonControllerProtocol: AnyObject {
     var initiateOpenToday: Bool? { get set }
     func showLessons(quarterlyInfo: QuarterlyInfo)
     func showPublishingInfo(publishingInfo: PublishingInfo?)
+    func setQuarterlyDownloadState(state: ReadButtonState)
+    func downloadedQuarterlyWithError()
 }
 
 protocol LessonControllerDelegate: AnyObject {
@@ -47,7 +49,7 @@ protocol LessonControllerDelegate: AnyObject {
 
 protocol LessonWireFrameProtocol: AnyObject {
     static func createLessonModule(quarterlyIndex: String, initiateOpenToday: Bool) -> LessonController
-    static func createLessonModuleNav(quarterlyIndex: String, initiateOpenToday: Bool) -> ASNavigationController
+    static func createLessonModuleNav(quarterlyIndex: String, initiateOpenToday: Bool) -> ASDKNavigationController
     func presentReadScreen(view: LessonControllerProtocol, lessonIndex: String)
     func showReadScreen(view: LessonControllerProtocol, readScreen: ReadController)
 }
@@ -56,6 +58,8 @@ protocol LessonInteractorOutputProtocol: AnyObject {
     func onError(_ error: Error?)
     func didRetrieveQuarterlyInfo(quarterlyInfo: QuarterlyInfo)
     func didRetrievePublishingInfo(publishingInfo: PublishingInfo?)
+    func downloadedQuarterlyWithSuccess()
+    func downloadedQuarterlyWithError()
 }
 
 protocol LessonInteractorInputProtocol: AnyObject {
@@ -64,4 +68,5 @@ protocol LessonInteractorInputProtocol: AnyObject {
     func configure()
     func retrieveQuarterlyInfo(quarterlyIndex: String)
     func retrievePublishingInfo()
+    func retrieveRead(readIndex: String, quarterlyIndex: String?)
 }

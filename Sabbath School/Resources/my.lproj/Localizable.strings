@@ -15,7 +15,11 @@
 "Languages" = "ဘာသာစကားများ";
 "Lato" = "Lato";
 "Light" = "အလင်း";
+"Automatic" = "အလိုအလျောက်";
 "Log out" = "လော့ဂ်အော့ဖ်လုပ်ထွက်ခြင်း";
+"Account removal" = "အကောင့်ဖယ်ရှားခြင်း။";
+"Delete account?" = "အကောင့်ဖျက်မလား။";
+"By deleting your account all your data, such as comments and highlights will be permanently deleted. Are you sure you want to proceed?" = "သင့်အကောင့်ကို ဖျက်ခြင်းဖြင့် မှတ်ချက်များနှင့် အသားပေးဖော်ပြချက်များကဲ့သို့သော သင့်ဒေတာအားလုံးကို အပြီးအပိုင် ဖျက်လိုက်ပါမည်။ ရှေ့ဆက်လိုသည်မှာ သေချာပါသလား။";
 "Login anonymously?" = "အမည်ဝှက်?";
 "Made with ❤ by Adventech" = "Adventech အားဖြင့်❤နှင့်ဖွဲ့";
 "More" = "နောက်ထပ်";
@@ -57,3 +61,6 @@
 "Audio" = "အသံ";
 "Video" = "ဗွီဒီယို";
 "Get Printed Resources" = "ပုံနှိပ်ထားသော အရင်းအမြစ်များကို ရယူပါ။";
+"There was an error during download" = "ဒေါင်းလုဒ်လုပ်နေစဉ် အမှားအယွင်းရှိခဲ့သည်။";
+"Remove all downloads" = "ဒေါင်းလုဒ်များအားလုံးကို ဖယ်ရှားပါ။";
+"By removing all downloads you will lose all the lessons content currently saved offline. Are you sure you want to proceed?" = "ဒေါင်းလုဒ်များအားလုံးကို ဖယ်ရှားခြင်းဖြင့် သင်သည် အော့ဖ်လိုင်းတွင် လက်ရှိသိမ်းဆည်းထားသည့် သင်ခန်းစာများအားလုံးကို ဆုံးရှုံးသွားမည်ဖြစ်သည်။ ရှေ့ဆက်လိုသည်မှာ သေချာပါသလား။";

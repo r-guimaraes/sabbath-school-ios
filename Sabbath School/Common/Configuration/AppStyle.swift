@@ -26,7 +26,7 @@ struct AppStyle {
     struct Base {
         struct Button {
             static func pillButtonUIEdgeInsets() -> UIEdgeInsets {
-                return UIEdgeInsets(top: 8, left: 40, bottom: 8, right: 40)
+                return UIEdgeInsets(top: 0, left: 40, bottom: 8, right: 8)
             }
         }
         
@@ -530,6 +530,10 @@ struct AppStyle {
 
             static var sepia: UIColor {
                 return UIColor(hex: "#FBF0D9")
+            }
+
+            static var auto: UIColor {
+                Preferences.darkModeEnable() ? dark:white
             }
         }
     }

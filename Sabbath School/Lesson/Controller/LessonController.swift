@@ -26,6 +26,7 @@ import UIKit
 import StoreKit
 import WidgetKit
 import SafariServices
+import SwiftMessages
 
 enum LessonControllerSections: Int {
     case header = 0
@@ -36,8 +37,8 @@ enum LessonControllerSections: Int {
 
 final class LessonController: ASDKViewController<ASDisplayNode> {
     var tableNode: ASTableNode? { return node as? ASTableNode }
-    
-    var delegate: LessonControllerDelegate?
+
+    weak var delegate: LessonControllerDelegate?
     var presenter: LessonPresenterProtocol?
     var dataSource: QuarterlyInfo?
     private var publishingInfo: PublishingInfo?
@@ -50,33 +51,38 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
 
     override init() {
         super.init(node: ASTableNode())
+        commonInit()
+    }
+
+    private func commonInit() {
         tableNode?.delegate = self
         tableNode?.dataSource = self
-        navigationController?.delegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("storyboards are incompatible with truth and beauty")
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.delegate = self
-        
-        self.tableNode?.allowsSelection = false
-
+        tableNode?.allowsSelection = false
         tableNode?.view.contentInsetAdjustmentBehavior = .never
-
         presenter?.configure()
         Armchair.userDidSignificantEvent(true)
-        
+        setupNavigationbar()
+        tableNode?.backgroundColor = AppStyle.Lesson.Color.backgroundFooter
         if #available(iOS 13, *) {} else {
-            if self.traitCollection.forceTouchCapability == .available, let view = tableNode?.view {
-                registerForPreviewing(with: self, sourceView: view)
+            if self.traitCollection.forceTouchCapability == .available {
+                guard let tableview = tableNode else {
+                    return
+                }
+                registerForPreviewing(with: self, sourceView: tableview.view)
             }
         }
-        setupNavigationbar()
-        self.tableNode?.backgroundColor = AppStyle.Lesson.Color.backgroundFooter
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -85,12 +91,13 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
         if let selected = tableNode?.indexPathForSelectedRow {
             tableNode?.view.deselectRow(at: selected, animated: true)
         }
-        self.setupNavigationbar()
+        navigationController?.delegate = self
+        setupNavigationbar()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tableNode?.view.separatorColor = AppStyle.Base.Color.tableSeparator
+        tableNode?.view.separatorColor = AppStyle.Base.Color.tableSeparator
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -173,9 +180,6 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
     }
     
     func openLesson(lessonIndex: String, pdf: Bool = false){
-        if let quarterlyGroup = dataSource?.quarterly.quarterlyGroup {
-            Preferences.saveQuarterlyGroup(quarterlyGroup: quarterlyGroup)
-        }
         
         if pdf {
             navigationController?.pushViewController(PDFReadController(lessonIndex: lessonIndex), animated: true)
@@ -220,13 +224,13 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
     }
     
     func parallax(scrollView: UIScrollView) {
-        if let coverHeader = self.tableNode?.nodeForRow(at: IndexPath(row: 0, section: LessonControllerSections.header.rawValue)) as? LessonQuarterlyInfoSplashView {
+        if let coverHeader = tableNode?.nodeForRow(at: IndexPath(row: 0, section: LessonControllerSections.header.rawValue)) as? LessonQuarterlyInfoSplashView {
             let scrollOffset = scrollView.contentOffset.y
             
             if scrollOffset >= 0 {
                 coverHeader.coverImage.frame.origin.y = scrollOffset / 2
             } else {
-                if let cellHeader = self.tableNode?.cellForRow(at: IndexPath(row: 0, section: LessonControllerSections.header.rawValue)) {
+                if let cellHeader = tableNode?.cellForRow(at: IndexPath(row: 0, section: LessonControllerSections.header.rawValue)) {
                     cellHeader.frame.origin.y = scrollOffset-1
                     cellHeader.frame.size.height = coverHeader.initialCoverHeight + (-scrollOffset)
                     coverHeader.frame.size.height = coverHeader.initialCoverHeight + (-scrollOffset)
@@ -246,7 +250,7 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
             if dataSource.lessons.count <= 0 { return }
         }
         
-        let titleOrigin = (self.tableNode?.nodeForRow(at: IndexPath(row: 0, section: LessonControllerSections.lessons.rawValue)) as! LessonView).view.rectCorrespondingToWindow
+        let titleOrigin = (tableNode?.nodeForRow(at: IndexPath(row: 0, section: LessonControllerSections.lessons.rawValue)) as! LessonView).view.rectCorrespondingToWindow
         guard let navigationBarMaxY =  self.navigationController?.navigationBar.rectCorrespondingToWindow.maxY else { return }
 
         var navBarAlpha: CGFloat = (initialOffset - (titleOrigin.minY + mn - navigationBarMaxY)) / initialOffset
@@ -274,7 +278,7 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        self.tableNode?.reloadData()   
+        tableNode?.reloadData()
     }
     
     @available(iOS 13.0, *)
@@ -315,8 +319,19 @@ final class LessonController: ASDKViewController<ASDisplayNode> {
         openToday()
     }
     
+    @objc func downloadButtonAction(sender: ASButtonNode) {
+        if let quarterlyIndex = dataSource?.quarterly.index {
+            DownloadQuarterlyState.shared.setStateForQuarterly(.downloading, quarterlyIndex: quarterlyIndex)
+        }
+        
+        setReadViewState(.downloading)
+        dataSource?.lessons.forEach({ lesson in
+            presenter?.interactor?.retrieveRead(readIndex: lesson.index, quarterlyIndex: dataSource?.quarterly.index)
+        })
+    }
+    
     @objc func openIntroduction(sender: ASTextNode) {
-        self.present(ASNavigationController(rootViewController: QuarterlyIntroductionController(quarterly: self.dataSource!.quarterly)), animated: true)
+        self.present(ASDKNavigationController(rootViewController: QuarterlyIntroductionController(quarterly: self.dataSource!.quarterly)), animated: true)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -357,11 +372,34 @@ extension LessonController: UINavigationControllerDelegate {
 }
 
 extension LessonController: LessonControllerProtocol {
+    func setQuarterlyDownloadState(state: ReadButtonState) {
+        setReadViewState(state)
+    }
+    
+    func setReadViewState(_ state: ReadButtonState) {
+        if let coverHeader = tableNode?.nodeForRow(at: IndexPath(row: 0, section: LessonControllerSections.header.rawValue)) as? LessonQuarterlyInfo {
+            coverHeader.readView.setState(state)
+        }
+    }
+    
+    func downloadedQuarterlyWithError() {
+        var config = SwiftMessages.Config()
+        config.presentationContext = .window(windowLevel: .statusBar)
+        config.duration = .seconds(seconds: 3)
+
+        let messageView = MessageView.viewFromNib(layout: .cardView)
+        messageView.button?.isHidden = true
+        messageView.bodyLabel?.font = R.font.latoBold(size: 17)
+        messageView.configureTheme(.warning)
+        messageView.configureContent(title: "", body: "There was an error during download".localized())
+        SwiftMessages.show(config: config, view: messageView)
+    }
+    
     func showLessons(quarterlyInfo: QuarterlyInfo) {
         self.dataSource = quarterlyInfo
-        self.tableNode?.allowsSelection = true
-        self.tableNode?.reloadData()
-        
+        tableNode?.allowsSelection = true
+        tableNode?.reloadData()
+
         self.title = quarterlyInfo.quarterly.title
         
         if !self.isPeeking! {
@@ -374,6 +412,8 @@ extension LessonController: LessonControllerProtocol {
             openToday()
             self.initiateOpenToday = false
         }
+        
+        setupObservers()
     }
     
     func showPublishingInfo(publishingInfo: PublishingInfo?) {
@@ -396,8 +436,8 @@ extension LessonController: UIViewControllerPreviewingDelegate {
         guard let cell = tableNode?.cellForRow(at: indexPath) else { return nil }
         let readController = getReadControllerForPeek(indexPath: indexPath, point: location)
         
-        previewingContext.sourceRect = (tableNode?.convert(cell.frame, to: tableNode))!
-        
+        previewingContext.sourceRect = (tableNode?.convert(cell.frame, to: tableNode)) ?? CGRectZero
+
         return readController
     }
 }
@@ -448,8 +488,14 @@ extension LessonController: ASTableDataSource {
                     node = LessonQuarterlyInfoView(quarterly: (self.dataSource?.quarterly)!)
                 }
                 
-                node.readButton.addTarget(self, action: #selector(self.readButtonAction(sender:)), forControlEvents: .touchUpInside)
+                node.readView.readButton.addTarget(self, action: #selector(self.readButtonAction(sender:)), forControlEvents: .touchUpInside)
+                node.readView.downloadButton.addTarget(self, action: #selector(self.downloadButtonAction(sender:)), forControlEvents: .touchUpInside)
                 node.introduction.addTarget(self, action: #selector(self.openIntroduction(sender:)), forControlEvents: .touchUpInside)
+                
+                if let quarterlyIndex = self.dataSource?.quarterly.index {
+                    node.readView.setState(DownloadQuarterlyState.shared.getStateForQuarterly(quarterlyIndex: quarterlyIndex))
+                }
+                
                 return node
             }
             
@@ -495,5 +541,24 @@ extension LessonController: ASTableDataSource {
         }
         
         return sections
+    }
+}
+
+// MARK: Setup Observers
+extension LessonController {
+    private func setupObservers() {
+        guard let quarterlyIndex = dataSource?.quarterly.index else { return }
+        let notificationName = Notification.Name(Constants.DownloadQuarterly.quarterlyDownloadStatus(quarterlyIndex: quarterlyIndex))
+        NotificationCenter.default.addObserver(forName: notificationName, object: nil, queue: .main) { [weak self] notification in
+            self?.updateQuarterlyDownloadState(notification: notification)
+        }
+    }
+
+    @objc private func updateQuarterlyDownloadState(notification: Notification) {
+        if let userInfo = notification.userInfo,
+           let quarterlyDownloadStatus = userInfo[Constants.DownloadQuarterly.downloadedQuarterlyStatus] as? Int,
+           let quarterlyDownloadState = ReadButtonState(rawValue: quarterlyDownloadStatus) {
+            setQuarterlyDownloadState(state: quarterlyDownloadState)
+        }
     }
 }

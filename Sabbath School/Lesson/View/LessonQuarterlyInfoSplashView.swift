@@ -48,7 +48,7 @@ class LessonQuarterlyInfoSplashView: LessonQuarterlyInfo {
         title.style.preferredLayoutSize = ASLayoutSize(width: ASDimensionMakeWithPoints(constrainedSize.max.width), height: ASDimensionMake(.auto, 0))
         introduction.style.minWidth = ASDimensionMakeWithPoints(constrainedSize.max.width)
         
-        var vSpecChildren: [ASLayoutElement] = [title, humanDate, readButton, introduction]
+        var vSpecChildren: [ASLayoutElement] = [title, humanDate, readView, introduction]
         
         if (features.count > 0) {
             var featuresSpecChildren: [ASLayoutElement] = []
@@ -97,7 +97,7 @@ class LessonQuarterlyInfoSplashView: LessonQuarterlyInfo {
         super.didLoad()
         initialCoverHeight = coverImage.calculatedSize.height
         if UIAccessibility.isReduceTransparencyEnabled {
-            coverOverlay.gradient(from: UIColor.white.withAlphaComponent(0), to: UIColor(hex: quarterly?.colorPrimary ?? UIColor.white.hex()))
+            coverOverlay.gradient(from: UIColor.white.withAlphaComponent(0), to: UIColor(hex: quarterly.colorPrimary ?? UIColor.white.hex()))
         } else {
             coverOverlay.gradientBlur(from: UIColor.white.withAlphaComponent(0), to: UIColor.white.withAlphaComponent(1))
         }

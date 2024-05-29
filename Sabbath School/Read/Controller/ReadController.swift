@@ -25,8 +25,7 @@ import SafariServices
 import UIKit
 import SwiftAudio
 import AVKit
-import PSPDFKit
-import PSPDFKitUI
+import WebKit
 
 class ReadController: VideoPlaybackDelegatable {
     var delegate: ReadControllerDelegate?
@@ -106,6 +105,18 @@ class ReadController: VideoPlaybackDelegatable {
         handleAudioPlayerStateChange(state: AudioPlayback.shared.playerState)
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 13.0, *) {
+            if UIApplication.shared.applicationState != .background &&
+                self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection),
+                Preferences.currentTheme() == .auto {
+                
+                didSelectTheme(theme: ReaderStyle.Theme.auto)
+            }
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -175,6 +186,9 @@ class ReadController: VideoPlaybackDelegatable {
             self.collectionNode.waitUntilAllUpdatesAreProcessed()
             self.collectionNode.reloadData()
             self.collectionNode.scrollToPage(at: self.lastPage ?? 0, animated: false)
+            
+            resetReader()
+            setHighlightsAndComments()
         }
         self.appeared = true
     }
@@ -229,11 +243,7 @@ class ReadController: VideoPlaybackDelegatable {
     @objc func resetReader() {
         if let webView = (self.collectionNode.nodeForPage(at: self.collectionNode.currentPageIndex) as? ReadView)?.webView {
             webView.createContextMenu()
-            webView.evaluateJavaScript("ssReader.clearSelection()") { _, error in
-                if error != nil {
-                    self.collectionNode.reloadData()
-                }
-            }
+            webView.evaluateJavaScript("ssReader.clearSelection()") { _, _ in }
         }
     }
 
@@ -257,7 +267,7 @@ class ReadController: VideoPlaybackDelegatable {
         if #available(iOS 13, *) {
             self.present(videoController, animated: true)
         } else {
-            self.present(ASNavigationController(rootViewController: videoController), animated: true)
+            self.present(ASDKNavigationController(rootViewController: videoController), animated: true)
         }
     }
     
@@ -272,7 +282,7 @@ class ReadController: VideoPlaybackDelegatable {
         if #available(iOS 13, *) {
             self.present(audioController, animated: true)
         } else {
-            self.present(ASNavigationController(rootViewController: audioController), animated: true)
+            self.present(ASDKNavigationController(rootViewController: audioController), animated: true)
         }
     }
     
@@ -430,25 +440,17 @@ class ReadController: VideoPlaybackDelegatable {
         }
 
         if Helper.isPad {
-            highlights.forEach { highlight in
-                setHighlights(highlights: highlight)
-            }
-            
-            comments.forEach { comment in
-                setComments(comments: comment)
-            }
+            setHighlightsAndComments()
         }
     }
     
-    private func updateCommentsListWhenRotateIpad(readComments: ReadComments) {
-        if Helper.isPad {
-            if !comments.filter({ $0.readIndex == readComments.readIndex }).isEmpty {
-                for (i, comment) in comments.enumerated() where comment.readIndex == readComments.readIndex {
-                    comments[i] = readComments
-                }
-            } else {
-                comments.append(readComments)
+    private func updateLocalCommentsList(readComments: ReadComments) {
+        if !comments.filter({ $0.readIndex == readComments.readIndex }).isEmpty {
+            for (i, comment) in comments.enumerated() where comment.readIndex == readComments.readIndex {
+                comments[i] = readComments
             }
+        } else {
+            comments.append(readComments)
         }
     }
     
@@ -469,6 +471,20 @@ class ReadController: VideoPlaybackDelegatable {
         let safariViewController = SFSafariViewController(url: url)
         safariViewController.modalPresentationStyle = .formSheet
         present(safariViewController, animated: true)
+    }
+}
+
+// MARK: Private Methods
+
+private extension ReadController {
+    func setHighlightsAndComments() {
+        highlights.forEach { highlight in
+            setHighlights(highlights: highlight)
+        }
+        
+        comments.forEach { comment in
+            setComments(comments: comment)
+        }
     }
 }
 
@@ -552,7 +568,9 @@ extension ReadController: ReadControllerProtocol {
     }
     
     func setHighlights(highlights: ReadHighlights) {
-        if Helper.isPad {
+        if !self.highlights.contains(where: { highlight in
+            highlights == highlight
+        }) {
             self.highlights.append(highlights)
         }
         
@@ -569,7 +587,7 @@ extension ReadController: ReadControllerProtocol {
             if let readView = self.collectionNode.nodeForPage(at: index) as? ReadView {
                 readView.comments = comments
                 if !comments.comments.isEmpty {
-                    updateCommentsListWhenRotateIpad(readComments: comments)
+                    updateLocalCommentsList(readComments: comments)
                 }
                 for comment in comments.comments {
                     readView.webView.setComment(comment)
@@ -663,15 +681,12 @@ extension ReadController: ReadViewOutputProtocol {
     }
 
     func didReceiveHighlights(readHighlights: ReadHighlights) {
-        if Helper.isPad {
-            highlights.append(readHighlights)
-        }
-        
+        highlights.append(readHighlights)
         presenter?.interactor?.saveHighlights(highlights: readHighlights)
     }
 
     func didReceiveComment(readComments: ReadComments) {
-        updateCommentsListWhenRotateIpad(readComments: readComments)
+        updateLocalCommentsList(readComments: readComments)
         presenter?.interactor?.saveComments(comments: readComments)
     }
 

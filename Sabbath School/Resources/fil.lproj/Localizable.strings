@@ -15,7 +15,11 @@
 "Languages" = "Mga Wika";
 "Lato" = "Lato";
 "Light" = "Banayad";
+"Automatic" = "Awtomatiko";
 "Log out" = "Mag-log out";
+"Account removal" = "Pag-alis ng account";
+"Delete account?" = "Tanggalin ang account?";
+"By deleting your account all your data, such as comments and highlights will be permanently deleted. Are you sure you want to proceed?" = "Sa pamamagitan ng pagtanggal sa iyong account, ang lahat ng iyong data, gaya ng mga komento at mga highlight ay permanenteng tatanggalin. Sigurado ka bang gusto mong magpatuloy?";
 "Login anonymously?" = "Mag-login nang hindi nagpapakilala?";
 "Made with ❤ by Adventech" = "Ginawa gamit ang ❤ sa Adventech";
 "More" = "Higit pa";
@@ -57,3 +61,6 @@
 "Audio" = "Audio";
 "Video" = "Video";
 "Get Printed Resources" = "Kumuha ng Mga Naka-print na Mapagkukunan";
+"There was an error during download" = "Nagkaroon ng error habang nagda-download";
+"Remove all downloads" = "Alisin ang lahat ng pag-download";
+"By removing all downloads you will lose all the lessons content currently saved offline. Are you sure you want to proceed?" = "Sa pamamagitan ng pag-alis ng lahat ng mga pag-download, mawawala ang lahat ng nilalaman ng mga aralin na kasalukuyang naka-save offline. Sigurado ka bang gusto mong magpatuloy?";

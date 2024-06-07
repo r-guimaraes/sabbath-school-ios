@@ -49,6 +49,11 @@ post_install do |installer|
         end
       end
     end
+    if target.name == 'PSPDFKit'
+      target.build_configurations.each do |config|
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      end
+    end
   end
 end
 

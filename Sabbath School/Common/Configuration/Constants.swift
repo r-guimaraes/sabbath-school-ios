@@ -22,7 +22,17 @@
 
 import UIKit
 
-struct Constants {    
+struct Constants {
+    struct DownloadQuarterly {
+        static func quarterlyDownloadStatus(quarterlyIndex: String) -> String {
+             return "io.adventech.quarterlyDownloadStatus-\(quarterlyIndex)"
+        }
+        
+        static let downloadedQuarterlyIndex = "io.adventech.downloadedQuarterlyIndex"
+        static let downloadedQuarterlyStatus = "io.adventech.downloadedQuarterlyStatus"
+        static let quarterlyDownloaded = "io.adventech.quarterlyDownloaded"
+    }
+    
     struct DefaultKey {
         static let gcmMessageIDKey = "gcm.message_id"
         static let interfaceLanguage = "io.adventech.interfaceLanguage"

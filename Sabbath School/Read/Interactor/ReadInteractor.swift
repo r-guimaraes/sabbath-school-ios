@@ -25,6 +25,11 @@ import FontBlaster
 import Zip
 import Cache
 
+protocol DownloadQuarterlyDelegate: AnyObject {
+    func downloadedQuarterlyWithSuccess()
+    func downloadedQuarterlyWithError()
+}
+
 class ReadInteractor: ReadInteractorInputProtocol {
     private var lessonInfoStorage: Cache.Storage<String, LessonInfo>?
     private var readStorage: Cache.Storage<String, Read>?
@@ -33,14 +38,18 @@ class ReadInteractor: ReadInteractorInputProtocol {
     private var publishingInfoStorage: Storage<String, PublishingInfoData>?
     
     weak var presenter: ReadInteractorOutputProtocol?
-    var ticker: Int = -1
+    var ticker: Int = 0
     
     let dispatchQueue = DispatchQueue(label: "readRetrieve", qos: .background)
     let semaphore = DispatchSemaphore(value: 0)
     
-    init () {}
+    weak var quarterlyDownloadDelegate: DownloadQuarterlyDelegate?
     
-    func configure() {
+    init () {
+        configure()
+    }
+    
+    private func configure() {
         checkifReaderBundleNeeded()
         self.lessonInfoStorage = APICache.storage?.transformCodable(ofType: LessonInfo.self)
         self.readStorage = APICache.storage?.transformCodable(ofType: Read.self)
@@ -49,7 +58,7 @@ class ReadInteractor: ReadInteractorInputProtocol {
         self.publishingInfoStorage = APICache.storage?.transformCodable(ofType: PublishingInfoData.self)
     }
 
-    func retrieveLessonInfo(lessonIndex: String) {
+    func retrieveLessonInfo(lessonIndex: String, quarterlyIndex: String?) {
         self.retrieveAudio(quarterlyIndex: String(lessonIndex.prefix(lessonIndex.count-3)))
         self.retrieveVideo(quarterlyIndex: String(lessonIndex.prefix(lessonIndex.count-3)))
         
@@ -61,29 +70,32 @@ class ReadInteractor: ReadInteractorInputProtocol {
         
         if (try? self.lessonInfoStorage?.existsObject(forKey: url)) != nil {
             if let lessonInfo = try? self.lessonInfoStorage?.entry(forKey: url) {
-                self.presenter?.didRetrieveLessonInfo(lessonInfo: lessonInfo.object)
-                self.retrieveReads(lessonInfo: lessonInfo.object)
                 hasCache = true
+                self.presenter?.didRetrieveLessonInfo(lessonInfo: lessonInfo.object)
+                self.retrieveReads(lessonInfo: lessonInfo.object, quarterlyIndex: quarterlyIndex)
             }
         }
         
         API.session.request(url).responseDecodable(of: LessonInfo.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let lessonInfo = response.value else {
-                self.presenter?.onError(response.error)
+                self.quarterlyDownloadDelegate?.downloadedQuarterlyWithError()
                 return
             }
             self.presenter?.didRetrieveLessonInfo(lessonInfo: lessonInfo)
             try? self.lessonInfoStorage?.setObject(lessonInfo, forKey: url)
-            if !hasCache { self.retrieveReads(lessonInfo: lessonInfo) }
+            if !hasCache {
+                self.retrieveReads(lessonInfo: lessonInfo, quarterlyIndex: quarterlyIndex)
+            }
         }
     }
 
-    private func retrieveReads(lessonInfo: LessonInfo) {
-        self.ticker = lessonInfo.days.count
+    private func retrieveReads(lessonInfo: LessonInfo, quarterlyIndex: String?) {
+        self.ticker += lessonInfo.days.count
+        
         dispatchQueue.async {
             lessonInfo.days.forEach { (day) in
                 self.ticker = self.ticker - 1
-                self.retrieveRead(readIndex: day.index)
+                self.retrieveRead(readIndex: day.index, quarterlyIndex: quarterlyIndex)
                 self.semaphore.wait()
             }
             
@@ -97,7 +109,7 @@ class ReadInteractor: ReadInteractorInputProtocol {
         }
     }
 
-    func retrieveRead(readIndex: String) {
+    func retrieveRead(readIndex: String, quarterlyIndex: String?) {
         let parsedIndex =  Helper.parseIndex(index: readIndex)
         let url = "\(Constants.API.URL)/\(parsedIndex.lang)/quarterlies/\(parsedIndex.quarter)/lessons/\(parsedIndex.week)/days/\(parsedIndex.day)/read/index.json"
         
@@ -114,7 +126,7 @@ class ReadInteractor: ReadInteractorInputProtocol {
         API.session.request(url)
             .responseDecodable(of: Read.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let read = response.value else {
-                self.presenter?.onError(response.error)
+                self.quarterlyDownloadDelegate?.downloadedQuarterlyWithError()
                 if !found {
                     self.semaphore.signal()
                 }
@@ -127,6 +139,18 @@ class ReadInteractor: ReadInteractorInputProtocol {
                 read: read,
                 ticker: self.ticker
             )
+                
+                if self.ticker == 0 {
+                    if let quarterlyIndex {
+                        let notificationName = Notification.Name(Constants.DownloadQuarterly.quarterlyDownloadStatus(quarterlyIndex: quarterlyIndex))
+                        let downloadStatus = ReadButtonState.downloaded.rawValue
+                        NotificationCenter.default.post(name: notificationName,
+                                                        object: nil,
+                                                        userInfo: [Constants.DownloadQuarterly.downloadedQuarterlyIndex: quarterlyIndex,
+                                                                   Constants.DownloadQuarterly.downloadedQuarterlyStatus: downloadStatus])
+                        DownloadQuarterlyState.shared.setStateForQuarterly(.downloaded, quarterlyIndex: quarterlyIndex)
+                    }
+                }
             
             if !found {
                 self.semaphore.signal()

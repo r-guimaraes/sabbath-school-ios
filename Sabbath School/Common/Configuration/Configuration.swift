@@ -136,13 +136,48 @@ class Configuration: NSObject {
             }
         }
         
+        self.makeKeyAndVisible()
+    }
+    
+    static func makeKeyAndVisible() {
         if (PreferencesShared.loggedIn()) {
-            window?.rootViewController = QuarterlyWireFrame.createQuarterlyModule(initiateOpen: false)
+            window?.rootViewController = getRootViewController()
         } else {
             window?.rootViewController = LoginWireFrame.createLoginModule()
         }
-        
+
         window?.makeKeyAndVisible()
+    }
+    
+    public static func getRootViewController(quarterlyIndex: String? = nil,
+                                              lessonIndex: String? = nil,
+                                              readIndex: Int? = nil,
+                                              initiateOpen: Bool = false) -> UIViewController {
+        self.configureCache()
+        var ret: UIViewController = QuarterlyWireFrame.createQuarterlyModule()
+        
+        let currentLanguage = PreferencesShared.currentLanguage()
+        let feedViewModel = FeedViewModel()
+        
+
+        if let resourceInfo = feedViewModel.getDevotionalResourceInfo(key: feedViewModel.resourceInfoEndpoint) {
+            let resourceInfoForLanguage = resourceInfo.filter { $0.code == currentLanguage.code }
+            if !resourceInfoForLanguage.isEmpty {
+                let tabBarController = TabBarViewController()
+                tabBarController.viewControllers = tabBarController.tabBarControllersFor(
+                    pm: resourceInfoForLanguage.first?.pm ?? false,
+                    devo: resourceInfoForLanguage.first?.devo ?? false,
+                    quarterlyIndex: quarterlyIndex,
+                    lessonIndex: lessonIndex,
+                    readIndex: readIndex,
+                    initiateOpen: initiateOpen)
+                ret = tabBarController
+            }
+        }
+        
+        feedViewModel.retrieveResourceInfo()
+        
+        return ret
     }
     
     static func configureArmchair() {

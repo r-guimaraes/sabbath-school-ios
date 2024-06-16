@@ -89,7 +89,17 @@ class SettingsController: ASDKViewController<ASDisplayNode>, SettingsControllerP
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setCloseButton()
+        
+        navigationItem.title = "Settings"
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .foregroundColor: AppStyle.Base.Color.navigationTitle,
+            .font: R.font.latoBlack(size: 36)!
+        ]
+        
+        tableNode?.view.separatorStyle = UITableViewCell.SeparatorStyle.none
+        tableNode?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
+//        self.setCloseButton()
         
     }
     
@@ -110,6 +120,12 @@ class SettingsController: ASDKViewController<ASDisplayNode>, SettingsControllerP
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        setNavigationBarOpacity(alpha: 1)
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: AppStyle.Base.Color.navigationTitle]
+        
         if let selected = tableNode?.indexPathForSelectedRow {
             tableNode?.view.deselectRow(at: selected, animated: true)
         }

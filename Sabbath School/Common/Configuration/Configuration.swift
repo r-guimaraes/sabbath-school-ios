@@ -165,6 +165,7 @@ class Configuration: NSObject {
             if !resourceInfoForLanguage.isEmpty {
                 let tabBarController = TabBarViewController()
                 tabBarController.viewControllers = tabBarController.tabBarControllersFor(
+                    aij: resourceInfoForLanguage.first?.aij ?? false,
                     pm: resourceInfoForLanguage.first?.pm ?? false,
                     devo: resourceInfoForLanguage.first?.devo ?? false,
                     quarterlyIndex: quarterlyIndex,

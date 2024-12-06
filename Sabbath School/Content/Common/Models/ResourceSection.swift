@@ -31,6 +31,7 @@ struct ResourceSection: Codable, Identifiable {
     let id: String
     let name: String
     let title: String
-    let isRoot: Bool?
+    let isRoot: Bool
+    let displaySequence: Bool
     let documents: [ResourceDocument]
 }

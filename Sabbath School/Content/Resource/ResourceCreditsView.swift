@@ -25,13 +25,19 @@ import SwiftUI
 struct ResourceCreditsView: View {
     var credits: [ResourceCredit]
     var body: some View {
-        VStack {
+        VStack(spacing: AppStyle.Resources.Resource.Credits.spacingBetweenCredits) {
             ForEach(credits, id: \.name) { credit in
                 VStack (alignment: .leading, spacing: 5) {
-                    Text(credit.name).frame(alignment: .leading).multilineTextAlignment(.leading).fontWeight(.bold).foregroundColor(.black.opacity(0.6))
-                    Text(credit.value).frame(alignment: .leading).multilineTextAlignment(.leading).foregroundColor(.black.opacity(0.6))
+                    Text(AppStyle.Resources.Resource.Credits.creditName(credit.name))
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Text(AppStyle.Resources.Resource.Credits.creditValue(credit.value))
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }.frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 10)
             }
         }
     }

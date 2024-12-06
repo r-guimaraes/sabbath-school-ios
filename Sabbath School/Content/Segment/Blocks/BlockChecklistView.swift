@@ -50,9 +50,7 @@ class ChecklistViewModel: ObservableObject {
 
 struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
     var block: Checklist
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
-    @Environment(\.userInput) var userInput: [AnyUserInput]
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     @EnvironmentObject var viewModel: DocumentViewModel
     @StateObject var checklistViewModel: ChecklistViewModel = ChecklistViewModel()
@@ -61,27 +59,32 @@ struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
         VStack (spacing: 0) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
-                    .environment(\.nested, true)
                     .environmentObject(checklistViewModel)
             }
-        }.onChange(of: userInput) { newValue in
-            if let userInput = getUserInputForBlock(blockId: block.id, userInput: newValue)?.asType(UserInputChecklist.self) {
-                checklistViewModel.loadUserInput(userInput: userInput)
-            }
+        }
+        .onAppear {
+            loadInputData()
+        }
+        .onChange(of: viewModel.documentUserInput) { newValue in
+            loadInputData()
         }.onChange(of: checklistViewModel.checked) { newValue in
             if !checklistViewModel.savingMode { return }
             
             saveUserInput(AnyUserInput(UserInputChecklist(blockId: block.id, inputType: .checklist, checked: newValue)))
         }
     }
+    
+    internal func loadInputData() {
+        if let userInput = getUserInputForBlock(blockId: block.id, userInput: nil)?.asType(UserInputChecklist.self) {
+            checklistViewModel.loadUserInput(userInput: userInput)
+        }
+    }
 }
 
 struct BlockChecklistItemView: StyledBlock, View {
     var block: ChecklistItem
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
-    @State var parentBlock: AnyBlock?
     @EnvironmentObject var viewModel: ChecklistViewModel
     @State var checked = false
     

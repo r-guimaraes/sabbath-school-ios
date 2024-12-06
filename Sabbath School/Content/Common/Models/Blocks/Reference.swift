@@ -22,12 +22,23 @@
 
 import Foundation
 
+enum ReferenceScope: String, Codable {
+    case document
+    case resource
+    case segment
+}
+
 struct Reference: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let target: String
-//    let scope: ReferenceScope
+    let scope: ReferenceScope
     let title: String
     let subtitle: String?
+    let resource: Resource?
+    let document: ResourceDocument?
+    let nested: Bool?
+//    let segment: Segment?
 }

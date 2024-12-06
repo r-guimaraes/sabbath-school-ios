@@ -26,10 +26,12 @@ struct List: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let depth: Int?
     let ordered: Bool?
     let start: Int?
     let items: [AnyBlock]
+    let nested: Bool?
     
     var bullet: String {
         guard let depth = depth else {
@@ -47,4 +49,6 @@ struct ListItem: BlockProtocol {
     let style: BlockStyle?
     let index: Int?
     let markdown: String
+    let data: BlockData?
+    let nested: Bool?
 }

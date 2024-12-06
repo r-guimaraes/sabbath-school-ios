@@ -32,9 +32,9 @@ PODS:
   - PINRemoteImage/PINCache (3.0.3):
     - PINCache (~> 3.0.3)
     - PINRemoteImage/Core
-  - PSPDFKit (10.4.2):
-    - PSPDFKit/Core (= 10.4.2)
-  - PSPDFKit/Core (10.4.2)
+  - PSPDFKit (12.4.0):
+    - PSPDFKit/Core (= 12.4.0)
+  - PSPDFKit/Core (12.4.0)
   - QuickLayout (3.0.0)
   - R.swift (5.4.0):
     - R.swift.Library (~> 5.3.0)
@@ -48,6 +48,7 @@ PODS:
   - SwiftMessages (9.0.5):
     - SwiftMessages/App (= 9.0.5)
   - SwiftMessages/App (9.0.5)
+  - SwiftUIPager (2.5.0)
   - Texture (3.1.0):
     - Texture/AssetsLibrary (= 3.1.0)
     - Texture/Core (= 3.1.0)
@@ -78,7 +79,7 @@ DEPENDENCIES:
   - GoogleSignIn
   - Hue
   - MenuItemKit
-  - PSPDFKit (from `https://customers.pspdfkit.com/pspdfkit-ios/10.4.2.podspec`)
+  - PSPDFKit (from `https://customers.pspdfkit.com/pspdfkit-ios/12.4.0.podspec`)
   - R.swift
   - Shimmer
   - SimulatorStatusMagic
@@ -86,6 +87,7 @@ DEPENDENCIES:
   - SwiftDate
   - SwiftEntryKit
   - SwiftMessages
+  - SwiftUIPager
   - Texture (from `https://github.com/TextureGroup/Texture.git`, branch `master`)
   - Wormholy
   - Zip
@@ -113,12 +115,13 @@ SPEC REPOS:
     - SwiftDate
     - SwiftEntryKit
     - SwiftMessages
+    - SwiftUIPager
     - Wormholy
     - Zip
 
 EXTERNAL SOURCES:
   PSPDFKit:
-    :podspec: https://customers.pspdfkit.com/pspdfkit-ios/10.4.2.podspec
+    :podspec: https://customers.pspdfkit.com/pspdfkit-ios/12.4.0.podspec
   Texture:
     :branch: master
     :git: https://github.com/TextureGroup/Texture.git
@@ -141,7 +144,7 @@ SPEC CHECKSUMS:
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: daa34d4aa1d8449089be7d405b9d974abc4724c6
   PINRemoteImage: f1295b29f8c5e640e25335a1b2bd9d805171bd01
-  PSPDFKit: 14fbf11a44313b2eac415a1dade24fd9e98a4a2f
+  PSPDFKit: 72f55ef713840142ec7da53666045c60a0d25fb2
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
   R.swift: c533450b0f7dc494e0993f5f1a1db925d84c3006
   R.swift.Library: 0fc583cb55a99e28901299cc451614cad1161962
@@ -151,10 +154,11 @@ SPEC CHECKSUMS:
   SwiftDate: 72d28954e8e1c6c1c0f917ccc8005e4f83c7d4b2
   SwiftEntryKit: 537c92699d6034efb1ef9c32b11e0b37c97aa589
   SwiftMessages: 9cca50659fa22bb523b4dd2a958d4442e843a354
+  SwiftUIPager: b314d8923bef0bde743c904bb74fcc7a05fd3422
   Texture: 2e8ab2519452515f7f5a520f5a8f7e0a413abfa3
   Wormholy: 3252bc3e55a1847ef9a0976c1377bd77bf3635fa
   Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
 
-PODFILE CHECKSUM: 1083c154ae12e46b55478ceb07886977f2d96412
+PODFILE CHECKSUM: 4a1abd382dae395b71ea667cad5c39cba54c1ba8
 
 COCOAPODS: 1.15.0

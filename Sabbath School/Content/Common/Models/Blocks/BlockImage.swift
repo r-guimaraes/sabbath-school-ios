@@ -26,6 +26,8 @@ struct BlockImage: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let src: URL
     let caption: String?
+    let nested: Bool?
 }

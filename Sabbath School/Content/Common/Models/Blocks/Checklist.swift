@@ -29,6 +29,8 @@ struct Checklist: BlockProtocol {
     let ordered: Bool?
     let start: Int?
     let items: [AnyBlock]
+    let data: BlockData?
+    let nested: Bool?
 }
 
 struct ChecklistItem: BlockProtocol {
@@ -37,4 +39,6 @@ struct ChecklistItem: BlockProtocol {
     let style: BlockStyle?
     let index: Int
     let markdown: String
+    let data: BlockData?
+    let nested: Bool?
 }

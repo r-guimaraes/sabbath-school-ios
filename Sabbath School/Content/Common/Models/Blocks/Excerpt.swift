@@ -26,14 +26,18 @@ struct Excerpt: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let options: [String]
     let items: [ExcerptItem]
+    let nested: Bool?
 }
 
 struct ExcerptItem: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let option: String
     let items: [AnyBlock]
+    let nested: Bool?
 }

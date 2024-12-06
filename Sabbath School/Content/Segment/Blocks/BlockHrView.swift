@@ -24,8 +24,7 @@ import SwiftUI
 
 struct BlockHrView: StyledBlock, View {
     var block: Hr
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
         Rectangle()

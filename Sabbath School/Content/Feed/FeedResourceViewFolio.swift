@@ -26,36 +26,21 @@ struct FeedResourceViewFolio: View {
     var resource: Resource
     var direction: FeedGroupDirection
     
-    
     var body: some View {
         FeedResourceViewBase(direction: direction,
                              viewType: .folio,
                              coverType: .portrait,
                              content: { dimensions in
             VStack(spacing: 0) {
-                if direction == .horizontal {
-                    VStack (spacing: 10) {
-                        FeedResourceViewCover(url: resource.covers.portrait, dimensions: dimensions)
-                        
-                        if direction == .horizontal {
-                            VStack (alignment: .leading, spacing: 5) {
-                                Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2).multilineTextAlignment(.leading)
-                                Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(2).multilineTextAlignment(.leading)
-                                Spacer()
-                            }.frame(width: dimensions.width, alignment: .leading)
-                        }
-                    }
+                FeedResourceConditionalStack(
+                    spacing: AppStyle.Resources.Feed.Spacing.betweenCoverAndTitle(direction),
+                    direction: direction
+                ) {
+                    FeedResourceCoverView(resource.covers.portrait, dimensions, resource.primaryColor)
+                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction, direction == .vertical)
+                    
                 }
-                if direction == .vertical {
-                    HStack(spacing: 20) {
-                        FeedResourceViewCover(url: resource.covers.portrait, dimensions: dimensions)
-                        
-                        VStack (alignment: .leading) {
-                            Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2).multilineTextAlignment(.leading)
-                            Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(2).multilineTextAlignment(.leading)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .topLeading)
-                }
+                .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }
         })
     }

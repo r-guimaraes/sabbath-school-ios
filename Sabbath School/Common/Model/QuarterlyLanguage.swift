@@ -22,7 +22,7 @@
 
 import Foundation
 
-struct QuarterlyLanguage: Codable {
+struct QuarterlyLanguage: Codable, Hashable, Equatable {
     let code: String
     let name: String
     var translatedName: String? = ""
@@ -30,6 +30,10 @@ struct QuarterlyLanguage: Codable {
     init(code: String, name: String) {
         self.code = code
         self.name = name
+        let locale = Locale(identifier: code)
+        let currentLocale = Locale.current
+        
+        self.translatedName = currentLocale.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
     }
 
     init(from decoder: Decoder) throws {

@@ -27,6 +27,7 @@ import SwiftUI
 @MainActor class ResourceViewModel: ObservableObject {
     @Published var resource: Resource? = nil
     @Published var fontsDownloaded: Bool = false
+    @Published var readButtonDocumentIndex: String? = nil
     
     private static var resourceStorage: Storage<String, Resource>?
     
@@ -40,21 +41,21 @@ import SwiftUI
     
     func downloadFont(from url: URL, completion: @escaping (URL?) -> Void) {
         let task = URLSession.shared.downloadTask(with: url) { location, response, error in
-            guard let location = location, error == nil else {
-                completion(nil)
-                return
-            }
-
             let fileManager = FileManager.default
             let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
             let destinationURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
 
             do {
                 if fileManager.fileExists(atPath: destinationURL.path) {
-                    print("SSDEBUG, completing since it exists")
                     completion(destinationURL)
                     return
                 }
+                
+                guard let location = location, error == nil else {
+                    completion(nil)
+                    return
+                }
+                
                 try fileManager.moveItem(at: location, to: destinationURL)
                 completion(destinationURL)
             } catch {
@@ -65,13 +66,38 @@ import SwiftUI
     }
     
     func registerFont(with url: URL) {
-        guard let fontDataProvider = CGDataProvider(url: url as CFURL),
-              let font = CGFont(fontDataProvider) else { return }
-
-        var error: Unmanaged<CFError>?
-        if !CTFontManagerRegisterGraphicsFont(font, &error) {
-            print("SSDEBUG Error registering font: \(String(describing: error)), \(url)")
+        guard let fontFile = NSData(contentsOf: url) else {
+            return
         }
+
+        guard let provider = CGDataProvider(data: fontFile) else {
+            return
+        }
+
+        let font = CGFont(provider)
+        let error: UnsafeMutablePointer<Unmanaged<CFError>?>? = nil
+
+        guard CTFontManagerRegisterGraphicsFont(font!, error) else {
+            guard let unError = error?.pointee?.takeUnretainedValue(),
+                  let _ = CFErrorCopyDescription(unError) else {
+                return
+            }
+        }
+    }
+    
+    func downloadFonts(resourceIndex: String) async {
+        await self.retrieveResource(resourceIndex: resourceIndex, completion: {
+            if let resource = self.resource {
+                guard let fonts = resource.fonts else {
+                    self.fontsDownloaded = true
+                    return
+                }
+                
+                self.downloadAndRegisterFonts(fontURLs: fonts.map({ $0.src }), completion: {
+                    self.fontsDownloaded = true
+                })
+            }
+        })
     }
 
     func downloadAndRegisterFonts(fontURLs: [URL], completion: @escaping () -> Void) {
@@ -95,12 +121,14 @@ import SwiftUI
     }
     
     func retrieveResource(resourceIndex: String, completion: (() -> Void)? = nil) async {
-        let url = "http://localhost:3002/api/v2/\(resourceIndex)/sections/index.json"
+        let url = "\(Constants.API.URLv3)/\(resourceIndex)/sections/index.json"
+        
         var completed = false
         if (try? ResourceViewModel.resourceStorage?.existsObject(forKey: url)) != nil {
             if let resource = try? ResourceViewModel.resourceStorage?.entry(forKey: url) {
                 self.resource = resource.object
                 completed = true
+                self.setReadDocumentIndex()
                 completion?()
             }
         }
@@ -110,22 +138,39 @@ import SwiftUI
             }
             self.resource = resource
             try? ResourceViewModel.resourceStorage?.setObject(resource, forKey: url)
+            self.setReadDocumentIndex()
             if !completed { completion?() }
         }
     }
     
-    func downloadFonts(resourceIndex: String) async {
-        await self.retrieveResource(resourceIndex: resourceIndex, completion: {
-            if let resource = self.resource {
-                guard let fonts = resource.fonts else {
-                    self.fontsDownloaded = true
-                    return
-                }
-                
-                self.downloadAndRegisterFonts(fontURLs: fonts.map({ $0.src }), completion: {
-                    self.fontsDownloaded = true
-                })
+    func setReadDocumentIndex () {
+        if let sections = self.resource?.sections {
+            var today = Date()
+            let weekday = Calendar.current.component(.weekday, from: today)
+            let hour = Calendar.current.component(.hour, from: today)
+            
+            if weekday == 7 && hour == 12 {
+                today = Calendar.current.date(byAdding: .day, value: -1, to: today) ?? today
             }
-        })
+            
+            self.readButtonDocumentIndex = sections.first?.documents.first?.index
+            
+            sections.forEach { section in
+                section.documents.forEach { document in
+                    if let startDate = document.startDate,
+                       let endDate = document.endDate
+                    {
+                        let start = Calendar.current.compare(startDate.date, to: today, toGranularity: .day)
+                        let end = Calendar.current.compare(endDate.date, to: today, toGranularity: .day)
+                        
+                        let fallsBetween = ((start == .orderedAscending) || (start == .orderedSame)) && ((end == .orderedDescending) || (end == .orderedSame))
+
+                        if fallsBetween {
+                            self.readButtonDocumentIndex = document.index
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -27,4 +27,6 @@ struct Question: BlockProtocol {
     let type: BlockType
     let style: BlockStyle?
     let markdown: String
+    let data: BlockData?
+    let nested: Bool?
 }

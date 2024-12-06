@@ -24,22 +24,29 @@ import SwiftUI
 
 struct ResourceFeaturesView: View {
     var features: [ResourceFeature]
+    let featureSize: CGSize = AppStyle.Resources.Resource.Features.size
     
     var body: some View {
-        VStack {
-            ForEach(features, id: \.title) { feature in
-                VStack (alignment: .leading, spacing: 5) {
+        VStack (spacing: AppStyle.Resources.Resource.Features.spacingBetweenFeatures) {
+            ForEach (features, id: \.title) { feature in
+                VStack (alignment: .leading) {
                     HStack {
                         AsyncImage(url: feature.image) { image in
                             image.image?.resizable()
                                 .renderingMode(.template)
-                                .colorMultiply(.black.opacity(0.6))
-                        }.frame(width: 16, height: 12)
-                            
-                        
-                        Text(feature.title).frame(alignment: .leading).fontWeight(.bold).foregroundColor(.black.opacity(0.6))
+                                .colorMultiply(AppStyle.Resources.Resource.Features.color)
+                        }.frame(width: featureSize.width, height: featureSize.height)
+
+                        Text(AppStyle.Resources.Resource.Features.featureName(feature.title))
+                            .frame(alignment: .leading)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    Text(feature.description).frame(alignment: .leading).multilineTextAlignment(.leading).foregroundColor(.black.opacity(0.6))
+                    
+                    Text(AppStyle.Resources.Resource.Features.featureDescription(feature.description))
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
         }

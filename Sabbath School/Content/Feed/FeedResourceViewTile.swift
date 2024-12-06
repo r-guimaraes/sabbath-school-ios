@@ -32,26 +32,14 @@ struct FeedResourceViewTile: View {
                              coverType: .landscape,
                              content: { dimensions in
             VStack(spacing: 0) {
-                if direction == .horizontal {
-                    VStack (alignment: .leading) {
-                        FeedResourceViewCover(url: resource.covers.landscape, dimensions: dimensions)
-                        VStack (alignment: .leading) {
-                            Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2)
-                            Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(1)
-                        }
-                        .frame(width: dimensions.width, alignment: .leading)
-                    }
+                FeedResourceConditionalStack(
+                    spacing: AppStyle.Resources.Feed.Spacing.betweenCoverAndTitle(direction),
+                    direction: direction
+                ) {
+                    FeedResourceCoverView(resource.covers.landscape, dimensions, resource.primaryColor)
+                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction)
                 }
-                if direction == .vertical {
-                    HStack(spacing: 10) {
-                        FeedResourceViewCover(url: resource.covers.landscape, dimensions: dimensions)
-                        
-                        VStack (alignment: .leading, spacing: 5) {
-                            Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2).multilineTextAlignment(.leading)
-                            Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(2).multilineTextAlignment(.leading)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .topLeading)
-                }
+               .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }
         })
     }

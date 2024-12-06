@@ -28,15 +28,37 @@ struct ResourceSectionsView: View {
     
     init(resource: Resource) {
         self.resource = resource
-        self._selectedSection = State(initialValue: ResourceSectionsView.selectFirstNonRootSection(for: resource))
+        self._selectedSection = State(initialValue: selectSectionWithinDates() ?? (resource.sections?.first(where: {
+            $0.isRoot == false
+        }) ?? nil))
+        
     }
     
-    private static func selectFirstNonRootSection(for resource: Resource) -> ResourceSection? {
-        return resource.sections?.first(where: {
-            $0.isRoot == nil
-        }) ?? nil
+    private func selectSectionWithinDates() -> ResourceSection? {
+        let today = Date()
+        
+        if let sections = resource.sections {
+            for section in sections {
+                for document in section.documents {
+                    if let startDate = document.startDate,
+                       let endDate = document.endDate
+                    {
+                        let start = Calendar.current.compare(startDate.date, to: today, toGranularity: .day)
+                        let end = Calendar.current.compare(endDate.date, to: today, toGranularity: .day)
+                        
+                        let fallsBetween = ((start == .orderedAscending) || (start == .orderedSame)) &&
+                                           ((end == .orderedDescending) || (end == .orderedSame))
+
+                        if fallsBetween {
+                            return section
+                        }
+                    }
+                }
+            }
+        }
+        
+        return nil
     }
-    
     
     var body: some View {
         VStack (spacing: 0) {
@@ -46,26 +68,35 @@ struct ResourceSectionsView: View {
                 if let sections = resource.sections, let _ = selectedSection {
                     Menu {
                         ForEach(sections.filter { section in
-                            if section.isRoot != nil { return false }
+                            if section.isRoot == true { return false }
                             return true
                         }, id: \.id) { section in
-                            Button(section.title) {
+                            Button(action: {
                                 selectedSection = section
+                            }){
+                                HStack {
+                                    Text(section.title)
+                                    if section.title == selectedSection?.title ?? "" {
+                                        Image(systemName: "checkmark")
+                                            .tint(AppStyle.Resources.Resource.Section.Dropdown.chevronTint)
+                                    }
+                                }
                             }
                         }
                     }
                     label : {
                         HStack {
-                            Text(selectedSection?.title ?? "").font(.headline)
-                                .foregroundColor(.black) // Custom color
+                            Text(AppStyle.Resources.Resource.Section.Dropdown.text(selectedSection?.title ?? ""))
                                 .frame(alignment: .leading)
-                                .lineLimit(1)
+                                .lineLimit(AppStyle.Resources.Resource.Section.Dropdown.lineLimit)
                             
-                            Image(systemName: "chevron.down").tint(.black).fontWeight(.bold)
-                        }.padding(20)
+                            Image(systemName: "chevron.down")
+                                .tint(AppStyle.Resources.Resource.Section.Dropdown.chevronTint)
+                                .fontWeight(.bold)
+                            
+                        }.padding(AppStyle.Resources.Resource.Section.Dropdown.padding)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .border(Color.red)
                     .transaction { transaction in
                         transaction.animation = nil
                     }

@@ -12,6 +12,12 @@
 	<array>
 		<string>applinks:sabbath-school-stage.adventech.io</string>
 		<string>applinks:sabbath-school.adventech.io</string>
+		<string>applinks:app.babies.aliveinjesus.info</string>
+		<string>applinks:app.beginner.aliveinjesus.info</string>
+		<string>applinks:app.kindergarten.aliveinjesus.info</string>
+		<string>applinks:app.primary.aliveinjesus.info</string>
+		<string>applinks:app.junior.aliveinjesus.info</string>
+		<string>applinks:app.teen.aliveinjesus.info</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>

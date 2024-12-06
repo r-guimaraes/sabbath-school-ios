@@ -22,16 +22,30 @@
 
 import SwiftUI
 
-struct FeedResourceViewCover: View {
-    var url: URL
-    var dimensions: CGSize
+struct SegmentChip: View {
+    var segments: [Segment]
+    @EnvironmentObject var documentViewOperator: DocumentViewOperator
+    
+    @State private var animatedActiveTab: Int = 0
     
     var body: some View {
-        AsyncImage(url: url) { image in
-            image.image?.resizable()
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(Array(segments.enumerated()), id:\.offset) { index, segment in
+                    Button(action: {
+                        documentViewOperator.activeTab = index
+                    }) {
+                        Text(segment.title)
+                            .padding([.vertical], 4)
+                            .padding([.horizontal], 8)
+                            .background(index == documentViewOperator.activeTab ? Color.black : Color.white)
+                            .foregroundColor(index == documentViewOperator.activeTab ? .white : .black)
+                            .font(.caption)
+                            .cornerRadius(3)
+                    }
+                    
+                }
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
         }
-        .frame(width: dimensions.width, height: dimensions.height)
-        .cornerRadius(6)
-        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
     }
 }

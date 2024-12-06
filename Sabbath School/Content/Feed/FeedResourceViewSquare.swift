@@ -32,29 +32,15 @@ struct FeedResourceViewSquare: View {
                              coverType: .square,
                              content: { dimensions in
             VStack(spacing: 0) {
-                if direction == .horizontal {
-                    VStack (spacing: 10) {
-                        FeedResourceViewCover(url: resource.covers.square, dimensions: dimensions)
-                        
-                        VStack (alignment: .leading) {
-                            if direction == .horizontal {
-                                Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2).multilineTextAlignment(.leading)
-                                Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(2).multilineTextAlignment(.leading)
-                                Spacer()
-                            }
-                        }.frame(width: dimensions.width, alignment: .leading)
-                    }
+                FeedResourceConditionalStack(
+                    spacing: AppStyle.Resources.Feed.Spacing.betweenCoverAndTitle(direction),
+                    direction: direction
+                ) {
+                    FeedResourceCoverView(resource.covers.square, dimensions, resource.primaryColor)
+                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction, direction == .vertical)
+                    
                 }
-                if direction == .vertical {
-                    HStack(spacing: 10) {
-                        FeedResourceViewCover(url: resource.covers.square, dimensions: dimensions)
-                        
-                        VStack (alignment: .leading) {
-                            Text(AppStyle.Resources.Text.resourceTitle(string: resource.title)).lineLimit(2).multilineTextAlignment(.leading)
-                            Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle)).lineLimit(2).multilineTextAlignment(.leading)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .topLeading)
-                }
+                .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }
         })
     }

@@ -24,9 +24,7 @@ import SwiftUI
 
 struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
     var block: Question
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
-    @Environment(\.userInput) var userInput: [AnyUserInput]
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     @EnvironmentObject var viewModel: DocumentViewModel
     
@@ -37,20 +35,25 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
     var body: some View {
         VStack (spacing: 0) {
             VStack (spacing: 0) {
-                let alignment = getTextAlignment(block: AnyBlock(block))
-                InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: BlockParagraphView.convertTextAlignment(alignment))
+                if block.markdown.count > 0 {
+                    InlineAttributedText(
+                        block: AnyBlock(block),
+                        markdown: block.markdown
+                    ).frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
+                }
                 Divider().background(.gray.opacity(0.4))
             }.padding(0)
-                .background(Color(UIColor(hex: "#f9f9f9")))
+            .background(Color(UIColor(hex: "#f9f9f9")))
             
             VStack (spacing: 0) {
                 TextEditor(text: $answer)
-                .onChange(of: answer) { newValue in
-                    resetTypingTimer()
-                }
-                    .frame(maxHeight: 200, alignment: .leading)
-                    .font(Font(R.font.latoRegular(size: sizePoints(size: .base))!))
+                    .onChange(of: answer) { newValue in
+                        resetTypingTimer()
+                    }
+                    .frame(height: 100, alignment: .leading)
+                    .lineLimit(5)
+                    .font(Font.custom("Lato-Regular", size: BlockStyleTemplate().textSizePoints(.base)))
                     .scrollContentBackground(.hidden)
                     .padding(.leading, 50)
                     .padding(.vertical, 0)
@@ -73,21 +76,22 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
         }.frame(maxWidth: .infinity, alignment: .leading)
             .cornerRadius(3)
             .padding(.vertical, 10)
-            .onChange(of: userInput) { newValue in
-                self.answer = getAnswerBlockValue(userInput: newValue)
+            .onAppear {
+                loadInputData()
+            }
+            .onChange(of: viewModel.documentUserInput) { newValue in
+                loadInputData()
             }
     }
     
     func resetTypingTimer() {
         typingTimer?.invalidate()
         typingTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
-            if answer != getAnswerBlockValue() {
-                self.saveUserInput(AnyUserInput(UserInputQuestion(blockId: block.id, inputType: .question, answer: self.answer)))
-            }
+            self.saveUserInput(AnyUserInput(UserInputQuestion(blockId: block.id, inputType: .question, answer: self.answer)))
         }
     }
     
-    func getAnswerBlockValue(userInput: [AnyUserInput]? = nil) -> String {
-        return getUserInputForBlock(blockId: block.id, userInput: userInput)?.asType(UserInputQuestion.self)?.answer ?? ""
+    internal func loadInputData() {
+        self.answer = getUserInputForBlock(blockId: block.id, userInput: nil)?.asType(UserInputQuestion.self)?.answer ?? ""
     }
 }

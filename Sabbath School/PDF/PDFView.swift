@@ -61,7 +61,7 @@ class PDFView: ASDisplayNode {
             }
             
             document.title = pdf.title
-            document.annotationSaveMode = .embedded
+            document.annotationSaveMode = .disabled
             documents.append(document)
         }
         
@@ -70,7 +70,6 @@ class PDFView: ASDisplayNode {
             $0.documentLabelEnabled = .NO
             $0.allowWindowTitleChange = false
             $0.allowToolbarTitleChange = false
-            $0.isPageGrabberEnabled = false
             $0.thumbnailBarMode = .none
             $0.shouldHideStatusBarWithUserInterface = true
             $0.userInterfaceViewMode = .automatic

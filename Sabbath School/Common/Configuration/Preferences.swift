@@ -24,6 +24,42 @@ import Foundation
 import UIKit
 import PSPDFKitUI
 
+extension UserDefaults {
+    var account: Account? {
+        get {
+            if let data = data(forKey: Constants.DefaultKey.accountObject) {
+                return try? JSONDecoder().decode(Account.self, from: data)
+            }
+            return nil
+        }
+        set {
+            if let newValue = newValue {
+                let data = try? JSONEncoder().encode(newValue)
+                set(data, forKey: Constants.DefaultKey.accountObject)
+            } else {
+                removeObject(forKey: Constants.DefaultKey.accountObject)
+            }
+        }
+    }
+    
+    var language: QuarterlyLanguage? {
+        get {
+            if let data = data(forKey: Constants.DefaultKey.quarterlyLanguage) {
+                return try? JSONDecoder().decode(QuarterlyLanguage.self, from: data)
+            }
+            return PreferencesShared.currentLanguage()
+        }
+        set {
+            if let newValue = newValue {
+                let data = try? JSONEncoder().encode(newValue)
+                set(data, forKey: Constants.DefaultKey.quarterlyLanguage)
+            } else {
+                removeObject(forKey: Constants.DefaultKey.quarterlyLanguage)
+            }
+        }
+    }
+}
+
 struct Preferences {
     static var userDefaults: UserDefaults {
         return PreferencesShared.userDefaults

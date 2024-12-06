@@ -41,8 +41,8 @@ enum FeedGroupViewType: String, Codable {
 
 struct FeedGroup: Codable, Identifiable {
     let id: String
-    let title: String
-    let name: String
+    let title: String?
+    let seeAll: String?
     
     let view: FeedGroupViewType
     let direction: FeedGroupDirection

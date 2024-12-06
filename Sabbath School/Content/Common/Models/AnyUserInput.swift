@@ -28,7 +28,14 @@ protocol UserInputProtocol: Codable {
 }
 
 enum UserInputType: String, Codable {
-    case appeal, checklist, question, unknown
+    case annotation,
+         appeal,
+         checklist,
+         highlights,
+         multipleChoice = "multiple-choice",
+         poll,
+         question,
+         unknown
     
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -78,8 +85,16 @@ struct AnyUserInput: UserInputProtocol, Decodable, Hashable {
             _base = try UserInputAppeal(from: decoder)
         case .checklist:
             _base = try UserInputChecklist(from: decoder)
+        case .highlights:
+            _base = try UserInputHighlights(from: decoder)
+        case .multipleChoice:
+            _base = try UserInputMultipleChoice(from: decoder)
+        case .poll:
+            _base = try UserInputPoll(from: decoder)
         case .question:
             _base = try UserInputQuestion(from: decoder)
+        case .annotation:
+            _base = try UserInputAnnotation(from: decoder)
         default:
             _base = try UserInputUnknown(from: decoder)
         }

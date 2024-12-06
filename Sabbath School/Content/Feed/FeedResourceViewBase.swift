@@ -21,6 +21,48 @@
  */
 
 import SwiftUI
+import NukeUI
+
+@MainActor @ViewBuilder
+func FeedResourceCoverView(_ url: URL, _ dimensions: CGSize, _ placeholderColor: String? = nil) -> some View {
+    LazyImage(url: url) { state in
+        if let image = state.image {
+            image.resizable().aspectRatio(contentMode: .fill)
+        } else if state.error != nil {
+
+        } else {
+            Color(hex: placeholderColor ?? "#cccccc")
+        }
+    }
+    .frame(width: dimensions.width, height: dimensions.height)
+    .cornerRadius(6)
+    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+}
+
+@ViewBuilder
+func FeedResourceTitleView(_ title: String, _ subtitle: String?, _ dimensions: CGSize? = nil, _ direction: FeedGroupDirection, _ enlarge: Bool = false) -> some View {
+    VStack(alignment: .leading, spacing: AppStyle.Resources.Feed.Spacing.betweenTitleAndSubtitle) {
+        Text(AppStyle.Resources.Feed.Title.text(title, enlarge))
+            .lineLimit(AppStyle.Resources.Feed.Title.lineLimit)
+            .multilineTextAlignment(.leading)
+        
+        if let subtitle = subtitle, direction == .vertical {
+            Text(AppStyle.Resources.Feed.Subtitle.text(subtitle))
+                .lineLimit(AppStyle.Resources.Feed.Subtitle.lineLimit)
+                .multilineTextAlignment(.leading)
+        }
+    }
+    .frame(width: dimensions?.width, alignment: .leading)
+}
+
+@ViewBuilder
+func FeedResourceConditionalStack<Content: View>(spacing: CGFloat, direction: FeedGroupDirection, @ViewBuilder content: () -> Content) -> some View {
+    if direction == .horizontal {
+        VStack(spacing: spacing, content: content)
+    } else {
+        HStack(spacing: spacing, content: content)
+    }
+}
 
 struct FeedResourceViewBase<Content: View>: View {
     var direction: FeedGroupDirection
@@ -42,7 +84,12 @@ struct FeedResourceViewBase<Content: View>: View {
     }
     
     private func updateDimensions() {
-        dimensions = AppStyle.Resources.Size.coverSize(coverType: coverType, direction: direction, viewType: viewType, initialWidth: screenSizeMonitor.screenSize.width)
+        dimensions = AppStyle.Resources.Feed.Cover.size(
+            coverType,
+            direction,
+            viewType,
+            screenSizeMonitor.screenSize.width
+        )
     }
 }
 

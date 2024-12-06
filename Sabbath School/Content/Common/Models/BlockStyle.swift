@@ -34,7 +34,17 @@ enum BlockStylePositionY: String, Codable {
     case center
 }
 
-enum BlockStyleSize: String, Codable {
+enum ImageStyleTextAlignment: String, Codable {
+    case top
+    case bottom
+}
+
+struct BlockImageStyle: Codable {
+    let aspectRatio: CGFloat?
+    let expandable: Bool?
+}
+
+enum BlockStyleSpacing: String, Codable {
     case none
     case xs
     case sm
@@ -43,29 +53,16 @@ enum BlockStyleSize: String, Codable {
     case xl
 }
 
-enum TextStyleSize: String, Codable {
-    case xs
-    case sm
-    case base
-    case lg
-    case xl
-}
-
-enum TextStyleOffset: String, Codable {
-    case sup
-    case sub
-}
-
 struct BackgroundPositionStyle: Codable {
     let x: BlockStylePositionX
     let y: BlockStylePositionY
 }
 
 struct SpacingStyle: Codable {
-    let top: BlockStyleSize?
-    let bottom: BlockStyleSize?
-    let start: BlockStyleSize?
-    let end: BlockStyleSize?
+    let top: BlockStyleSpacing?
+    let bottom: BlockStyleSpacing?
+    let start: BlockStyleSpacing?
+    let end: BlockStyleSpacing?
 }
 
 struct BlockLevelStyle: Codable {
@@ -77,53 +74,30 @@ struct BlockLevelStyle: Codable {
     let rounded: Bool?
 }
 
-struct BlockWrapperLevelStyle: Codable {
-    let rounded: Bool?
-    let backgroundColor: String?
-    let backgroundImage: URL?
-    let backgroundPosition: BackgroundPositionStyle?
-    let padding: SpacingStyle?
-    let margin: SpacingStyle?
-    
-}
-
-struct BlockImageStyle: Codable {
-    let aspectRatio: CGFloat?
-    let rounded: Bool?
-    let expandable: Bool?
-}
-
-struct BlockTextStyle: Codable {
-    let typeface: String?
-    let color: String?
-    let size: TextStyleSize?
-    let align: BlockStylePositionX?
-    let offset: TextStyleOffset?
-}
-
-struct BlockStyle: Codable {
-    let block: BlockLevelStyle?
-    let wrapper: BlockWrapperLevelStyle?
-    let image: BlockImageStyle?
-    let text: BlockTextStyle?
-}
-
-struct DefaultBlockStyleOverride: Codable {
+struct BlockStyleOverride: Codable {
     let type: BlockType
     let style: BlockStyle
 }
 
-struct DefaultBlockStylesInline: Codable {
-    let all: BlockStyle?
-    let blocks: [DefaultBlockStyleOverride]?
+struct BlockStyle: Codable {
+    let block: BlockLevelStyle?
+    let wrapper: BlockLevelStyle?
+    let image: BlockImageStyle?
+    let text: TextStyle?
 }
 
-struct DefaultBlockStylesNested: Codable {
+
+struct InlineBlocksStyle: Codable {
     let all: BlockStyle?
-    let blocks: [DefaultBlockStyleOverride]?
+    let blocks: [BlockStyleOverride]?
 }
 
-struct DefaultBlockStyles: Codable {
-    let inline: DefaultBlockStylesInline?
-    let nested: DefaultBlockStylesNested?
+struct NestedBlocksStyle: Codable {
+    let all: BlockStyle?
+    let blocks: [BlockStyleOverride]?
+}
+
+struct BlocksStyle: Codable {
+    let inline: InlineBlocksStyle?
+    let nested: NestedBlocksStyle?
 }

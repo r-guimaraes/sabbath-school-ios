@@ -24,9 +24,7 @@ import SwiftUI
 
 struct BlockAppealView: StyledBlock, InteractiveBlock, View {
     var block: Appeal
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
-    @Environment(\.userInput) var userInput: [AnyUserInput]
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     @EnvironmentObject var viewModel: DocumentViewModel
     
@@ -41,8 +39,14 @@ struct BlockAppealView: StyledBlock, InteractiveBlock, View {
                 Image(systemName: checked ? "checkmark.circle.fill" : "circle").foregroundColor(checked ? .blue : .gray)
                 InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
             }
-        }.onChange(of: userInput) { newValue in
-            self.checked = getUserInputForBlock(blockId: block.id, userInput: newValue)?.asType(UserInputAppeal.self)?.appeal ?? false
+        }.onAppear {
+            loadInputData()
+        }.onChange(of: viewModel.documentUserInput) { newValue in
+            loadInputData()
         }
+    }
+    
+    internal func loadInputData() {
+        self.checked = getUserInputForBlock(blockId: block.id, userInput: nil)?.asType(UserInputAppeal.self)?.appeal ?? false
     }
 }

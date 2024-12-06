@@ -93,7 +93,8 @@ class LessonInteractor: LessonInteractorInputProtocol {
         }
         
         let language = PreferencesShared.currentLanguage()
-        guard let countryCode = Locale.current.regionCode else { return }
+        guard let countryCode = Locale.current.language.region?.identifier else { return }
+        
         
         let body = ["language": language.code, "country": countryCode.lowercased()]
         

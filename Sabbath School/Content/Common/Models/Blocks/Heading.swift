@@ -28,13 +28,15 @@ enum HeadingDepth: Int, Codable {
     case three = 3
     case four = 4
     case five = 5
-    case size = 6
+    case six = 6
 }
 
 struct Heading: BlockProtocol {
     let id: String
     var type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let markdown: String
     let depth: HeadingDepth
+    let nested: Bool?
 }

@@ -23,18 +23,10 @@
 import Foundation
 import Cache
 
-struct ResourceInfo: Codable {
-    let name: String
-    let code: String
-    let pm: Bool
-    let devo: Bool
-}
-
-class FeedViewModel: ObservableObject {
+@MainActor class FeedViewModel: ObservableObject {
     @Published var feed: Feed? = nil
     @Published var feedGroup: FeedGroup? = nil
     
-    private static var resourceInfoStorage: Storage<String, [ResourceInfo]>?
     private static var resourceFeedStorage: Storage<String, Feed>?
     private static var resourceSeeAllFeedStorage: Storage<String, FeedGroup>?
     
@@ -43,43 +35,19 @@ class FeedViewModel: ObservableObject {
     }
     
     func configure() {
-        FeedViewModel.resourceInfoStorage = APICache.storage?.transformCodable(ofType: [ResourceInfo].self)
         FeedViewModel.resourceFeedStorage = APICache.storage?.transformCodable(ofType: Feed.self)
         FeedViewModel.resourceSeeAllFeedStorage = APICache.storage?.transformCodable(ofType: FeedGroup.self)
     }
     
-    public var resourceInfoEndpoint: String {
-//        return "\(Constants.API.URL)/resources/index.json"
-        return "http://localhost:3002/api/v2/resources/index.json"
-    }
-    
-    public func getDevotionalResourceInfo(key: String) -> [ResourceInfo]? {
-        if let resources = try? FeedViewModel.resourceInfoStorage?.entry(forKey: key) {
-            return resources.object
-        }
-        return nil
-    }
-    
-    func retrieveResourceInfo() {
-        let url = self.resourceInfoEndpoint
-                
-        API.session.request(url).responseDecodable(of: [ResourceInfo].self, decoder: Helper.SSJSONDecoder()) { response in
-            
-            guard let resourceInfo = response.value else {
-                return
-            }
-            try? FeedViewModel.resourceInfoStorage?.setObject(resourceInfo, forKey: url)
-        }
-    }
-    
     func retrieveFeed(resourceType: ResourceType, language: String) async {
-        let url = "http://localhost:3002/api/v2/\(language)/\(resourceType)/index.json"
+        let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/index.json"
         
         if (try? FeedViewModel.resourceFeedStorage?.existsObject(forKey: url)) != nil {
             if let feed = try? FeedViewModel.resourceFeedStorage?.entry(forKey: url) {
                 self.feed = feed.object
             }
         }
+        
         API.session.request(url).responseDecodable(of: Feed.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let feed = response.value else {
                 return
@@ -89,8 +57,8 @@ class FeedViewModel: ObservableObject {
         }
     }
     
-    func retrieveSeeAllFeed(resourceType: ResourceType, feedGroupName: String, language: String) async {
-        let url = "http://localhost:3002/api/v2/\(language)/\(resourceType)/feeds/\(feedGroupName)/index.json"
+    func retrieveSeeAllFeed(resourceType: ResourceType, feedGroupId: String, language: String) async {
+        let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/feeds/\(feedGroupId)/index.json"
         
         if (try? FeedViewModel.resourceSeeAllFeedStorage?.existsObject(forKey: url)) != nil {
             if let feedGroup = try? FeedViewModel.resourceSeeAllFeedStorage?.entry(forKey: url) {

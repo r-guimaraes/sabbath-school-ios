@@ -26,6 +26,8 @@ struct Collapse: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let caption: String
     let items: [AnyBlock]
+    let nested: Bool?
 }

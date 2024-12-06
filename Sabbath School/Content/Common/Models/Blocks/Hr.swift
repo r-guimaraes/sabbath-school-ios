@@ -26,4 +26,6 @@ struct Hr: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
+    let nested: Bool?
 }

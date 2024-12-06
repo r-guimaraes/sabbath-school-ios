@@ -26,8 +26,13 @@ import Cache
 
 @MainActor class DocumentViewModel: ObservableObject {
     @Published var document: ResourceDocument? = nil
-    @Published var documentUserInput: [AnyUserInput] = []
+    @Published var pdfAuxiliary: [PDFAux]? = nil
+    @Published var videoAuxiliary: [VideoAux]? = nil
+    @Published var audioAuxiliary: [Audio]? = nil
     
+    @Published var documentUserInput: [AnyUserInput] = []
+    @Published var selectedSegmentIndex: Int? = nil
+
     private static var documentStorage: Storage<String, ResourceDocument>?
     
     init() {
@@ -38,15 +43,48 @@ import Cache
         DocumentViewModel.documentStorage = APICache.storage?.transformCodable(ofType: ResourceDocument.self)
     }
     
+    func retrievePDFAux(resourceIndex: String, documentIndex: String) async {
+        let url = "\(Constants.API.URLv3)/\(resourceIndex)/pdf.json"
+        
+        API.session.request(url).responseDecodable(of: [PDFAux].self, decoder: Helper.SSJSONDecoder()) { response in
+            guard let pdfAuxiliary = response.value else {
+                return
+            }
+            self.pdfAuxiliary = pdfAuxiliary.filter { $0.target == documentIndex }
+        }
+    }
+    
+    func retrieveVideoAux(resourceIndex: String, documentIndex: String) async {
+        let url = "\(Constants.API.URLv3)/\(resourceIndex)/video.json"
+        
+        API.session.request(url).responseDecodable(of: [VideoAux].self, decoder: Helper.SSJSONDecoder()) { response in
+            guard let videoAuxiliary = response.value else {
+                return
+            }
+            self.videoAuxiliary = videoAuxiliary
+        }
+    }
+    
+    func retrieveAudioAux(resourceIndex: String, documentIndex: String) async {
+        let url = "\(Constants.API.URLv3)/\(resourceIndex)/audio.json"
+        
+        API.session.request(url).responseDecodable(of: [Audio].self, decoder: Helper.SSJSONDecoder()) { response in
+            guard let audioAuxiliary = response.value else {
+                return
+            }
+            self.audioAuxiliary = audioAuxiliary
+        }
+    }
     
     func retrieveDocument(documentIndex: String, completion: (() -> Void)? = nil) async {
-        let url = "http://localhost:3002/api/v2/\(documentIndex)/index.json"
+        let url = "\(Constants.API.URLv3)/\(documentIndex)/index.json"
         var completed = false
         
         if (try? DocumentViewModel.documentStorage?.existsObject(forKey: url)) != nil {
             if let document = try? DocumentViewModel.documentStorage?.entry(forKey: url) {
                 self.document = document.object
                 completed = true
+                self.setSelectedSegmentIndex()
                 completion?()
             }
         }
@@ -56,19 +94,31 @@ import Cache
             }
             self.document = document
             try? DocumentViewModel.documentStorage?.setObject(document, forKey: url)
+            self.setSelectedSegmentIndex()
             if !completed { completion?() }
         }
     }
     
     func retrieveDocumentUserInput(documentId: String) async {
-        API.auth.request("http://localhost:3001/api/v2/resources/user/input/document/\(documentId)")
+        API.auth.request("\(Constants.API.URLv3)/resources/user/input/document/\(documentId)")
             .customValidate()
             .responseDecodable(of: [AnyUserInput].self, decoder: Helper.SSJSONDecoder()) { response in
-                print("SSDEBUG", response)
             guard let userInput = response.value else {
                 return
             }
             self.documentUserInput = userInput
+        }
+    }
+    
+    func retrievePollData(pollId: String, completion: ((PollResults?) -> Void?)? = nil) async {
+        API.auth.request("\(Constants.API.URLv3)/resources/polls/\(pollId)")
+            .customValidate()
+            .responseDecodable(of: PollResults.self, decoder: Helper.SSJSONDecoder()) { response in
+            guard let pollResults = response.value else {
+                completion?(nil)
+                return
+            }
+            completion?(pollResults)
         }
     }
     
@@ -80,16 +130,35 @@ import Cache
         do {
             let userInput = try JSONSerialization.jsonObject(with: JSONEncoder().encode(userInput), options: .allowFragments) as! [String: Any]
             
-            print("SSDEBUG saving", "http://localhost:3001/api/v2/resources/user/input/\(userInputType.rawValue)/\(documentId)/\(blockId)")
-            
             API.auth.request(
-                "http://localhost:3001/api/v2/resources/user/input/\(userInputType.rawValue)/\(documentId)/\(blockId)",
+                "\(Constants.API.URLv3)/resources/user/input/\(userInputType.rawValue)/\(documentId)/\(blockId)",
                 method: .post,
                 parameters: userInput,
                 encoding: JSONEncoding.default
-            ).responseJSON { response in }
+            ).responseDecodable(of: String.self, decoder: Helper.SSJSONDecoder()) { response in }
         } catch let error {
             print("SSDEBUG", error)
+        }
+    }
+    
+    func setSelectedSegmentIndex () {
+        if let segments = self.document?.segments {
+            let today = Date()
+            let cal = Calendar.current
+            
+            segments.enumerated().forEach { segmentIndex, segment in
+                if let segmentDate = segment.date,
+                   self.selectedSegmentIndex == nil
+                {
+                    if cal.compare(today, to: segmentDate.date, toGranularity: .day) == .orderedSame {
+                        self.selectedSegmentIndex = segmentIndex
+                    }
+                }
+            }
+            
+            if self.selectedSegmentIndex == nil {
+                self.selectedSegmentIndex = 0
+            }
         }
     }
 }

@@ -21,6 +21,24 @@
  */
 
 import SwiftUI
+import NukeUI
+
+@ViewBuilder
+func FeedGroupConditionalStack<Content: View>(
+    resources: [Resource],
+    feedGroupDirection: FeedGroupDirection,
+    @ViewBuilder content: () -> Content) -> some View {
+    if feedGroupDirection == .horizontal {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: AppStyle.Resources.Feed.Spacing.betweenResources, content: content)
+                .padding(AppStyle.Resources.Feed.Spacing.horizontalPadding)
+            
+        }
+    } else {
+        VStack(spacing: AppStyle.Resources.Feed.Spacing.betweenResources, content: content)
+            .padding(AppStyle.Resources.Feed.Spacing.horizontalPadding)
+    }
+}
 
 struct FeedGroupView: View {
     var resourceType: ResourceType
@@ -30,49 +48,83 @@ struct FeedGroupView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if (displayFeedGroupTitle || displaySeeAllButton) {
+            if ((displayFeedGroupTitle || displaySeeAllButton)
+                && (feedGroup.title != nil || feedGroup.seeAll != nil)
+            ) {
                 HStack {
-                    if displayFeedGroupTitle {
-                        Text(AttributedString(AppStyle.Quarterly.Text.groupName(string:feedGroup.title)))
+                    if let title = feedGroup.title, displayFeedGroupTitle {
+                        Text(AppStyle.Resources.Feed.GroupTitle.text(title))
                     }
                     Spacer()
-                    if displaySeeAllButton {
+                    if let seeAll = feedGroup.seeAll, displaySeeAllButton {
                         NavigationLink {
-                            FeedSeeAllView(resourceType: resourceType, feedGroupName: feedGroup.name)
+                            FeedSeeAllView(resourceType: resourceType, feedGroupId: feedGroup.id)
                         } label: {
-                            Text(AttributedString(AppStyle.Quarterly.Text.seeMore(string: "See All".localized())))
+                            Text(AppStyle.Resources.Feed.SeeAllTitle.text("\(seeAll) ›"))
                         }
                     }
                     
-                }.padding(20)
+                }
+                .padding(AppStyle.Resources.Feed.Spacing.horizontalPadding)
             }
             if let resources = feedGroup.resources {
-                ScrollView(feedGroup.direction == .horizontal ? .horizontal : .vertical, showsIndicators: false) {
-                    if feedGroup.direction == .horizontal {
-                        HStack(spacing: 20) {
-                            ForEach(resources) { resource in
-                                NavigationLink {
-                                    ResourceView(resourceIndex: feedGroup.resources!.first!.index)
-                                } label: {
-                                    FeedResourceView(resource: feedGroup.resources!.first!, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction)
-                                }
+                VStack {
+                    FeedGroupConditionalStack(resources: resources, feedGroupDirection: feedGroup.direction) {
+                        ForEach(resources) { resource in
+                            NavigationLink {
+                                ResourceView(resourceIndex: resource.index)
+                            } label: {
+                                FeedResourceView(resource: resource, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction)
                             }
-                        }.padding(20)
-                    } else {
-                        VStack(spacing: 20) {
-                            ForEach(resources) { resource in
+                            
+                            .contextMenu {
                                 NavigationLink {
-                                    ResourceView(resourceIndex: feedGroup.resources!.first!.index)
+                                    ResourceView(resourceIndex: resource.index)
                                 } label: {
-                                    FeedResourceView(resource: feedGroup.resources!.first!, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction)
+                                    Text("Read".localized())
                                 }
+                                Divider()
+                                
+                                ShareLink(
+                                    item: URL(string: "\(Constants.API.HOST)/resources/\(resource.index)")!,
+                                    subject: Text(resource.title)
+                                ) {
+                                    Text("Share".localized())
+                                }
+                            } preview: {
+                                HStack {
+                                    LazyImage(url: resource.covers.portrait) { image in
+                                        image
+                                            .image?
+                                            .resizable()
+                                            .scaledToFill()
+                                    }
+                                    .cornerRadius(5)
+                                    .frame(width: 80, height: 100)
+                                    
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        if let subtitle = resource.subtitle {
+                                            Text(subtitle.uppercased())
+                                                .font(.custom("Lato-Bold", size: 10))
+                                                .foregroundColor((.black | .white).opacity(0.5))
+                                                .lineLimit(1)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        
+                                        Text(resource.title)
+                                            .font(.custom("Lato-Bold", size: 18))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(20)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
-                        .padding(20)
                     }
-                }.padding(0)
-                    .conditionalBackground(hex: feedGroup.backgroundColor)
-                
+                }
+                .padding(0)
+                .conditionalBackground(hex: feedGroup.backgroundColor)
             }
         }
         .padding(0)

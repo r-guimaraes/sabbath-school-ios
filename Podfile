@@ -1,9 +1,9 @@
-platform :ios, '12.1'
+platform :ios, '16'
 use_frameworks!
 inhibit_all_warnings!
 
 target 'Sabbath School' do
-  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/pspdfkit-ios/10.4.2.podspec'
+  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/pspdfkit-ios/12.4.0.podspec'
   pod 'Armchair'
   pod 'Down'
   pod 'FontBlaster'
@@ -17,6 +17,7 @@ target 'Sabbath School' do
   pod 'SwiftMessages'
   pod 'SwiftDate'
   pod 'Texture', :git => 'https://github.com/TextureGroup/Texture.git', :branch => 'master'
+  pod 'SwiftUIPager'
 
   pod 'Zip'
   pod 'Wormholy', :configurations => ['Debug']

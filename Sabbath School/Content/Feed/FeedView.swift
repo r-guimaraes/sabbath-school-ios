@@ -22,52 +22,86 @@
 
 import SwiftUI
 
-struct FeedView: View {
-    @StateObject var viewModel: FeedViewModel = FeedViewModel()
+enum NavigationStep: Hashable {
+    case resource(String)
+    case document(String)
+}
 
+struct FeedView: View {
     var resourceType: ResourceType
-    let gradient = LinearGradient(colors: [Color.orange,Color.green],
-                                      startPoint: .top, endPoint: .bottom)
+    @Binding var path: [NavigationStep]
+
+    @StateObject var viewModel: FeedViewModel = FeedViewModel()
+    @EnvironmentObject var languageManager: LanguageManager
+    
+    @State var showLanguage: Bool = false
+    @State var showSettings: Bool = false
+
     var body: some View {
-        NavigationStack {
-            ZStack {
-                if (self.viewModel.feed != nil) {
+        NavigationStack(path: $path) {
+            VStack {
+                if let feed = self.viewModel.feed {
                     ScrollView {
                         // Adding VStack to prevent unnecessary spacing between elements in the ScrollView
                         VStack (spacing: 0) {
-                            ForEach(self.viewModel.feed!.groups) { group in
+                            ForEach(feed.groups, id:\.id) { group in
                                 FeedGroupView(resourceType: resourceType, feedGroup: group)
                             }
                         }
                     }.navigationTitle(self.viewModel.feed!.title)
                 } else {
-                    Text("Loading")
+                    FeedLoadingView()
                 }
-            }.navigationBarTitleDisplayMode(.large)
-            
-        }.task {
-            await viewModel.retrieveFeed(resourceType: self.resourceType, language: "en")
-        }.onAppear {
-            let appearance = UINavigationBarAppearance()
-            let appearanceScroll = UINavigationBarAppearance()
-
-            appearance.shadowColor = .clear
-            appearanceScroll.shadowColor = .clear
-
-           
-            appearance.backgroundColor = AppStyle.Base.Color.background
-            appearance.backgroundEffect = nil
-            appearanceScroll.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-            
-            UINavigationBar.appearance().standardAppearance = appearanceScroll
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        
+            }
+            .navigationDestination(for: NavigationStep.self) { step in
+               switch step {
+               case .resource(let resourceIndex):
+                   ResourceView(resourceIndex: resourceIndex)
+               case .document(let documentIndex):
+                   DocumentView(documentIndex: documentIndex)
+               }
+               
+            }
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showSettings = true
+                    }) {
+                        Image(uiImage: R.image.iconNavbarSettings()!)
+                            .renderingMode(.template)
+                            .foregroundColor(.black | .white)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showLanguage = true
+                    }) {
+                        Image(uiImage: R.image.iconNavbarLanguage()!)
+                            .renderingMode(.template)
+                            .foregroundColor(.black | .white)
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showLanguage) {
+            LanguageViewV2()
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsViewV2()
+        }
+        .task {
+            await viewModel.retrieveFeed(resourceType: self.resourceType, language: PreferencesShared.currentLanguage().code)
+        }
+        .onAppear {
+            UIApplication.shared.currentTabBarController()?.tabBar.isHidden = false
         }
     }
 }
 
 struct FeedView_Previews: PreviewProvider {
     static var previews: some View {
-        FeedView(resourceType: .pm).environmentObject(ScreenSizeMonitor())
+        FeedView(resourceType: .ss, path: .constant([])).environmentObject(ScreenSizeMonitor())
     }
 }

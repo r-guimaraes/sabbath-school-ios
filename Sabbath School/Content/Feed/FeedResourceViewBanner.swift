@@ -32,7 +32,7 @@ struct FeedResourceViewBanner: View {
                              coverType: .landscape,
                              content: { dimensions in
             ZStack (alignment: .bottomLeading) {
-                FeedResourceViewCover(url: resource.covers.landscape, dimensions: dimensions)
+                FeedResourceCoverView(resource.covers.landscape, dimensions, resource.primaryColor)
                 
                 Rectangle()
                     .fill(.ultraThinMaterial)
@@ -53,19 +53,11 @@ struct FeedResourceViewBanner: View {
                             Rectangle()
                                 .frame(height: dimensions.height*0.1)
                         }.cornerRadius(6)
-
                     }
-//
-                    
-                
-                VStack (alignment: .leading, spacing: 5) {
-                    Text(AppStyle.Resources.Text.resourceTitle(string: resource.title, viewType: .banner)).lineLimit(2)
-                    Text(AppStyle.Resources.Text.resourceSubTitle(string: resource.subtitle, viewType: .banner)).lineLimit(2)
-                    
-                }
-                // TODO: spacing * 2
-                .frame(width: dimensions.width-40, alignment: .leading)
-                .padding(15)
+
+                FeedResourceTitleView(resource.title, nil, dimensions, direction, false)
+                    .frame(width: dimensions.width - AppStyle.Resources.Feed.Spacing.horizontalPadding * 2, alignment: .leading)
+                    .padding(AppStyle.Resources.Feed.Spacing.insideBanner)
                 
             }.frame(width: dimensions.width)
         })

@@ -24,19 +24,19 @@ import Foundation
 import SwiftUI
 
 struct DefaultBlockStylesKey: EnvironmentKey {
-    static let defaultValue = DefaultBlockStyles(inline: nil, nested: nil)
+    static let defaultValue = Style(resource: nil, segment: nil, blocks: nil)
 }
 
 struct BlockNestedKey: EnvironmentKey {
     static let defaultValue = false
 }
 
-struct UserInputKey: EnvironmentKey {
-    static let defaultValue: [AnyUserInput] = []
+struct ThemeManagerKey: EnvironmentKey {
+    static let defaultValue = ThemeManager()
 }
 
 extension EnvironmentValues {
-    var defaultBlockStyles: DefaultBlockStyles {
+    var defaultBlockStyles: Style {
         get { self[DefaultBlockStylesKey.self] }
         set { self[DefaultBlockStylesKey.self] = newValue }
     }
@@ -46,8 +46,8 @@ extension EnvironmentValues {
         set { self[BlockNestedKey.self] = newValue }
     }
     
-    var userInput: [AnyUserInput] {
-        get { self[UserInputKey.self] }
-        set { self[UserInputKey.self] = newValue }
+    var themeManager: ThemeManager {
+        get { self[ThemeManagerKey.self] }
+        set { self[ThemeManagerKey.self] = newValue }
     }
 }

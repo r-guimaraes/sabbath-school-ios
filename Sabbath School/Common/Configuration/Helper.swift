@@ -35,6 +35,11 @@ struct Helper {
         return UIDevice.current.userInterfaceIdiom == .pad
     }
     
+    static var isLandscape: Bool {
+        let orientation = UIDevice.current.orientation
+        return orientation == .landscapeLeft || orientation == .landscapeRight
+    }
+    
     static var isPhone: Bool {
         return UIDevice.current.userInterfaceIdiom == .phone
     }
@@ -45,7 +50,7 @@ struct Helper {
     }
     
     static func firstRun() -> Bool {
-        return PreferencesShared.userDefaults.bool(forKey: Constants.DefaultKey.firstRun)
+        return !PreferencesShared.userDefaults.bool(forKey: Constants.DefaultKey.firstRun)
     }
     
     static func isDarkMode() -> Bool {

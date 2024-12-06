@@ -21,15 +21,17 @@
  */
 
 import Foundation
+import SwiftUI
 
-protocol InteractiveBlock {
-    var userInput: [AnyUserInput] { get }
+protocol InteractiveBlock: View where Body: View {
     var viewModel: DocumentViewModel { get }
+    func loadInputData()
 }
 
 extension InteractiveBlock {
+    @MainActor
     public func getUserInputForBlock(blockId: String, userInput: [AnyUserInput]?) -> AnyUserInput? {
-        return (userInput ?? self.userInput).first(where: { $0.blockId == blockId })
+        return (userInput ?? self.viewModel.documentUserInput).first(where: { $0.blockId == blockId })
     }
     
     @MainActor public func saveUserInput(_ userInput: AnyUserInput) {
@@ -39,6 +41,13 @@ extension InteractiveBlock {
                 blockId: userInput.blockId,
                 userInputType: userInput.inputType,
                 userInput: userInput)
+            
+            // Updating documentViewModel with the new user input
+            if let index = viewModel.documentUserInput.firstIndex(where: { $0.blockId == userInput.blockId && $0.inputType == userInput.inputType }) {
+                viewModel.documentUserInput[index] = userInput
+            } else {
+                viewModel.documentUserInput.append(userInput)
+            }
         }
     }
 }

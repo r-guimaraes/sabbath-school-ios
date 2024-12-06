@@ -22,15 +22,61 @@
 
 import SwiftUI
 
+class ParagraphViewModel: ObservableObject {
+     @Published var highlights: [UserInputHighlight] = []
+     @Published var savingMode: Bool = false
+     
+     public func loadUserInput(userInput: UserInputHighlights) {
+         self.highlights = userInput.highlights
+     }
+    
+     public func setHighlight(startIndex: Int, endIndex: Int, length: Int, color: HighlightColor) {
+         savingMode = true
+         self.highlights.append(UserInputHighlight(startIndex: startIndex, endIndex: endIndex, length: length, color: color))
+     }
+    
+     public func removeHighlight(startIndex: Int, endIndex: Int, length: Int) {
+         savingMode = true
+         let endIndex = startIndex + length
+         self.highlights = self.highlights.filter { highlight in
+             return (highlight.startIndex + highlight.length <= startIndex) || (highlight.startIndex >= endIndex)
+         }
+    }
+}
+
 struct BlockParagraphView: StyledBlock, View {
     var block: Paragraph
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    
+    @State var parentBlock: AnyBlock?
     
     var body: some View {
-        let alignment = getTextAlignment(block: AnyBlock(block))
-        InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: BlockParagraphView.convertTextAlignment(alignment))
-            .lineSpacing(5)
+        InlineAttributedText(
+            block: AnyBlock(block),
+            markdown: block.markdown,
+            selectable: isSelectable()
+        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    private func isSelectable() -> Bool {
+        guard let parent = parentBlock else {
+            return true
+        }
+        
+        // Making sure that we only allow selecting if the paragraph immediate child of these block types
+        switch parent.type {
+        case .collapse:
+            return true
+        case .blockquote:
+            return true
+        case .listItem:
+            return true
+        case .excerptItem:
+            return true
+        default:
+            return false
+        }
     }
     
     public static func convertTextAlignment(_ textAlignment: TextAlignment) -> Alignment {

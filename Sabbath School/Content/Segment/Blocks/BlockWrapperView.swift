@@ -25,10 +25,11 @@ import SwiftUI
 
 struct BlockWrapperView: StyledBlock, View {
     var block: AnyBlock
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State private var dropShadow = false
+    @State private var refreshView = 0
     
     var parentBlock: AnyBlock?
     
@@ -36,9 +37,29 @@ struct BlockWrapperView: StyledBlock, View {
         VStack (spacing: 0) {
             VStack (spacing: 0) {
                 switch block.type {
-                case .paragraph:
-                    if let paragraph = block.asType(Paragraph.self) {
-                        BlockParagraphView(block: paragraph)
+                case .appeal:
+                    if let appeal = block.asType(Appeal.self) {
+                        BlockAppealView(block: appeal)
+                    }
+                case .audio:
+                    if let audio = block.asType(AudioBlock.self) {
+                        BlockAudioView(block: audio)
+                    }
+                case .blockquote:
+                    if let blockquote = block.asType(Blockquote.self) {
+                        BlockBlockquoteView(block: blockquote)
+                    }
+                case .checklist:
+                    if let checklist = block.asType(Checklist.self) {
+                        BlockChecklistView(block: checklist)
+                    }
+                case .checklistItem:
+                    if let checklistItem = block.asType(ChecklistItem.self) {
+                        BlockChecklistItemView(block: checklistItem)
+                    }
+                case .collapse:
+                    if let collapse = block.asType(Collapse.self) {
+                        BlockCollapseView(block: collapse)
                     }
                 case .excerpt:
                     if let excerpt = block.asType(Excerpt.self) {
@@ -48,45 +69,9 @@ struct BlockWrapperView: StyledBlock, View {
                     if let excerptItem = block.asType(ExcerptItem.self) {
                         BlockExcerptItemView(block: excerptItem)
                     }
-                case .list:
-                    if let list = block.asType(List.self) {
-                        BlockListView(block: list)
-                    }
-                case .listItem:
-                    if let listItem = block.asType(ListItem.self) {
-                        BlockListItemView(block: listItem, parentBlock: parentBlock)
-                    }
-                case .checklist:
-                    if let checklist = block.asType(Checklist.self) {
-                        BlockChecklistView(block: checklist)
-                    }
-                case .checklistItem:
-                    if let checklistItem = block.asType(ChecklistItem.self) {
-                        BlockChecklistItemView(block: checklistItem, parentBlock: parentBlock)
-                    }
                 case .heading:
                     if let heading = block.asType(Heading.self) {
                         BlockHeadingView(block: heading)
-                    }
-                case .blockquote:
-                    if let blockquote = block.asType(Blockquote.self) {
-                        BlockBlockquoteView(block: blockquote)
-                    }
-                case .collapse:
-                    if let collapse = block.asType(Collapse.self) {
-                        BlockCollapseView(block: collapse)
-                    }
-                case .appeal:
-                    if let appeal = block.asType(Appeal.self) {
-                        BlockAppealView(block: appeal)
-                    }
-                case .question:
-                    if let question = block.asType(Question.self) {
-                        BlockQuestionView(block: question)
-                    }
-                case .reference:
-                    if let reference = block.asType(Reference.self) {
-                        BlockReferenceView(block: reference)
                     }
                 case .hr:
                     if let hr = block.asType(Hr.self) {
@@ -96,21 +81,62 @@ struct BlockWrapperView: StyledBlock, View {
                     if let image = block.asType(BlockImage.self) {
                         BlockImageView(block: image)
                     }
+                case .list:
+                    if let list = block.asType(List.self) {
+                        BlockListView(block: list)
+                    }
+                case .listItem:
+                    if let listItem = block.asType(ListItem.self) {
+                        BlockListItemView(block: listItem, parentBlock: parentBlock)
+                    }
+                case .multipleChoice:
+                    if let multipleChoice = block.asType(MultipleChoice.self) {
+                        BlockMultipleChoiceView(block: multipleChoice)
+                    }
+                case .multipleChoiceItem:
+                    if let multipleChoiceItem = block.asType(MultipleChoiceItem.self) {
+                        BlockMultipleChoiceItemView(block: multipleChoiceItem)
+                    }
+                case .paragraph:
+                    if let paragraph = block.asType(Paragraph.self) {
+                        BlockParagraphView(block: paragraph, parentBlock: parentBlock)
+                    }
+                case .poll:
+                    if let poll = block.asType(Poll.self) {
+                        BlockPollView(block: poll)
+                    }
+                case .question:
+                    if let question = block.asType(Question.self) {
+                        BlockQuestionView(block: question)
+                    }
+                case .reference:
+                    if let reference = block.asType(Reference.self) {
+                        BlockReferenceView(block: reference)
+                    }
+                case .video:
+                    if let video = block.asType(VideoBlock.self) {
+                        BlockVideoView(block: video)
+                    }
                 default:
-                    Text("Nothing").multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
+                    EmptyView()
                 }
             }.onAppear {
                 if let _ = block.asType(Question.self) {
                     dropShadow = true
                 }
             }
-            .padding(getBlockPadding(block: block))
-            .background(getBlockBackgroundColor(block: block))
-            .cornerRadius(getBlockRounded(block: block))
+            .padding(Styler.getBlockPadding(defaultStyles, block))
+            .background(Styler.getBlockBackgroundColor(defaultStyles, block))
+            .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, block))
             .shadow(color: .gray.opacity(0.5), radius: dropShadow ? 5 : 0)
         }
-        .padding(getWrapperPadding(block: block))
-        .background(getWrapperBackgroundColor(block: block))
-//        .border(.red)
+        .padding(Styler.getWrapperPadding(defaultStyles, block))
+        .cornerRadius(Styler.getWrapperCornerRadius(defaultStyles, block))
+        .background(Styler.getWrapperBackgroundColor(defaultStyles, block))
+        .id(refreshView)
+        .onChange(of: themeManager.currentTheme) { newValue in
+            refreshView += 1
+        }
+        
     }
 }

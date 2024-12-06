@@ -21,3 +21,18 @@
  */
 
 import Foundation
+
+struct VideoAuxArtist: Codable, Hashable, Identifiable {
+    let id: String
+    let artist: String
+    let title: String
+    let target: String
+    let targetIndex: String
+    let src: URL
+    let thumbnail: URL
+}
+
+struct VideoAux: Codable, Hashable {
+    let artist: String
+    let clips: [VideoAuxArtist]
+}

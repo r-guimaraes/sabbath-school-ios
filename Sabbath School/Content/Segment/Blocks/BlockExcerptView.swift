@@ -26,8 +26,7 @@ import SwiftEntryKit
 struct BlockExcerptView: StyledBlock, View {
     var block: Excerpt
     var biblePopup: Bool
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @State private var selectedOption: String? = nil
@@ -87,14 +86,12 @@ struct BlockExcerptView: StyledBlock, View {
             if let selectedOptionItem = findOption(option: selectedOption) {
                 if biblePopup {
                     ScrollView {
-                        BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block))
-                            .environment(\.nested, true).padding(20)
+                        BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block)).padding(20)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                         .frame(maxHeight: .infinity)
                         
                 } else {
                     BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block))
-                        .environment(\.nested, true)
                 }
             }
         }
@@ -103,14 +100,12 @@ struct BlockExcerptView: StyledBlock, View {
 
 struct BlockExcerptItemView: StyledBlock, View {
     var block: ExcerptItem
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
         VStack (spacing: 10) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
-                    .environment(\.nested, true)
             }
         }
     }

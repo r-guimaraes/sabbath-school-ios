@@ -24,21 +24,24 @@ import SwiftUI
 
 struct BlockBlockquoteView: StyledBlock, View {
     var block: Blockquote
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         HStack (spacing: 0) {
             VStack (spacing: 10) {
                 ForEach(block.items) { item in
                     BlockWrapperView(block: item, parentBlock: AnyBlock(block))
-                        .environment(\.nested, true)
                 }
             }.padding(10)
                 .overlay {
                     VStack (spacing: 0) {
                         if !(block.callout ?? false) {
-                            Rectangle().cornerRadius(2).frame(maxWidth: 3, maxHeight: .infinity).frame(minHeight: 0).background(.black)
+                            Rectangle()
+                                .fill(themeManager.getTextColor())
+                                .cornerRadius(2)
+                                .frame(maxWidth: 3, maxHeight: .infinity).frame(minHeight: 0)
+                                
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }

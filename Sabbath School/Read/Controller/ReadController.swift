@@ -53,7 +53,7 @@ class ReadController: VideoPlaybackDelegatable {
     private var isTransitionInProgress: Bool = false
     private var contextMenuEnabled = false
     
-    private var menuItems = [UIMenuItem]()
+    private var menuItems = [UIEditMenuInteraction]()
     
     var readIndex: Int?
     

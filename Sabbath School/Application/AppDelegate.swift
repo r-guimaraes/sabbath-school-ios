@@ -27,14 +27,14 @@ import GoogleSignIn
 import UIKit
 import CoreSpotlight
 
-@UIApplicationMain
+//@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Configuration.configureArmchair()
         Configuration.configureFontblaster()
         Configuration.configurePreferences()
-        Configuration.configureNotifications(application: application)
+        Configuration.configureNotifications()
         Configuration.configureAuthentication()
         Configuration.configurePDF()
         Configuration.configureMisc()

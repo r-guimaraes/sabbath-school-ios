@@ -21,42 +21,176 @@
  */
 
 import SwiftUI
+import PSPDFKit
+import PSPDFKitUI
+import SwiftUIPager
+import SwiftAudio
 
 struct DocumentView: View {
-    @StateObject var resourceViewModel: ResourceViewModel = ResourceViewModel()
-    @StateObject var viewModel: DocumentViewModel = DocumentViewModel()
     var documentIndex: String
     
+    @State var showThemeAux = false
+    @State var showVideoAux = false
+    @State var showAudioAux = false
+    @State var page: Page = .first()
+    @State var pageOffset: Double = 0
+    
+    @StateObject var resourceViewModel: ResourceViewModel = ResourceViewModel()
+    @StateObject var viewModel: DocumentViewModel = DocumentViewModel()
+    @StateObject var documentViewOperator: DocumentViewOperator = DocumentViewOperator()
+
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    enum MenuItemIdentifier: String, Hashable {
+        case originalPDF
+        case readingOptions
+    }
+    
+    var menuItems: [MenuItemIdentifier] = [.originalPDF, .readingOptions]
+    
+    var btnBack: some View {
+        Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+        Image(systemName: "arrow.backward")
+            .renderingMode(.original)
+            .foregroundColor(documentViewOperator.shouldShowNavigationBar
+                             ? colorScheme == .dark ? .white : .black
+                             : (documentViewOperator.shouldShowCovers() ? .white : .black))
+            .aspectRatio(contentMode: .fit)
+            .id(documentViewOperator.shouldShowNavigationBar)
+            .transition(.opacity.animation(.easeInOut))
+        }
+    }
+
+    var isActiveTabPDF: Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                if let segments = viewModel.document?.segments {
+                    return segments[documentViewOperator.activeTab].type == .pdf
+                }
+                return false
+            },
+            set: { _ in }
+        )
+    }
+    
     var body: some View {
-        VStack (spacing: 0) {
+        //        ZStack(alignment: .bottom) {
+        VStack {
             if resourceViewModel.fontsDownloaded {
-                if let document = viewModel.document,
+                if let resource = resourceViewModel.resource,
+                   let document = viewModel.document,
                    let segments = viewModel.document?.segments {
-                    TabView{
-                        ForEach(segments) { segment in
-                            SegmentView(segment: segment)
+                    ZStack(alignment: .bottom) {
+                        pagerView(resource, document, segments)
+                        if documentViewOperator.showMiniPlayer {
+                            miniPlayerView()
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            } else {
+                DocumentLoadingView()
+            }
+        }
+        .edgesIgnoringSafeArea(.top)
+        .edgesIgnoringSafeArea(.bottom)
+        .task {
+            await setup()
+        }
+        .onChange(of: documentViewOperator.activeTab) { newValue in
+            documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: newValue, force: true)
+            page.index = newValue
+        }
+        .onChange(of: page.index) { newValue in
+            documentViewOperator.activeTab = newValue
+        }
+        .sheet(isPresented: $showAudioAux) {
+            AudioControllerRepresentable(
+                audio: viewModel.audioAuxiliary ?? [],
+                documentIndex: viewModel.document?.id ?? "",
+                segmentIndex: viewModel.document?.segments?[documentViewOperator.activeTab].id ?? ""
+            )
+        }
+        .sheet(isPresented: $showVideoAux) {
+            VideoAuxiliaryView(
+                videos: viewModel.videoAuxiliary ?? [],
+                targetIndex: viewModel.document?.id ?? ""
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+        .toolbar {
+            toolbarView()
+        }
+        .environmentObject(viewModel)
+        .toolbarBackground(documentViewOperator.shouldShowNavigationBar ? .visible : .hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(false)
+        .navigationBarItems(leading: btnBack)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(documentViewOperator.navigationBarTitle)
+        .safeAreaInset(edge: .top) {
+            if documentViewOperator.shouldShowSegmentChips() {
+                segmentChipsView()
+            }
+        }
+        .onChange(of: colorScheme) { newColorScheme in
+            themeManager.setTheme(to: themeManager.currentTheme)
+        }
+        .onChange(of: showAudioAux) { newValue in
+            documentViewOperator.updatePlayPauseState(state: AudioPlayback.shared.playerState)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
+    }
+
+    func setup() async {
+        AudioPlayback.shared.event.stateChange.addListener(documentViewOperator, documentViewOperator.updatePlayPauseState)
+        documentViewOperator.updatePlayPauseState(state: AudioPlayback.shared.playerState)
+        
+        if viewModel.document != nil { return }
+        
+        await viewModel.retrieveDocument(documentIndex: documentIndex, completion: {
+            Task {
+                if let document = viewModel.document {
+                    documentViewOperator.activeTab = viewModel.selectedSegmentIndex ?? 0
+                    if let segments = document.segments {
+                        let showChips = segments.count > 1
+                        
+                        if let showSegmentChips = document.showSegmentChips,
+                           showSegmentChips {
+                            documentViewOperator.showSegmentChips = showChips
+                        } else {
+                            documentViewOperator.showSegmentChips = false
+                        }
+                        
+                        for (index, segment) in segments.enumerated() {
+                            documentViewOperator.setShowTabBar(segment.type == .block || segment.type == .pdf, tab: index)
+                            documentViewOperator.navigationBarTitles[index] = segment.title
+                            documentViewOperator.setShowSegmentChips(showChips && segment.type == .block, tab: index)
+                            documentViewOperator.setShowCovers(((document.cover != nil) || (segment.cover != nil)), tab: index)
+                            documentViewOperator.setShowNavigationBar(segment.type == .pdf, tab: index)
+                        }
+                    }
+                    await resourceViewModel.downloadFonts(resourceIndex: document.resourceIndex)
+                    Configuration.configureFontblaster()
+                    await viewModel.retrieveDocumentUserInput(documentId: document.id)
+                    await viewModel.retrievePDFAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
+                    await viewModel.retrieveVideoAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
+                    await viewModel.retrieveAudioAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
                 }
             }
-        }.task {
-            await viewModel.retrieveDocument(documentIndex: documentIndex, completion: {
-                Task {
-                    if let document = viewModel.document {
-                        await resourceViewModel.downloadFonts(resourceIndex: document.resourceIndex)
-                        await viewModel.retrieveDocumentUserInput(documentId: document.id)
-                    }
-                }
-            })
-        }.environment(\.userInput, viewModel.documentUserInput)
-         .environmentObject(viewModel)
+        })
     }
 }
 
 struct DocumentView_Previews: PreviewProvider {
     static var previews: some View {
-        DocumentView(documentIndex: "en/devo/test/content/root/blocks").environmentObject(ScreenSizeMonitor())
+        DocumentView(documentIndex: "en/devo/test/blocks").environmentObject(ScreenSizeMonitor())
     }
 }

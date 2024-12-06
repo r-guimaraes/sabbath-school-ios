@@ -28,34 +28,61 @@ struct ResourceSectionView: View {
     
     var body: some View {
         VStack (spacing: 0) {
-            if (section.isRoot == nil && displaySectionName) {
-                Text(section.title).frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(20)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .fontWeight(.bold)
-                    .textCase(.uppercase)
-                    .background(.gray.opacity(0.1))
+            if !section.isRoot && displaySectionName {
+                Text(AppStyle.Resources.Resource.Section.Title.text(section.title))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(AppStyle.Resources.Resource.Section.Title.padding)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .background(AppStyle.Resources.Resource.Section.Title.background)
+                Divider().opacity(0.5)
             }
 
             ForEach(section.documents) { document in
                 NavigationLink {
                     DocumentView(documentIndex: document.index)
                 } label: {
-                    VStack (spacing: 5) {
-                        if let subtitle = document.subtitle {
-                            Text(subtitle).frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
+                    HStack (spacing: AppStyle.Resources.Resource.Document.Spacing.padding) {
+                        if section.displaySequence {
+                            Text(AppStyle.Resources.Resource.Document.Sequence.text(document.sequence))
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(AppStyle.Resources.Resource.Document.Sequence.lineLimit)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .layoutPriority(2)
                         }
-                        Text(document.title).frame(maxWidth: .infinity, alignment: .leading)
-                        if let startDate = document.startDate,
-                           let endDate = document.endDate {
-                            Text("\(startDate.stringLessonDate()) - \(endDate.stringLessonDate())").frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
-                                .font(.caption)
+                        VStack (spacing: AppStyle.Resources.Resource.Document.Spacing.betweenTitleSubtitleAndDate) {
+                            if let subtitle = document.subtitle {
+                                Text(AppStyle.Resources.Resource.Document.Subtitle.text(subtitle))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(AppStyle.Resources.Resource.Document.Subtitle.lineLimit)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            
+                            Text(AppStyle.Resources.Resource.Document.Title.text(document.title))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(AppStyle.Resources.Resource.Document.Title.lineLimit)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            if let startDate = document.startDate,
+                               let endDate = document.endDate,
+                               let stringDate = "\(startDate.date.stringLessonDate()) - \(endDate.date.stringLessonDate())" {
+                                Text(AppStyle.Resources.Resource.Document.Date.text(stringDate))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(AppStyle.Resources.Resource.Document.Date.lineLimit)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
-                    }.padding(20)
+                        .padding(.vertical, AppStyle.Resources.Resource.Document.Spacing.padding)
+                        .frame(maxWidth: .infinity)
+                        .layoutPriority(1)
+                    }.padding(.horizontal, AppStyle.Resources.Resource.Document.Spacing.padding)
+                    
                 }
+                
+                Divider().opacity(0.5)
             }
         }
     }

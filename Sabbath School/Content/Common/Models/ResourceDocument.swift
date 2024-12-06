@@ -30,45 +30,12 @@ struct ResourceDocument: Codable, Identifiable {
     let name: String
     let title: String
     let subtitle: String?
-    let startDate: Date?
-    let endDate: Date?
+    let sequence: String
+    let startDate: ServerDate?
+    let endDate: ServerDate?
     let segments: [Segment]?
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case resourceId
-        case resourceIndex
-        case index
-        case name
-        case title
-        case subtitle
-        case startDate
-        case endDate
-        case segments
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        resourceId = try container.decode(String.self, forKey: .resourceId)
-        resourceIndex = try container.decode(String.self, forKey: .resourceIndex)
-        index = try container.decode(String.self, forKey: .index)
-        name = try container.decode(String.self, forKey: .name)
-        title = try container.decode(String.self, forKey: .title)
-        subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
-        
-        if let startDateString = try container.decodeIfPresent(String.self, forKey: .startDate) {
-            startDate = Date.serverDateFormatter().date(from: startDateString)
-        } else {
-            startDate = nil
-        }
-        
-        if let endDateString = try container.decodeIfPresent(String.self, forKey: .endDate) {
-            endDate = Date.serverDateFormatter().date(from: endDateString)
-        } else {
-            endDate = nil
-        }
-        
-        segments = try container.decodeIfPresent([Segment].self, forKey: .segments)
-    }
+    let showSegmentChips: Bool?
+    let style: Style?
+    let titleBelowCover: Bool?
+    let cover: URL?
 }

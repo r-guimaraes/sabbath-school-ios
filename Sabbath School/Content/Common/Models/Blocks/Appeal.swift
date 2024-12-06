@@ -26,5 +26,7 @@ struct Appeal: BlockProtocol {
     let id: String
     var type: BlockType
     let style: BlockStyle?
+    let data: BlockData?
     let markdown: String
+    let nested: Bool?
 }

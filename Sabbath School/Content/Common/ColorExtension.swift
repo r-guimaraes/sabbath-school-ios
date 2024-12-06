@@ -32,12 +32,12 @@ public extension Color {
         
         let red, green, blue, alpha: Double
         switch hexSanitized.count {
-        case 6: // RGB (no alpha)
+        case 6:
             red = Double((rgb & 0xFF0000) >> 16) / 255.0
             green = Double((rgb & 0x00FF00) >> 8) / 255.0
             blue = Double(rgb & 0x0000FF) / 255.0
-            alpha = 1.0 // Default alpha if not provided
-        case 8: // RGBA (includes alpha)
+            alpha = 1.0
+        case 8:
             red = Double((rgb & 0xFF000000) >> 24) / 255.0
             green = Double((rgb & 0x00FF0000) >> 16) / 255.0
             blue = Double((rgb & 0x0000FF00) >> 8) / 255.0

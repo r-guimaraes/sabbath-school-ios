@@ -58,6 +58,8 @@ class AudioPlayback: NSObject {
     static func configure() {
         try? AVAudioSession.sharedInstance().setMode(.default)
         try? AVAudioSession.sharedInstance().setCategory(.playback)
+        try? AVAudioSession.sharedInstance().setActive(true, options: [])
+
         
         AudioPlayback.shared.remoteCommands = [
             .play,

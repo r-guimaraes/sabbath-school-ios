@@ -26,4 +26,6 @@ struct Unknown: BlockProtocol {
     var id: String = UUID().uuidString
     var type: BlockType = .unknown
     var style: BlockStyle? = nil
+    let data: BlockData? = nil
+    let nested: Bool? = nil
 }

@@ -23,5 +23,6 @@
 import Foundation
 
 struct BlockData: Codable {
-    let bible: Excerpt?
+    let bible: [String: Excerpt]?
+    let egw: [String: [AnyBlock]]?
 }

@@ -23,14 +23,20 @@
 import SwiftUI
 
 struct ResourceFeaturesHeaderView: View {
+    let featureSize: CGSize = AppStyle.Resources.Resource.Features.size
     var features: [ResourceFeature]
+    var style: Style?
     var body: some View {
         if features.count > 0 {
-            HStack(spacing: 10) {
+            HStack(spacing: AppStyle.Resources.Resource.Features.spacingBetweenSplashFeatures) {
                 ForEach(features, id: \.title) { feature in
                     AsyncImage(url: feature.image) { image in
-                        image.image?.resizable().renderingMode(.template).foregroundColor(.white.opacity(0.6))
-                    }.frame(width: 16, height: 12)
+                        image.image?.resizable()
+                            .renderingMode(.template)
+                            .foregroundColor(
+                                Styler.getTextColor(style, ResourceDescriptionStyleTemplate()).opacity(0.7)
+                            )
+                    }.frame(width: featureSize.width, height: featureSize.height)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
         } else {

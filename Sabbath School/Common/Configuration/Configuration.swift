@@ -30,12 +30,32 @@ import UIKit
 import StoreKit
 import WidgetKit
 import PSPDFKit
+import SwiftUI
+import Nuke
 
 class Configuration: NSObject {
     static var window: UIWindow?
+    private static var screenSizeMonitor = ScreenSizeMonitor()
+    private static var themeManager = ThemeManager()
+    
+    static func configureUI() {
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
+        appearance.backgroundColor = AppStyle.Base.Color.background
+        appearance.backgroundEffect = nil
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: UIFontMetrics.default.scaledFont(for: R.font.latoBlack(size: 36)!)
+        ]
+        
+        appearance.largeTitleTextAttributes = attrs
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     static func configurePDF() {
-        SDK.setLicenseKey("ZLQj7zvL9bCaR1f8ZJimIEuUhCGSJ6H4aCl4nRLStyNmHQS/IShh/DySMqXHBVCg9vNn7+arORfAt8EQocSX9Hx6iJ8lFyovEBf7vA06qbEksaVHAk6djHfj6R6TCkG0LDLA0pQxbgTjHCgOYbKf2bTi+mpwf2g0qu+lL9DyBFt3uPRTbl5l9a/vFfm9uX7UchjpkLBcrmKCsWqTU4CYrM0JQZrNx+7t4dF2DUr1SdRaybR0QaWzOPMJiUFLpW/eA8PdLnGLdvnpvqXMigqC9k2RPAs1WL4fPxP4ttgs0ZX/cjqxI+VOhwNzP2RNzhYGPxH/J1/tAQGX+mxSNp8rmffSopvDtQL6r1REYlF61/y0tYV3z66R9n4gESGQTJimtPntMdB8psbSBfadY1+CKLpWVWMEeOKk0lHbiBWx2s17ryAPWhugWDUCyIcrPpHioQT+j/4ff+HRNgYi/9iMThbhdLxsD93UbnWLYuO7+8fPayi9ptNqWrnA6nzoNXncfVp0KMiabWMwOv61Qrgos5I+qr7ceWUIqC6kDB5bjInPWFKNrGuVxB0Ipiv0ZhLuw/eyrx5TILuqNDBGLgI2W7Q8sYHOhmcaRHRpDkyr4OY=",
+        SDK.setLicenseKey("cJGk5VhG4CHpFwBMb0qi8Y93Ac2y4XnKQlN166tNY6-N3pQQGrBTxVzbGwG3afxZ4dIEXSyZgJRs6kgai-Uq_N6oYsuxEchhj5ANVamABFWDRTVfEqNNl1Tx9rpp-Xnno8Q2dbYpMlAiAcnLYfjIfX9iWe8DSp-G9f7XapAE4f9Hf5freAttn5dThUxB-tQLgxK4kpH0HE_WxWjQB4wqW6XIv7Nh8PYXdJ8rYagOBLuw8ze2gyhzkxIkUNtNEHw6XpwS30RQjC-OJZsmle5DQklmWDtVXdA5cI60B3_WyK5zIQP39FAgntA7_DSv57AJRypjHHW2URyZTqH3b-7lCYsZgHbZzT75Y9G5k_XUTitiQH5xCg5tgdVylj_1jLc8Vt-ryjKzC95fDwzEJgCU2p12dR-JVNMAOq6iAYGDWQFJeGJkuZztPa38QqfM3eXxxLgZ8Fookb6mbF2IArWggnouAQombQnvSvVrNcD-28NS6cDms4KkRs2PrJCx9wDilgC70iGbhbdD3oFonjkClLL51KvbA8KMbKsJAVzE415gbTJ8L0U2QC6q2FbZ8XauTCczx5RRAg-34OoGigRf8HyM-QWNTU_IqAZv1LMqCxk=",
                           options: [.fileCoordinationEnabled: false])
         
         SDK.shared.imageLoadingHandler = { imageName in
@@ -103,6 +123,7 @@ class Configuration: NSObject {
         } catch {}
     }
     
+    // TODO: Deprecate
     static func configureAuthentication() {
         self.migrateUserAccountFromFirebase()
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -139,44 +160,69 @@ class Configuration: NSObject {
         self.makeKeyAndVisible()
     }
     
-    static func makeKeyAndVisible() {
+    static func makeKeyAndVisible(_ animated: Bool = false) {
+        
+        var rootViewController: UIViewController
+        
         if (PreferencesShared.loggedIn()) {
-            window?.rootViewController = getRootViewController()
+            rootViewController = getRootViewController()
         } else {
-            window?.rootViewController = LoginWireFrame.createLoginModule()
+//            window?.rootViewController = LoginWireFrame.createLoginModule()
+            rootViewController = getRootViewController() //UIHostingController(rootView: LoginViewV2())
         }
-
-        window?.makeKeyAndVisible()
+        
+        if animated {
+            UIView.transition(with: window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                window?.rootViewController = rootViewController
+                window?.makeKeyAndVisible()
+            }, completion: nil)
+        } else {
+            window?.rootViewController = rootViewController
+            window?.makeKeyAndVisible()
+        }
     }
+    
+    
+    
     
     public static func getRootViewController(quarterlyIndex: String? = nil,
                                               lessonIndex: String? = nil,
                                               readIndex: Int? = nil,
                                               initiateOpen: Bool = false) -> UIViewController {
         self.configureCache()
-        var ret: UIViewController = QuarterlyWireFrame.createQuarterlyModule()
+        
+        @State var sspath: [NavigationStep] = []
+        
+        var ret: UIViewController = UIHostingController(rootView: FeedView(resourceType: .ss, path: $sspath)
+            .environmentObject(screenSizeMonitor)
+            .environmentObject(themeManager)
+        )
         
         let currentLanguage = PreferencesShared.currentLanguage()
-        let feedViewModel = FeedViewModel()
-        
+//        let resourceInfoViewModel = ResourceInfoViewModel()
 
-        if let resourceInfo = feedViewModel.getDevotionalResourceInfo(key: feedViewModel.resourceInfoEndpoint) {
-            let resourceInfoForLanguage = resourceInfo.filter { $0.code == currentLanguage.code }
-            if !resourceInfoForLanguage.isEmpty {
-                let tabBarController = TabBarViewController()
-                tabBarController.viewControllers = tabBarController.tabBarControllersFor(
-                    aij: resourceInfoForLanguage.first?.aij ?? false,
-                    pm: resourceInfoForLanguage.first?.pm ?? false,
-                    devo: resourceInfoForLanguage.first?.devo ?? false,
-                    quarterlyIndex: quarterlyIndex,
-                    lessonIndex: lessonIndex,
-                    readIndex: readIndex,
-                    initiateOpen: initiateOpen)
-                ret = tabBarController
-            }
-        }
-        
-        feedViewModel.retrieveResourceInfo()
+//        if let resourceInfo = resourceInfoViewModel.getResourceInfo() {
+//            let resourceInfoForLanguage = resourceInfo.filter { $0.code == currentLanguage.code }
+//            if !resourceInfoForLanguage.isEmpty {
+//                let tabBarController = TabBarViewController()
+//                let viewControllers = tabBarController.tabBarControllersFor(
+//                    aij: resourceInfoForLanguage.first?.aij ?? false,
+//                    pm: resourceInfoForLanguage.first?.pm ?? false,
+//                    devo: resourceInfoForLanguage.first?.devo ?? false,
+//                    ss: resourceInfoForLanguage.first?.ss ?? false,
+//                    quarterlyIndex: quarterlyIndex,
+//                    lessonIndex: lessonIndex,
+//                    readIndex: readIndex,
+//                    initiateOpen: initiateOpen)
+//                tabBarController.viewControllers = viewControllers
+//
+//                if viewControllers.count > 0 {
+//                    ret = tabBarController
+//                }
+//            }
+//        }
+//
+//        resourceInfoViewModel.retrieveResourceInfo()
         
         return ret
     }
@@ -184,13 +230,26 @@ class Configuration: NSObject {
     static func configureArmchair() {
         Armchair.appID("895272167")
         Armchair.shouldPromptClosure { info -> Bool in
-            SKStoreReviewController.requestReview()
+            if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                DispatchQueue.main.async {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
             return false
         }
     }
     
     static func configureCache() {
         ConfigurationShared.configureCache()
+        
+        let dataCache = try! DataCache(name: Constants.DefaultKey.appGroupName)
+        dataCache.sizeLimit = 200 * 1024 * 1024
+        
+        ImagePipeline.shared = ImagePipeline {
+            $0.dataLoader = DataLoader()
+            $0.dataCache = dataCache
+            $0.imageCache = ImageCache.shared
+        }
     }
     
     static func configureFontblaster() {
@@ -207,13 +266,13 @@ class Configuration: NSObject {
         ])
 
         if Helper.firstRun() {
-            Preferences.userDefaults.set(false, forKey: Constants.DefaultKey.firstRun)
+            Preferences.userDefaults.set(true, forKey: Constants.DefaultKey.firstRun)
             Preferences.userDefaults.set(true, forKey: Constants.DefaultKey.migrationToAppGroups)
-            SettingsController.setUpLocalNotification()
+            NotificationsManager.setupLocalNotifications()
         }
     }
     
-    static func configureNotifications(application: UIApplication) {
+    static func configureNotifications() {
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,

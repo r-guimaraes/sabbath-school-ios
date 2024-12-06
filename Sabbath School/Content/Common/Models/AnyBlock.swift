@@ -26,6 +26,8 @@ protocol BlockProtocol: Codable, Identifiable, Hashable {
     var id: String { get }
     var type: BlockType { get }
     var style: BlockStyle? { get }
+    var data: BlockData? { get }
+    var nested: Bool? { get }
 }
 
 extension BlockProtocol {
@@ -40,6 +42,7 @@ extension BlockProtocol {
 
 enum BlockType: String, Codable {
     case appeal,
+         audio,
          blockquote,
          checklist,
          checklistItem = "list-item-checklist",
@@ -48,11 +51,16 @@ enum BlockType: String, Codable {
          heading,
          hr,
          image,
-         list,
-         listItem = "list-item",
+         list, listItem = "list-item",
+         multipleChoice = "multiple-choice", multipleChoiceItem = "list-item-choice",
          paragraph,
+         poll,
+         pollItem = "poll-item",
          reference,
+         story,
+         storySlide,
          question,
+         video,
          unknown
     
     init(from decoder: Decoder) throws {
@@ -78,6 +86,14 @@ struct AnyBlock: BlockProtocol, Decodable {
         return _base.style
     }
     
+    var data: BlockData? {
+        return _base.data
+    }
+    
+    var nested: Bool? {
+        return _base.nested
+    }
+    
     init(_ base: any BlockProtocol) {
         self._base = base
     }
@@ -89,39 +105,57 @@ struct AnyBlock: BlockProtocol, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
-        let style = try container.decodeIfPresent(BlockStyle.self, forKey: .style)
+        let nested = try container.decodeIfPresent(Bool.self, forKey: .nested)
+        
+//        let style = try container.decodeIfPresent(BlockStyle.self, forKey: .style)
         
         switch type {
         case .appeal:
             _base = try Appeal(from: decoder)
-        case .paragraph:
-            _base = try Paragraph(from: decoder)
-        case .heading:
-            _base = try Heading(from: decoder)
-        case .list:
-            _base = try List(from: decoder)
-        case .listItem:
-            _base = try ListItem(from: decoder)
+        case .audio:
+            _base = try AudioBlock(from: decoder)
+        case .blockquote:
+            _base = try Blockquote(from: decoder)
         case .checklist:
             _base = try Checklist(from: decoder)
         case .checklistItem:
             _base = try ChecklistItem(from: decoder)
+        case .collapse:
+            _base = try Collapse(from: decoder)
         case .excerpt:
             _base = try Excerpt(from: decoder)
         case .excerptItem:
             _base = try ExcerptItem(from: decoder)
+        case .heading:
+            _base = try Heading(from: decoder)
         case .hr:
             _base = try Hr(from: decoder)
-        case .reference:
-            _base = try Reference(from: decoder)
-        case .question:
-            _base = try Question(from: decoder)
-        case .blockquote:
-            _base = try Blockquote(from: decoder)
-        case .collapse:
-            _base = try Collapse(from: decoder)
         case .image:
             _base = try BlockImage(from: decoder)
+        case .list:
+            _base = try List(from: decoder)
+        case .listItem:
+            _base = try ListItem(from: decoder)
+        case .multipleChoice:
+            _base = try MultipleChoice(from: decoder)
+        case .multipleChoiceItem:
+            _base = try MultipleChoiceItem(from: decoder)
+        case .paragraph:
+            _base = try Paragraph(from: decoder)
+        case .poll:
+            _base = try Poll(from: decoder)
+        case .pollItem:
+            _base = try PollItem(from: decoder)
+        case .reference:
+            _base = try Reference(from: decoder)
+        case .story:
+            _base = try Story(from: decoder)
+        case .storySlide:
+            _base = try StorySlide(from: decoder)
+        case .question:
+            _base = try Question(from: decoder)
+        case .video:
+            _base = try VideoBlock(from: decoder)
         default:
             _base = try Unknown(from: decoder)
         }
@@ -134,5 +168,7 @@ struct AnyBlock: BlockProtocol, Decodable {
     private enum CodingKeys: String, CodingKey {
         case type
         case style
+        case data
+        case nested
     }
 }

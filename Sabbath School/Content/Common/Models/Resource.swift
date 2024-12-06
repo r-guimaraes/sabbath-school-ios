@@ -22,10 +22,47 @@
 
 import Foundation
 
+struct ResourceInfo: Codable, Hashable {
+    let name: String
+    let code: String
+    let aij: Bool
+    let pm: Bool
+    let devo: Bool
+    let ss: Bool
+    
+    var translatedName: String? = ""
+    
+    init(code: String, name: String, ss: Bool, aij: Bool, pm: Bool, devo: Bool) {
+        self.code = code
+        self.name = name
+        self.ss = ss
+        self.aij = aij
+        self.pm = pm
+        self.devo = devo
+
+        self.translatedName = Locale.current.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try values.decode(String.self, forKey: .name)
+        self.code = try values.decode(String.self, forKey: .code)
+        
+        self.ss = try values.decode(Bool.self, forKey: .ss)
+        self.aij = try values.decode(Bool.self, forKey: .aij)
+        self.pm = try values.decode(Bool.self, forKey: .pm)
+        self.devo = try values.decode(Bool.self, forKey: .devo)
+        
+        self.translatedName = Locale.current.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
+    }
+}
+
 enum ResourceType: String, Codable {
     case pm
     case devo
     case aij
+    case ss
 }
 
 enum ResourceCoverType {
@@ -73,7 +110,7 @@ struct ResourceFeature: Codable {
 
 struct ResourceCovers: Codable {
     let square: URL
-    let splash: URL
+    let splash: URL?
     let landscape: URL
     let portrait: URL
 }
@@ -82,8 +119,12 @@ struct Resource: Codable, Identifiable {
     let id: String
     let index: String
     let title: String
-    let subtitle: String
-    let description: String
+    let markdownTitle: String?
+    let subtitle: String?
+    let markdownSubtitle: String?
+    let description: String?
+    let markdownDescription: String?
+    let introduction: String?
     let primaryColor: String
     let primaryColorDark: String
     let sections: [ResourceSection]?
@@ -94,4 +135,5 @@ struct Resource: Codable, Identifiable {
     let features: [ResourceFeature]
     let credits: [ResourceCredit]
     let fonts: [ResourceFont]?
+    let style: Style?
 }

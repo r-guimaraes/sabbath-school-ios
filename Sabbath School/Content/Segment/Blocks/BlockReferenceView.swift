@@ -24,26 +24,39 @@ import SwiftUI
 
 struct BlockReferenceView: StyledBlock, View {
     var block: Reference
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
-        Button {
-
+        NavigationLink {
+            if let resource = block.resource,
+               block.scope == .resource {
+                ResourceView(resourceIndex: resource.index)
+            }
+            
+            if let document = block.document,
+               block.scope == .document {
+                DocumentView(documentIndex: document.index)
+            }
         } label: {
             HStack {
-                VStack (spacing: 5) {
-                    Text(block.title).frame(maxWidth: .infinity, alignment: .leading).font(.body)
-                        .foregroundColor(getBlockTextColor(block: AnyBlock(block)))
+                if let resource = block.resource {
+                    AsyncImage(url: resource.covers.square) { image in
+                        image.image?.resizable()
+                    }
+                    .frame(width: 40, height: 40)
+                    .cornerRadius(6)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+                }
+                
+                VStack (alignment: .leading, spacing: 5) {
+                    InlineAttributedText(block: AnyBlock(self.block), markdown: block.title, selectable: false, lineLimit: 1)
+                    
                     if let subtitle = block.subtitle {
-                        Text(subtitle).frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.caption)
-                            .foregroundColor(getBlockTextColor(block: AnyBlock(block)))
-                            .multilineTextAlignment(.leading)
+                        InlineAttributedText(block: AnyBlock(self.block), markdown: subtitle, selectable: false, lineLimit: 2)
                     }
                 }
                 Spacer()
-                Image(systemName: "chevron.right").foregroundColor(getBlockTextColor(block: AnyBlock(block)))
+                Image(systemName: "chevron.right").foregroundColor(.black | .white)
             }.frame(maxWidth: .infinity)
         }.frame(maxWidth: .infinity)
             .padding()

@@ -26,43 +26,41 @@ struct FeedSeeAllView: View {
     @StateObject var viewModel: FeedViewModel = FeedViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-   var btnBack : some View { Button(action: {
-       self.presentationMode.wrappedValue.dismiss()
-       }) {
-           Image(systemName: "arrow.backward")
-               .renderingMode(.original)
-               .foregroundColor(.black)
-               .aspectRatio(contentMode: .fit)
-               
-       }
-   }
-
     var resourceType: ResourceType
-    var feedGroupName: String
+    var feedGroupId: String
     
     var body: some View {
         VStack(spacing: 0) {
-            if (self.viewModel.feedGroup != nil) {
+            if let feedGroup = self.viewModel.feedGroup {
                 ScrollView {
                     // Adding VStack to prevent unnecessary spacing between elements in the ScrollView
                     VStack (spacing: 0) {
-                        FeedGroupView(resourceType: resourceType, feedGroup: self.viewModel.feedGroup!, displayFeedGroupTitle: false, displaySeeAllButton: false)
+                        FeedGroupView(
+                            resourceType: resourceType,
+                            feedGroup: feedGroup,
+                            displayFeedGroupTitle: false,
+                            displaySeeAllButton: false
+                        )
                     }
                 }
-                .navigationTitle(self.viewModel.feedGroup!.title)
-                
+                .navigationTitle(feedGroup.title ?? (viewModel.feed?.title ?? "test"))
             }
-        }.navigationBarBackButtonHidden(true)
-         .navigationBarItems(leading: btnBack)
-         .navigationBarTitleDisplayMode(.large)
-         .task {
-             await viewModel.retrieveSeeAllFeed(resourceType: self.resourceType, feedGroupName: self.feedGroupName, language: "en")
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: NavigationBackButton(self.presentationMode))
+        .navigationBarTitleDisplayMode(.large)
+        .task {
+             await viewModel.retrieveSeeAllFeed(
+                resourceType: self.resourceType,
+                feedGroupId: self.feedGroupId,
+                language: PreferencesShared.currentLanguage().code
+             )
         }
     }
 }
 
 struct FeedSeeAllView_Previews: PreviewProvider {
     static var previews: some View {
-        FeedSeeAllView(resourceType: .devo, feedGroupName: "devotionals")
+        FeedSeeAllView(resourceType: .devo, feedGroupId: "main")
     }
 }

@@ -203,7 +203,7 @@ class ReadInteractor: ReadInteractorInputProtocol {
             let wrappedHighlights = try JSONSerialization.jsonObject(with: JSONEncoder().encode(highlights), options: .allowFragments) as! [String: Any]
             
             API.auth.request(
-                "\(Constants.API.URL)/highlights",
+                "\(Constants.API.URLv2)/highlights",
                 method: .post,
                 parameters: wrappedHighlights,
                 encoding: JSONEncoding.default
@@ -222,7 +222,7 @@ class ReadInteractor: ReadInteractorInputProtocol {
             let wrappedComments = try JSONSerialization.jsonObject(with: JSONEncoder().encode(comments), options: .allowFragments) as! [String: Any]
             
             API.auth.request(
-                "\(Constants.API.URL)/comments",
+                "\(Constants.API.URLv2)/comments",
                 method: .post,
                 parameters: wrappedComments,
                 encoding: JSONEncoding.default

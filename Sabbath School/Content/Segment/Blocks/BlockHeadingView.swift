@@ -24,27 +24,14 @@ import SwiftUI
 
 struct BlockHeadingView: StyledBlock, View {
     var block: Heading
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
-    
-    // TODO: multiply by the font scale
-    let headingSizes: [HeadingDepth: CGFloat] = [
-        .one: 28,
-        .two: 26,
-        .three: 24,
-        .four: 22,
-        .five: 20,
-        .size: 18
-    ]
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
-        let defaultHeadingSize = sizePoints(size: .base)
-        let textSize = headingSizes[block.depth] ?? defaultHeadingSize
-        var attributedString = try! AttributedString(markdown: block.markdown)
-        attributedString.font = R.font.latoBold(size: getTextSize(block: AnyBlock(block), defaultTextSize: textSize))
-        
-        return Text(attributedString)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .multilineTextAlignment(.leading)
+        return InlineAttributedText(
+            block: AnyBlock(self.block),
+            markdown: block.markdown,
+            selectable: false,
+            headingDepth: block.depth
+        ).frame(maxWidth: .infinity, alignment: .leading)
     }
 }

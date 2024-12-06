@@ -27,6 +27,7 @@ class PDFReadViewController: PDFViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setBackButton()
+        
         navigationItem.setRightBarButtonItems([], for: .document, animated: false)
         navigationItem.setRightBarButtonItems([settingsButtonItem, outlineButtonItem, annotationButtonItem], for: .document, animated: false)
         navigationItem.setRightBarButtonItems([thumbnailsButtonItem], for: .thumbnails, animated: false)

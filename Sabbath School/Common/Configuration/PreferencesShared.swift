@@ -43,7 +43,11 @@ struct PreferencesShared {
 
     static func currentLanguage() -> QuarterlyLanguage {
         guard let dictionary = PreferencesShared.userDefaults.value(forKey: Constants.DefaultKey.quarterlyLanguage) as? Data else {
-            return QuarterlyLanguage(code: "en", name: "English")
+            
+            let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+            let languageName = Locale.current.localizedString(forLanguageCode: languageCode) ?? "Unknown Language"
+            
+            return QuarterlyLanguage(code: languageCode, name: languageName)
         }
 
         let language: QuarterlyLanguage = try! JSONDecoder().decode(QuarterlyLanguage.self, from: dictionary)

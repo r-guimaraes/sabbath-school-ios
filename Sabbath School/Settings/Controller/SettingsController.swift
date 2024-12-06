@@ -121,8 +121,8 @@ class SettingsController: ASDKViewController<ASDisplayNode>, SettingsControllerP
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
-        setNavigationBarOpacity(alpha: 1)
+//        navigationItem.largeTitleDisplayMode = .always
+//        setNavigationBarOpacity(alpha: 1)
         
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: AppStyle.Base.Color.navigationTitle]
         
@@ -138,9 +138,14 @@ class SettingsController: ASDKViewController<ASDisplayNode>, SettingsControllerP
         PINRemoteImageManager.shared().cache.removeAllObjects()
         Preferences.userDefaults.removeObject(forKey: Constants.DefaultKey.accountObject)
         Preferences.userDefaults.set(nil, forKey: Constants.DefaultKey.appleAuthorizedUserIdKey)
+        
+        // TODO: clear all cache modules
+        // TODO: clear all cached NUKE images
+        
         if presentLoginScreen {
             DispatchQueue.main.async {
-                QuarterlyWireFrame.presentLoginScreen()
+//                QuarterlyWireFrame.presentLoginScreen()
+                Configuration.makeKeyAndVisible(true)
             }
         }
         
@@ -185,6 +190,9 @@ class SettingsController: ASDKViewController<ASDisplayNode>, SettingsControllerP
         let time = DateInRegion(Preferences.reminderTime(), format: "HH:mm")
         let hour = time?.hour ?? 0
         let minute = time?.minute ?? 0
+        
+        print("SSDEBUG", hour, minute)
+        
         let calendar = NSCalendar(identifier: .gregorian)!
 
         var dateFire = Date()

@@ -29,7 +29,7 @@ func NavigationBackButton(_ presentationMode: Binding<PresentationMode>) -> some
     }) {
        Image(systemName: "arrow.backward")
            .renderingMode(.original)
-           .foregroundColor(.black)
+           .foregroundColor(.black | .white)
            .aspectRatio(contentMode: .fit)
    }
 }

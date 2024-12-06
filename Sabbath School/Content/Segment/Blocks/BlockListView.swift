@@ -24,14 +24,12 @@ import SwiftUI
 
 struct BlockListView: StyledBlock, View {
     var block: List
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
-        VStack (spacing: 0) {
+        VStack (spacing: 10) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
-                    .environment(\.nested, true)
             }
         }.frame(maxWidth: .infinity)
     }
@@ -39,16 +37,17 @@ struct BlockListView: StyledBlock, View {
 
 struct BlockListItemView: StyledBlock, View {
     var block: ListItem
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    
     var parentBlock: AnyBlock?
     
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(alignment: .top, spacing: 5) {
             if let listItemBullet = listItemBullet {
                 InlineAttributedText(block: AnyBlock(block), markdown: listItemBullet)
+                Spacer()
             }
-            InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
+            InlineAttributedText(block: AnyBlock(block), markdown: block.markdown, selectable: true).frame(maxWidth: .infinity, alignment: .leading)
         }
     }
     

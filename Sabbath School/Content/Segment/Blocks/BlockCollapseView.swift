@@ -24,8 +24,7 @@ import SwiftUI
 
 struct BlockCollapseView: StyledBlock, View {
     var block: Collapse
-    @Environment(\.nested) var nested: Bool
-    @Environment(\.defaultBlockStyles) var defaultStyles: DefaultBlockStyles
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     @State var expanded: Bool = false
     
@@ -36,35 +35,36 @@ struct BlockCollapseView: StyledBlock, View {
                     expanded = !expanded
                 } label: {
                     HStack {
-                        Text(block.caption).frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(getBlockTextColor(block: AnyBlock(block)))
+                        InlineAttributedText(block: AnyBlock(self.block), markdown: block.caption, selectable: false, lineLimit: 2)
                         Spacer()
-                        Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(getBlockTextColor(block: AnyBlock(block)))
+                        Image(systemName: expanded ? "chevron.up" : "chevron.down").foregroundColor(.black | .white)
                     }.frame(maxWidth: .infinity)
                 }.frame(maxWidth: .infinity)
                     .padding()
                     .foregroundColor(.white)
-            }.background(.gray)
-                .clipShape(
-                    RoundedCorner(
-                        radius: 6,
-                        corners: !expanded ? [.allCorners] : [.topLeft, .topRight]
-                    )
+            }
+            .background(.gray.opacity(0.5))
+            .clipShape(
+                RoundedCorner(
+                    radius: 6,
+                    corners: !expanded ? [.allCorners] : [.topLeft, .topRight]
                 )
-            
-            
+            )
             if expanded {
-                VStack (spacing: 0) {
-                    VStack (spacing: 10) {
-                        ForEach(block.items) { item in
-                            BlockWrapperView(block: item, parentBlock: AnyBlock(block))
-                                .environment(\.nested, true)
-                        }
-                    }.padding()
-                }.background(.gray.opacity(0.1))
-                 .clipShape(RoundedCorner(radius: 6, corners: [.bottomLeft, .bottomRight]))
+                collapseContent()
             }
         }
+    }
+    
+    @ViewBuilder
+    func collapseContent() -> some View {
+        VStack (spacing: 0) {
+            VStack (spacing: 10) {
+                ForEach(block.items) { item in
+                    BlockWrapperView(block: item, parentBlock: AnyBlock(block))
+                }
+            }.padding()
+        }.background(.gray.opacity(0.1))
+         .clipShape(RoundedCorner(radius: 6, corners: [.bottomLeft, .bottomRight]))
     }
 }

@@ -26,6 +26,7 @@ struct Paragraph: BlockProtocol {
     let id: String
     let type: BlockType
     let style: BlockStyle?
-    let markdown: String
     let data: BlockData?
+    let markdown: String
+    let nested: Bool?
 }

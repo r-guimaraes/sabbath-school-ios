@@ -522,7 +522,7 @@
 		2F75267C2CCFFFEF0027FD1E /* StyleTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleTemplate.swift; sourceTree = "<group>"; };
 		2F75267E2CD022EE0027FD1E /* BlockStyleTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockStyleTemplate.swift; sourceTree = "<group>"; };
 		2F7526802CD0663C0027FD1E /* ThemeAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeAuxiliaryView.swift; sourceTree = "<group>"; };
-		2F7526822CD07A130027FD1E /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThemeManager.swift; path = ../../../../../../Downloads/ThemeManager.swift; sourceTree = "<group>"; };
+		2F7526822CD07A130027FD1E /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		2F754A1E2C5AB271009FE014 /* FeedLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoadingView.swift; sourceTree = "<group>"; };
 		2F7621C62C19166E00CB7C33 /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
 		2F7621C82C19168700CB7C33 /* DocumentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewModel.swift; sourceTree = "<group>"; };

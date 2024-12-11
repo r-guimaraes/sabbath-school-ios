@@ -35,7 +35,7 @@ struct LoginViewV2: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: AppStyle.Resources.Login.verticalSpacing) {
-            Image(uiImage: R.image.loginLogo()!)
+            Image("login-logo")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: AppStyle.Resources.Login.appLogoHeight)
@@ -59,7 +59,7 @@ struct LoginViewV2: View {
                     loginViewModel.loginActionGoogle()
                 }) {
                     HStack {
-                        Image(uiImage: R.image.loginIconGoogle()!)
+                        Image("login-icon-google")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 20)
@@ -84,7 +84,8 @@ struct LoginViewV2: View {
             }
             
             
-        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-         .background(Color(uiColor: AppStyle.Login.Color.background))
+        }
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+        .background(AppStyle.Resources.Login.backgroundColor)
     }
 }

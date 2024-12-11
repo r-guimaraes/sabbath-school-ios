@@ -26,6 +26,12 @@ import AVKit
 import Nuke
 import NukeUI
 
+extension View {
+    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        condition ? AnyView(transform(self)) : AnyView(self)
+    }
+}
+
 struct VideoAuxiliaryView: View {
     var videos: [VideoAux]
     var targetIndex: String
@@ -43,21 +49,30 @@ struct VideoAuxiliaryView: View {
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack (spacing: 40) {
-                Text(AppStyle.Resources.Base.navigationTitle("Video"))
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                if featuredMode {
-                    featuredView()
-                } else {
-                    multipleView()
+            VStack(spacing: 20) {
+                Rectangle()
+                    .fill(Color(uiColor: .baseGray1 | .baseGray2))
+                    .cornerRadius(3)
+                    .frame(width: 50, height: 5)
+    
+                VStack (spacing: 40) {
+                    Text(AppStyle.Resources.Base.navigationTitle("Video"))
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if featuredMode {
+                        featuredView()
+                    } else {
+                        multipleView()
+                    }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
-            }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxHeight: .infinity)
+            }.padding(.top, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(maxHeight: .infinity)
         }
@@ -65,7 +80,7 @@ struct VideoAuxiliaryView: View {
     }
     
     @MainActor
-    func thumbnailView (_ url: URL, _ size: CGSize) -> some View {
+    func thumbnailView (_ url: URL, _ size: CGSize? = nil) -> some View {
         LazyImage(url: url) { state in
             if let image = state.image {
                 image.resizable().aspectRatio(contentMode: .fill)
@@ -75,9 +90,15 @@ struct VideoAuxiliaryView: View {
                 Color(hex: "#cccccc")
             }
         }
-        .frame(
-            width: size.width,
-            height: size.height)
+        .if(size != nil) { view in
+            view.frame(width: size?.width ?? 0, height: size?.height ?? 0)
+        }
+        .if(size == nil) { view in
+            view
+                .frame(maxWidth: .infinity)
+                .aspectRatio(16 / 9, contentMode: .fill)
+        }
+        
         .cornerRadius(6)
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
     }
@@ -108,26 +129,16 @@ struct VideoAuxiliaryView: View {
             
             VStack (spacing: 20) {
                 VStack (spacing: 10) {
-                    let thumbnailSize = CGSize(
-                        width: availableWidth,
-                        height: availableWidth / (AppStyle.Video.Size.thumbnail().width / AppStyle.Video.Size.thumbnail().height)
-                    )
-                    
                     Button(action: {
                         VideoPlaybackV2.shared.play(featuredVideo)
                     }) {
-                        thumbnailView(featuredVideo.thumbnail, thumbnailSize)
+                        thumbnailView(featuredVideo.thumbnail)
                     }
+                    
                     
                     VStack (spacing: 5) {
                         titleView(featuredVideo.title)
                         subtitleView(featuredVideo.artist)
-                    }
-                    
-                    GeometryReader { proxy in
-                        Color.clear.onAppear {
-                            availableWidth = proxy.size.width
-                        }
                     }
                 }
                 
@@ -141,7 +152,8 @@ struct VideoAuxiliaryView: View {
                             VStack (spacing: 5) {
                                 titleView(clip.title)
                                 subtitleView(clip.artist)
-                            }.frame(maxWidth: AppStyle.Resources.VideoAux.Size.thumbnail(viewMode: .vertical).width)
+                            }.frame(maxWidth: .infinity)
+                            
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
@@ -179,7 +191,8 @@ struct VideoAuxiliaryView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                }
+                    .targetLayout()
+                }.scrollViewPaging()
             }
         }
     }

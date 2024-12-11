@@ -3,24 +3,14 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Sabbath School' do
-  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/pspdfkit-ios/12.4.0.podspec'
-  pod 'Armchair'
+  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/pspdfkit-ios/14.2.1.podspec'
   pod 'Down'
   pod 'FontBlaster'
   pod 'GoogleSignIn'
   pod 'Hue'
-  pod 'MenuItemKit'
-  pod 'R.swift'
-  pod 'Shimmer'
   pod 'SwiftAudio'
   pod 'SwiftEntryKit'
-  pod 'SwiftMessages'
   pod 'SwiftDate'
-  pod 'Texture', :git => 'https://github.com/TextureGroup/Texture.git', :branch => 'master'
-  pod 'SwiftUIPager'
-
-  pod 'Zip'
-  pod 'Wormholy', :configurations => ['Debug']
 end
 
 target 'WidgetExtension' do

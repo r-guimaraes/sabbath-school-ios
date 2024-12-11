@@ -65,7 +65,7 @@ struct SettingsViewV2: View {
                 Section {
                     Link(destination: URL(string: "https://github.com/Adventech")!) {
                         Text("🐙 GitHub".localized())
-                    }
+                    }.accentColor(.black | .white)
                     
                 } header: {
                     Text("Contribute".localized())
@@ -78,18 +78,18 @@ struct SettingsViewV2: View {
                         showAboutUs = true
                     }) {
                         Text("🙏 About us".localized())
-                    }
+                    }.accentColor(.black | .white)
                     
                     ShareLink(
                         item: URL(string: "https://itunes.apple.com/ca/app/sabbath-school/id895272167?mt=8")!,
                         subject: Text("I am using Sabbath School app from Adventech! 🎉".localized())
                     ) {
                         Text("💌 Recommend Sabbath School".localized())
-                    }
+                    }.accentColor(.black | .white)
                     
                     Link(destination: URL(string: "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=895272167&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software")!) {
                         Text("🎉 Rate app".localized())
-                    }
+                    }.accentColor(.black | .white)
                     
                 } header: {
                     Text("More".localized())

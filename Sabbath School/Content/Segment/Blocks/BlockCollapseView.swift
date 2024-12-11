@@ -25,6 +25,7 @@ import SwiftUI
 struct BlockCollapseView: StyledBlock, View {
     var block: Collapse
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State var expanded: Bool = false
     
@@ -38,12 +39,13 @@ struct BlockCollapseView: StyledBlock, View {
                         InlineAttributedText(block: AnyBlock(self.block), markdown: block.caption, selectable: false, lineLimit: 2)
                         Spacer()
                         Image(systemName: expanded ? "chevron.up" : "chevron.down").foregroundColor(.black | .white)
-                    }.frame(maxWidth: .infinity)
-                }.frame(maxWidth: .infinity)
-                    .padding()
-                    .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
             }
-            .background(.gray.opacity(0.5))
+            .background(AppStyle.Resources.Block.Collapse.backgroundColor(theme: themeManager.currentTheme))
             .clipShape(
                 RoundedCorner(
                     radius: 6,
@@ -51,20 +53,20 @@ struct BlockCollapseView: StyledBlock, View {
                 )
             )
             if expanded {
-                collapseContent()
+                collapseContent
             }
         }
     }
     
-    @ViewBuilder
-    func collapseContent() -> some View {
+    var collapseContent: some View {
         VStack (spacing: 0) {
             VStack (spacing: 10) {
                 ForEach(block.items) { item in
                     BlockWrapperView(block: item, parentBlock: AnyBlock(block))
                 }
             }.padding()
-        }.background(.gray.opacity(0.1))
-         .clipShape(RoundedCorner(radius: 6, corners: [.bottomLeft, .bottomRight]))
+        }
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedCorner(radius: 6, corners: [.bottomLeft, .bottomRight]))
     }
 }

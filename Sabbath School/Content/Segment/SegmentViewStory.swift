@@ -22,20 +22,34 @@
 
 import SwiftUI
 import Combine
-import SwiftUIPager
+import NukeUI
 
 class ImageLoader: ObservableObject {
     @Published var image: UIImage?
     private var cancellable: AnyCancellable?
-
+    
+    private static let imageCache = NSCache<NSURL, UIImage>()
+    
     func loadImage(from url: URL) {
+        if let cachedImage = Self.imageCache.object(forKey: url as NSURL) {
+            self.image = cachedImage
+            return
+        }
+        
         cancellable = URLSession.shared.dataTaskPublisher(for: url)
-            .map { UIImage(data: $0.data) }
+            .map { data, _ in
+                let image = UIImage(data: data)
+                if let image = image {
+                    // Cache the image
+                    Self.imageCache.setObject(image, forKey: url as NSURL)
+                }
+                return image
+            }
             .replaceError(with: nil)
             .receive(on: DispatchQueue.main)
             .assign(to: \.image, on: self)
     }
-
+    
     deinit {
         cancellable?.cancel()
     }
@@ -90,7 +104,7 @@ extension AttributedString {
         if let font = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont {
             maxHeight = 3 * font.lineHeight
         } else {
-            maxHeight = 3 * R.font.latoRegular(size: 28)!.lineHeight
+            maxHeight = 3 * UIFont(name: "Lato-Regular", size: 28)!.lineHeight
         }
         
         var rangeStart: Int = 0
@@ -151,13 +165,6 @@ struct SegmentViewImageStory: StyledBlock, View {
     
     @State var attrStringInitialied: Bool = false
     
-    @Binding var parentOffset: Double
-    @Binding var parentPage: Page
-    var parentPages: [StorySlide]
-    
-    @Binding var grandParentOffset: Double
-    @Binding var grandParentPage: Page
-    
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     
     var attributedString: AttributedString {
@@ -171,226 +178,138 @@ struct SegmentViewImageStory: StyledBlock, View {
     @State private var imageOffset: CGFloat = 0
     @State private var totalOffsets: [Int: CGFloat] = [:]
     @State private var imageSizeWidth: CGFloat = 0
+    
+    @State private var selection: Int = 0
+    @State private var alignment: TextAlignment = .leading
+    
     @StateObject private var imageLoader = ImageLoader()
     
-    @StateObject var page: Page = .first()
-    
-    init (block: StorySlide, defaultStyles: Style, parentOffset: Binding<Double>, parentPage: Binding<Page>, parentPages: [StorySlide], grandParentOffset: Binding<Double>, grandParentPage: Binding<Page>) {
+    init (block: StorySlide, defaultStyles: Style) {
         self.block = block
         self.defaultStyles = defaultStyles
-        self._parentOffset = parentOffset
-        self._parentPage = parentPage
-        self.parentPages = parentPages
-        self._grandParentOffset = grandParentOffset
-        self._grandParentPage = grandParentPage
         
+        _chunks = State(initialValue: AttributedString.splitAttributedString(NSAttributedString(Styler.getStyledText(block.markdown, defaultStyles, StoryStyleTemplate(), AnyBlock(block))), width: getAppVisibleSize().width - 40))
         
-        _chunks = State(initialValue: AttributedString.splitAttributedString(NSAttributedString(Styler.getStyledText(block.markdown, defaultStyles, StoryStyleTemplate(), AnyBlock(block))), width: UIScreen.main.bounds.width - 40))
-        
+        _alignment = State(initialValue: Styler.getTextAlignment(defaultStyles, BlockStyleTemplate(), AnyBlock(block)))
     }
     
     var body: some View {
-        let alignment = Styler.getTextAlignment(defaultStyles, BlockStyleTemplate(), AnyBlock(block))
-        
-        Pager(page: page, data: Array(0..<chunks.count), id: \.self, content: { index in
-            VStack {
-                if block.alignment == .bottom {
-                    Spacer()
-                }
-
-                Text(AttributedString(chunks[index]))
-                    .frame(width: screenSizeMonitor.screenSize.width - 40, alignment: Styler.convertTextAlignment(alignment))
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(alignment)
-                    .padding(.top, block.alignment == .top ? 80 : 0)
-                    .padding(.bottom, block.alignment == .bottom ? 80 : 0)
-
-                if block.alignment == .top {
-                    Spacer()
-                }
-            }
-            .overlay(
-                OffsetProxy()
-            )
-            .onPreferenceChange(OffsetKey.self) { offset in
-                let offsetToSave = offset < -screenSizeMonitor.screenSize.width ? -screenSizeMonitor.screenSize.width : offset
-                totalOffsets[index] = offsetToSave
-                
-                let offsetVal: CGFloat = totalOffsets.values.filter { $0 < 0 }.reduce(0, +)
-                totalOffset = offsetVal < (-1 * (CGFloat(chunks.count - 1)) * screenSizeMonitor.screenSize.width) ? totalOffset : offsetVal
-                
-                imageOffset = totalOffset / (CGFloat(chunks.count-1)*screenSizeMonitor.screenSize.width / (imageSizeWidth-screenSizeMonitor.screenSize.width))
-            }
-            .frame(alignment: block.alignment == .top ? .top : .bottom)
-            .frame(width: screenSizeMonitor.screenSize.width)
-        })
-        .preferredItemSize(CGSize(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height))
-        .bounces(false)
-        .swipeInteractionArea(.allAvailable)
-        .onDraggingChanged { increment in
-            withAnimation {
-                if page.index == chunks.count - 1, increment > 0 {
-                    parentOffset = increment
-                    
-                    if parentPage.index == parentPages.count - 1 {
-                        grandParentOffset = increment
+        TabView(selection: $selection) {
+            ForEach(0..<chunks.count, id: \.self) { index in
+                VStack {
+                    if block.alignment == .bottom {
+                        Spacer()
                     }
-                } else if page.index == 0, increment < 0 {
-                    parentOffset = increment
 
-                    if parentPage.index == 0 {
-                        grandParentOffset = increment
+                    Text(AttributedString(chunks[index]))
+                        .frame(width: screenSizeMonitor.screenSize.width - 40, alignment: Styler.convertTextAlignment(alignment))
+                        .padding(.horizontal, 20)
+                        .if(block.alignment == .top) { view in
+                            view.padding(.top, 90)
+                        }
+                        .if(block.alignment == .bottom) { view in
+                            view.padding(.bottom, 80)
+                        }
+                        .multilineTextAlignment(alignment)
+
+                    if block.alignment == .top {
+                        Spacer()
                     }
                 }
+                .tag(index)
+                .overlay(OffsetProxy())
+                .onPreferenceChange(OffsetKey.self) { offset in
+                    let offsetToSave = offset < -screenSizeMonitor.screenSize.width ? -screenSizeMonitor.screenSize.width : offset
+                    totalOffsets[index] = offsetToSave
+    
+                    let offsetVal: CGFloat = totalOffsets.values.filter { $0 < 0 }.reduce(0, +)
+                    totalOffset = offsetVal < (-1 * (CGFloat(chunks.count - 1)) * screenSizeMonitor.screenSize.width) ? totalOffset : offsetVal
+    
+                    imageOffset = totalOffset / (CGFloat(chunks.count-1)*screenSizeMonitor.screenSize.width / (imageSizeWidth-screenSizeMonitor.screenSize.width))
+                }
+                .frame(alignment: block.alignment == .top ? .top : .bottom)
+                .frame(width: screenSizeMonitor.screenSize.width)
             }
         }
-        .onDraggingEnded {
-            if parentOffset != 0 {
-                let sign = Int(parentOffset/abs(parentOffset))
-                let increment: Int = (abs(parentOffset) > 0.33 ? 1 : 0) * sign
-                withAnimation {
-                    parentOffset = 0
-                    let newIndex = parentPage.index + increment
-                    parentPage.update(.new(index: newIndex))
-                }
-            }
-            
-            if grandParentOffset != 0 {
-                let sign = Int(grandParentOffset/abs(grandParentOffset))
-                let increment: Int = (abs(grandParentOffset) > 0.33 ? 1 : 0) * sign
-                withAnimation {
-                    grandParentOffset = 0
-                    let newIndex = grandParentPage.index + increment
-                    grandParentPage.update(.new(index: newIndex))
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
         .background {
             ZStack (alignment: block.alignment == .top ? .top : .bottom) {
-                if let image = imageLoader.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
-                        .offset(x: imageOffset <= 0 ? imageOffset : 0, y: 0)
-                        .edgesIgnoringSafeArea(.top)
-                        .onAppear {
-                            imageSizeWidth = (image.size.width / image.size.height) * screenSizeMonitor.screenSize.height
-                        }
-                } else {
-                    ProgressView()
-                        .onAppear {
-                            imageLoader.loadImage(from: block.image)
-                        }
+                VStack {
+                    if let image = imageLoader.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
+                            .offset(x: imageOffset <= 0 ? imageOffset : 0, y: 0)
+                            .edgesIgnoringSafeArea(.top)
+                            .onAppear {
+                                imageSizeWidth = (image.size.width / image.size.height) * screenSizeMonitor.screenSize.height
+                            }
+                    } else {
+                        ProgressView()
+                            .onAppear {
+                                imageLoader.loadImage(from: block.image)
+                            }
+                    }
+//                    LazyImage(url: block.image) { state in
+//                        if let image = state.image {
+//                            image
+//                                .resizable()
+//                                .scaledToFill()
+//                                .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
+//                                .offset(x: imageOffset <= 0 ? imageOffset : 0, y: 0)
+//                        } else {
+//                            ProgressView()
+//                        }
+//                    }
+//                    .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
+//                    .edgesIgnoringSafeArea(.top)
+//                    .id(block.id)
                 }
+                .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
+                .ignoresSafeArea(.all)
+                .clipped()
                 
                 Rectangle()
                     .fill(Styler.getBlockBackgroundColor(defaultStyles, AnyBlock(block)))
-                    .frame(width: screenSizeMonitor.screenSize.width, height: R.font.latoRegular(size: 28)!.lineHeight * 3 + 120)
-                
-            }.frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
+                    .frame(width: screenSizeMonitor.screenSize.width, height: UIFont(name: "Lato-Regular", size: 28)!.lineHeight * 3 + 120)
+            }
+            .edgesIgnoringSafeArea(.all)
+            .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
         }
         .onChange(of: screenSizeMonitor.screenSize.width) { newValue in
             chunks = AttributedString.splitAttributedString(NSAttributedString(attributedString), width: newValue - 40)
         }
-        
-//        TabView {
-//            ForEach(0..<chunks.count, id: \.self) { index in
-//                VStack {
-//                    if block.alignment == .bottom {
-//                        Spacer()
-//                    }
-//
-//                    Text(AttributedString(chunks[index]))
-//                        .frame(width: screenSizeMonitor.screenSize.width - 40, alignment: Styler.convertTextAlignment(alignment))
-//                        .padding(.horizontal, 20)
-//                        .multilineTextAlignment(alignment)
-//
-//                    if block.alignment == .top {
-//                        Spacer()
-//                    }
-//                }
-//                .overlay(
-//                    OffsetProxy()
-//                )
-//                .onPreferenceChange(OffsetKey.self) { offset in
-//                    let offsetToSave = offset < -screenSizeMonitor.screenSize.width ? -screenSizeMonitor.screenSize.width : offset
-//                    totalOffsets[index] = offsetToSave
-//
-//                    let offsetVal: CGFloat = totalOffsets.values.filter { $0 < 0 }.reduce(0, +)
-//                    totalOffset = offsetVal < (-1 * (CGFloat(chunks.count - 1)) * screenSizeMonitor.screenSize.width) ? totalOffset : offsetVal
-//
-//                    imageOffset = totalOffset / (CGFloat(chunks.count-1)*screenSizeMonitor.screenSize.width / (imageSizeWidth-screenSizeMonitor.screenSize.width))
-//                }
-//                .frame(alignment: block.alignment == .top ? .top : .bottom)
-//                .frame(width: screenSizeMonitor.screenSize.width)
-//            }
-//        }
-        
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(width: screenSizeMonitor.screenSize.width)
     }
 }
 
 struct SegmentViewStory: View {
     var segment: Segment
-    
-    @Binding var parentOffset: Double
-    @Binding var parentPage: Page
-    
-    @State var page: Page = .first()
-    @State var pageOffsetInternal: Double = 0
-    
+
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var documentViewOperator: DocumentViewOperator
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    
+    @State var selection: Int = 0
 
     var body: some View {
-        if let story = segment.blocks?.first?.asType(Story.self) {
-            Pager(page: page, data: Array(0..<story.items.count), id: \.self, content: { index in
-                if let storySlide = story.items[index] {
-                    SegmentViewImageStory(
-                        block: storySlide, defaultStyles: defaultStyles,
-                        parentOffset: $pageOffsetInternal,
-                        parentPage: $page,
-                        parentPages: story.items,
-                        grandParentOffset: self.$parentOffset,
-                        grandParentPage: self.$parentPage
-                    )
+        TabView(selection: $selection) {
+            if let story = segment.blocks?.first?.asType(Story.self) {
+                ForEach(Array(story.items.enumerated()), id: \.offset) { index, storySlide in
+                    SegmentViewImageStory(block: storySlide, defaultStyles: defaultStyles).tag(index)
                         .environmentObject(screenSizeMonitor)
                 }
-            })
-            .bounces(false)
-            .pageOffset(pageOffsetInternal)
-            .swipeInteractionArea(.allAvailable)
-            .preferredItemSize(CGSize(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
-            .onTapGesture {
-                documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
-                documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
-                documentViewOperator.setShowSegmentChips(!documentViewOperator.shouldShowSegmentChips())
             }
-            .edgesIgnoringSafeArea(.bottom)
-            .edgesIgnoringSafeArea(.top)
-            
         }
-//        TabView {
-//            if let story = segment.blocks.first?.asType(Story.self) {
-//                ForEach(Array(story.items.enumerated()), id: \.offset) { index, storySlide in
-//                    SegmentViewImageStory(block: storySlide, defaultStyles: defaultStyles).tag(index)
-//                        .environmentObject(screenSizeMonitor)
-//                }
-//            }
-//        }
-//        .onTapGesture {
-//            documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
-//            documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
-//            documentViewOperator.setShowSegmentChips(!documentViewOperator.shouldShowSegmentChips())
-//        }
-//        .tabViewStyle(.page(indexDisplayMode: .never))
-//        .frame(maxWidth: .infinity, maxHeight: screenSizeMonitor.screenSize.height, alignment: .leading)
-//        .edgesIgnoringSafeArea(.bottom)
-//        .edgesIgnoringSafeArea(.top)
+        .onTapGesture {
+            documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
+            documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
+            documentViewOperator.setShowSegmentChips(!documentViewOperator.shouldShowSegmentChips())
+        }
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
     }
 }

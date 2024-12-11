@@ -38,4 +38,5 @@ struct ResourceDocument: Codable, Identifiable {
     let style: Style?
     let titleBelowCover: Bool?
     let cover: URL?
+    let externalURL: URL?
 }

@@ -37,7 +37,7 @@ struct FeedResourceViewTile: View {
                     direction: direction
                 ) {
                     FeedResourceCoverView(resource.covers.landscape, dimensions, resource.primaryColor)
-                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction)
+                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction, externalURL: resource.externalURL)
                 }
                .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }

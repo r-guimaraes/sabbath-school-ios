@@ -65,30 +65,6 @@ struct Preferences {
         return PreferencesShared.userDefaults
     }
     
-    static func firebaseUserMigrated() -> Bool {
-        return Preferences.userDefaults.bool(forKey: Constants.DefaultKey.accountFirebaseMigrated)
-    }
-
-    static func migrateUserDefaultsToAppGroups() {
-        let userDefaults = UserDefaults.standard
-        let groupDefaults = UserDefaults(suiteName: Constants.DefaultKey.appGroupName)
-        
-        if let groupDefaults = groupDefaults {
-            if !groupDefaults.bool(forKey: Constants.DefaultKey.migrationToAppGroups) {
-                for (key, value) in userDefaults.dictionaryRepresentation() {
-                    groupDefaults.set(value, forKey: key)
-                }
-                groupDefaults.set(true, forKey: Constants.DefaultKey.migrationToAppGroups)
-                groupDefaults.synchronize()
-            } else {
-                print("No need to migrate defaults")
-            }
-        } else {
-            print("Unable to create NSUserDefaults with given app group")
-        }
-        
-    }
-    
     static func currentLanguage() -> QuarterlyLanguage {
         return PreferencesShared.currentLanguage()
     }
@@ -99,33 +75,14 @@ struct Preferences {
     
     static func currentTheme() -> ReaderStyle.Theme {
         guard let rawTheme = Preferences.userDefaults.string(forKey: Constants.DefaultKey.readingOptionsTheme),
-            let theme = ReaderStyle.Theme(rawValue: rawTheme) else {
-            if #available(iOS 13, *) {
-                return .auto
-            }
-            return .light
+              let theme = ReaderStyle.Theme(rawValue: rawTheme) else {
+            return .auto
         }
         return theme
     }
     
     static func darkModeEnable() -> Bool {
         return UIScreen.main.traitCollection.userInterfaceStyle == .dark
-    }
-    
-    static func currentTypeface() -> ReaderStyle.Typeface {
-        guard let rawTypeface = Preferences.userDefaults.string(forKey: Constants.DefaultKey.readingOptionsTypeface),
-            let typeface = ReaderStyle.Typeface(rawValue: rawTypeface) else {
-            return .lato
-        }
-        return typeface
-    }
-    
-    static func currentSize() -> ReaderStyle.Size {
-        guard let rawSize = Preferences.userDefaults.string(forKey: Constants.DefaultKey.readingOptionsSize),
-            let size = ReaderStyle.Size(rawValue: rawSize) else {
-            return .medium
-        }
-        return size
     }
     
     static func reminderStatus() -> Bool {
@@ -137,29 +94,6 @@ struct Preferences {
             return Constants.DefaultKey.settingsDefaultReminderTime
         }
         return time
-    }
-    
-    static func latestReaderBundleTimestamp() -> String {
-        guard let timestamp = Preferences.userDefaults.string(forKey: Constants.DefaultKey.latestReaderBundleTimestamp) else {
-            return ""
-        }
-        return timestamp
-    }
-
-    static func getSettingsTheme() -> String {
-        guard let theme = Preferences.userDefaults.string(forKey: Constants.DefaultKey.settingsTheme) else {
-            if #available(iOS 13.0, *) {
-                if UITraitCollection.current.userInterfaceStyle == .dark {
-                    return Theme.Dark.rawValue
-                }
-            }
-            return Theme.Light.rawValue
-        }
-        return theme
-    }
-
-    static func gcPopupStatus() -> Bool {
-        return Preferences.userDefaults.bool(forKey: Constants.DefaultKey.gcPopup)
     }
     
     static func getPreferredBibleVersionKey() -> String {

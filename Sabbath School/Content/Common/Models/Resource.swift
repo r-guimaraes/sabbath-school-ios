@@ -136,4 +136,5 @@ struct Resource: Codable, Identifiable {
     let credits: [ResourceCredit]
     let fonts: [ResourceFont]?
     let style: Style?
+    let externalURL: URL?
 }

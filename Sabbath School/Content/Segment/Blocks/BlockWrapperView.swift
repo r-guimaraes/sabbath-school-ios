@@ -121,14 +121,18 @@ struct BlockWrapperView: StyledBlock, View {
                     EmptyView()
                 }
             }.onAppear {
-                if let _ = block.asType(Question.self) {
+                // TODO: Refactor to move the shadow to QuestionBlock
+                if let _ = block.asType(Question.self),
+                   themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Helper.isDarkMode()) {
                     dropShadow = true
                 }
             }
             .padding(Styler.getBlockPadding(defaultStyles, block))
             .background(Styler.getBlockBackgroundColor(defaultStyles, block))
             .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, block))
-            .shadow(color: .gray.opacity(0.5), radius: dropShadow ? 5 : 0)
+            .if(dropShadow) { view in
+                view.shadow(color: .gray.opacity(0.5), radius: 5)
+            }
         }
         .padding(Styler.getWrapperPadding(defaultStyles, block))
         .cornerRadius(Styler.getWrapperCornerRadius(defaultStyles, block))

@@ -23,7 +23,6 @@
 import SwiftUI
 import PSPDFKit
 import PSPDFKitUI
-import SwiftUIPager
 import SwiftAudio
 
 struct DocumentView: View {
@@ -32,8 +31,6 @@ struct DocumentView: View {
     @State var showThemeAux = false
     @State var showVideoAux = false
     @State var showAudioAux = false
-    @State var page: Page = .first()
-    @State var pageOffset: Double = 0
     
     @StateObject var resourceViewModel: ResourceViewModel = ResourceViewModel()
     @StateObject var viewModel: DocumentViewModel = DocumentViewModel()
@@ -41,6 +38,7 @@ struct DocumentView: View {
 
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    @EnvironmentObject var audioPlayback: AudioPlaybackV2
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -80,16 +78,18 @@ struct DocumentView: View {
     }
     
     var body: some View {
-        //        ZStack(alignment: .bottom) {
-        VStack {
+        Group {
             if resourceViewModel.fontsDownloaded {
                 if let resource = resourceViewModel.resource,
                    let document = viewModel.document,
                    let segments = viewModel.document?.segments {
                     ZStack(alignment: .bottom) {
-                        pagerView(resource, document, segments)
-                        if documentViewOperator.showMiniPlayer {
+                        ScrollView(.init()) {
+                            pagerView(resource, document, segments)
+                        }
+                        if audioPlayback.shouldShowMiniPlayer() {
                             miniPlayerView()
+                                .padding(.bottom, documentViewOperator.tabBarHeight + 20)
                         }
                     }
                 }
@@ -100,17 +100,16 @@ struct DocumentView: View {
         .edgesIgnoringSafeArea(.top)
         .edgesIgnoringSafeArea(.bottom)
         .task {
+            if viewModel.document != nil { return }
+            
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             await setup()
         }
         .onChange(of: documentViewOperator.activeTab) { newValue in
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: newValue, force: true)
-            page.index = newValue
-        }
-        .onChange(of: page.index) { newValue in
-            documentViewOperator.activeTab = newValue
         }
         .sheet(isPresented: $showAudioAux) {
-            AudioControllerRepresentable(
+            AudioAuxiliaryView(
                 audio: viewModel.audioAuxiliary ?? [],
                 documentIndex: viewModel.document?.id ?? "",
                 segmentIndex: viewModel.document?.segments?[documentViewOperator.activeTab].id ?? ""
@@ -122,7 +121,6 @@ struct DocumentView: View {
                 targetIndex: viewModel.document?.id ?? ""
             )
             .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
         }
         .toolbar {
             toolbarView()
@@ -134,25 +132,22 @@ struct DocumentView: View {
         .navigationBarItems(leading: btnBack)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(documentViewOperator.navigationBarTitle)
-        .safeAreaInset(edge: .top) {
-            if documentViewOperator.shouldShowSegmentChips() {
-                segmentChipsView()
-            }
-        }
+//        .safeAreaInset(edge: .top) {
+//            if documentViewOperator.shouldShowSegmentChips() {
+//                segmentChipsView()
+//            }
+//        }
         .onChange(of: colorScheme) { newColorScheme in
             themeManager.setTheme(to: themeManager.currentTheme)
         }
         .onChange(of: showAudioAux) { newValue in
-            documentViewOperator.updatePlayPauseState(state: AudioPlayback.shared.playerState)
+            if newValue == false && audioPlayback.state != .playing {
+                audioPlayback.stop()
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
     }
 
     func setup() async {
-        AudioPlayback.shared.event.stateChange.addListener(documentViewOperator, documentViewOperator.updatePlayPauseState)
-        documentViewOperator.updatePlayPauseState(state: AudioPlayback.shared.playerState)
-        
         if viewModel.document != nil { return }
         
         await viewModel.retrieveDocument(documentIndex: documentIndex, completion: {
@@ -172,7 +167,7 @@ struct DocumentView: View {
                         for (index, segment) in segments.enumerated() {
                             documentViewOperator.setShowTabBar(segment.type == .block || segment.type == .pdf, tab: index)
                             documentViewOperator.navigationBarTitles[index] = segment.title
-                            documentViewOperator.setShowSegmentChips(showChips && segment.type == .block, tab: index)
+                            documentViewOperator.setShowSegmentChips(showChips && (segment.type == .block || segment.type == .video), tab: index)
                             documentViewOperator.setShowCovers(((document.cover != nil) || (segment.cover != nil)), tab: index)
                             documentViewOperator.setShowNavigationBar(segment.type == .pdf, tab: index)
                         }
@@ -182,7 +177,7 @@ struct DocumentView: View {
                     await viewModel.retrieveDocumentUserInput(documentId: document.id)
                     await viewModel.retrievePDFAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
                     await viewModel.retrieveVideoAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
-                    await viewModel.retrieveAudioAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
+                    await viewModel.retrieveAudioAux(resourceIndex: document.resourceIndex, documentIndex: document.id)
                 }
             }
         })

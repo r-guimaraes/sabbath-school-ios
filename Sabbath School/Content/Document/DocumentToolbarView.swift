@@ -21,6 +21,8 @@
  */
 
 import SwiftUI
+import PSPDFKit
+import PSPDFKitUI
 
 extension DocumentView {
     @ToolbarContentBuilder
@@ -28,7 +30,7 @@ extension DocumentView {
         if let segment = viewModel.document?.segments?[documentViewOperator.activeTab],
            segment.type == .block || (segment.type == .story && documentViewOperator.shouldShowNavigationBar) {
             Group {
-                if viewModel.audioAuxiliary != nil {
+                if let audio = viewModel.audioAuxiliary, audio.count > 0 {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             showAudioAux = true

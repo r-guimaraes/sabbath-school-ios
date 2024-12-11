@@ -36,3 +36,10 @@ struct VideoAux: Codable, Hashable {
     let artist: String
     let clips: [VideoAuxArtist]
 }
+
+struct VideoClipSegment: Codable, Hashable {
+    let id: String
+    let artist: String
+    let title: String
+    let src: URL
+}

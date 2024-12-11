@@ -35,15 +35,16 @@ func AdaptiveStack<Content: View>(alignment: Alignment, spacing: CGFloat, isPad:
 
 struct ResourceView: View {
     @StateObject var viewModel: ResourceViewModel = ResourceViewModel()
+    
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     
-    @State private var uiImage: UIImage?
-    
     @State private var scrollOffset: CGFloat = 0
     @State private var showNavigationBar: Bool = false
     @State private var showIntroduction: Bool = false
+    
+    @State private var uiImage: UIImage?
     
     var resourceIndex: String
     
@@ -66,11 +67,11 @@ struct ResourceView: View {
     }
     
     private var headerFrameWidth: CGFloat {
-        AppStyle.Resources.Resource.Header.frameWidth(viewModel.resource?.covers.splash == nil)
+        AppStyle.Resources.Resource.Header.frameWidth(viewModel.resource?.covers.splash == nil, screenSizeMonitor.screenSize.width)
     }
     
     private var headerFrameAlignment: Alignment {
-        AppStyle.Resources.Resource.Header.frameAlignment(viewModel.resource?.covers.splash == nil)
+        return AppStyle.Resources.Resource.Header.frameAlignment(viewModel.resource?.covers.splash == nil)
     }
     
     private var headerTextAlignment: TextAlignment {
@@ -88,14 +89,16 @@ struct ResourceView: View {
                                 defaultHeight: Helper.isPad && resource.covers.splash == nil ? 0 : AppStyle.Resources.Resource.Splash.height
                             ) {
                                 if let splash = resource.covers.splash {
-                                    LazyImage(url: splash) { image in
-                                        image
-                                            .image?
-                                            .resizable()
-                                            .scaledToFill()
-                                            .onAppear {
-                                                Spotlight.indexResource(resource: resource, image: image.image?.snapshot())
-                                            }
+                                    LazyImage(url: splash) { state in
+                                        if let image = state.image {
+                                            image.resizable()
+                                                .scaledToFill()
+                                                .onAppear {
+                                                    if let container = state.imageContainer {
+                                                        uiImage = container.image
+                                                    }
+                                                }
+                                        }
                                     }
                                 } else {
                                     Color(hex: resource.primaryColor).edgesIgnoringSafeArea(.top)
@@ -105,11 +108,11 @@ struct ResourceView: View {
                             if resource.covers.splash != nil {
                                 GradientBlurEffectView(
                                     style: .light,
-                                    width: UIScreen.main.bounds.width,
+                                    width: screenSizeMonitor.screenSize.width,
                                     height: AppStyle.Resources.Resource.Splash.gradientBlurHeight
                                 )
                                 .frame(
-                                    width: UIScreen.main.bounds.width,
+                                    width: screenSizeMonitor.screenSize.width,
                                     height: AppStyle.Resources.Resource.Splash.gradientBlurHeight
                                 )
                             }
@@ -119,8 +122,16 @@ struct ResourceView: View {
                                 spacing: AppStyle.Resources.Resource.Spacing.betweenTitleSubtitleReadButonDescription,
                                 isPad: Helper.isPad && resource.covers.splash == nil) {
                                 if resource.covers.splash == nil {
-                                    AsyncImage(url: resource.covers.portrait) { image in
-                                        image.image?.resizable().scaledToFill()
+                                    LazyImage(url: resource.covers.portrait) { state in
+                                        if let image = state.image {
+                                            image.resizable()
+                                                .scaledToFill()
+                                                .onAppear {
+                                                    if let container = state.imageContainer {
+                                                        uiImage = container.image
+                                                    }
+                                                }
+                                        }
                                     }
                                     .frame(
                                        width: AppStyle.Resources.Resource.Cover.size(.portrait).width,
@@ -174,8 +185,10 @@ struct ResourceView: View {
                                                 .frame(width: headerFrameWidth, alignment: .leading)
                                                 .fixedSize(horizontal: false, vertical: true)
                                                 .mask(
-                                                        ZStack (alignment: .bottomTrailing) {
-                                                            Rectangle().fill(Color.white)
+                                                    
+                                                    ZStack (alignment: .bottomTrailing) {
+                                                        Rectangle().fill(Color.white)
+                                                        if resource.introduction != nil {
                                                             Text(AppStyle.Resources.Resource.Description.textMoreButton("\("More".localized().lowercased())\("More".localized().lowercased())"))
                                                                 .background(.white)
                                                                 .mask(
@@ -186,15 +199,17 @@ struct ResourceView: View {
                                                                     ))
                                                                 .blendMode(.destinationOut)
                                                         }
+                                                    }
                                                 )
                                             
-                                            
+                                            if resource.introduction != nil {
                                                 Button (action: {
                                                     showIntroduction = true
                                                 }, label: {
                                                     Text(AppStyle.Resources.Resource.Description.textMoreButton("More".localized().lowercased(), Color(hex: resource.primaryColorDark)))
                                                         .frame(alignment: .trailing)
                                                 })
+                                            }
                                             
                                         }.frame(width: headerFrameWidth)
                                     }
@@ -207,7 +222,7 @@ struct ResourceView: View {
                             .padding([.bottom], AppStyle.Resources.Resource.Spacing.paddingForSplashHeader)
                             .padding([.horizontal], AppStyle.Resources.Resource.Spacing.paddingForSplashHeader)
                             .padding([.top], AppStyle.Resources.Resource.Spacing.paddingForNonSplashHeader)
-                            .frame(width: UIScreen.main.bounds.width)
+                            .frame(width: screenSizeMonitor.screenSize.width)
                         }
                         .edgesIgnoringSafeArea(.top)
                         
@@ -239,7 +254,7 @@ struct ResourceView: View {
                         }
                         .background(AppStyle.Resources.Base.backgroundColor)
                         .offset(y: -10)
-                        .frame(width: UIScreen.main.bounds.width)
+                        .frame(width: screenSizeMonitor.screenSize.width)
                         .background(GeometryReader { geometry -> Color in
                             DispatchQueue.main.async {
                                 scrollOffset = geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY
@@ -274,7 +289,13 @@ struct ResourceView: View {
                 ResourceIntroductionView(introduction: introduction)
             }
         }
+        .onChange(of: uiImage) { image in
+            indexResourceForSpotlight()
+        }
         .task {
+            if viewModel.resource != nil { return }
+            
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             await viewModel.downloadFonts(resourceIndex: resourceIndex)
             
             // shortcuts
@@ -302,6 +323,16 @@ struct ResourceView: View {
         }.onAppear {
             UIApplication.shared.currentTabBarController()?.tabBar.isHidden = false
         }
+    }
+    
+    func indexResourceForSpotlight() {
+        DispatchQueue.main.async {
+            if let image = uiImage,
+               let resource = viewModel.resource {
+                Spotlight.indexResource(resource: resource, image: image)
+            }
+        }
+        
     }
 }
 

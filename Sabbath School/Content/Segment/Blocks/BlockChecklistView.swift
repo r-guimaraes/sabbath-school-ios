@@ -56,7 +56,7 @@ struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
     @StateObject var checklistViewModel: ChecklistViewModel = ChecklistViewModel()
     
     var body: some View {
-        VStack (spacing: 0) {
+        VStack (spacing: 5) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
                     .environmentObject(checklistViewModel)
@@ -84,17 +84,21 @@ struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
 struct BlockChecklistItemView: StyledBlock, View {
     var block: ChecklistItem
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     @EnvironmentObject var viewModel: ChecklistViewModel
     @State var checked = false
     
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 10) {
             Button(action: {
                 checked = !checked
                 viewModel.receiveChecklistItemChange(index: block.index, checked: checked)
             }) {
-                Image(systemName: checked ? "checkmark.square" : "square").foregroundColor(checked ? .blue : .black)
+                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(AppStyle.Resources.Block.Checklist.foregroundColor(theme: themeManager.currentTheme))
+                    .imageScale(.large)
+                    .animation(.easeInOut(duration: 0.3), value: checked)
             }
             
             InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)

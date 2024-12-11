@@ -28,67 +28,60 @@ extension DocumentView {
         Button(action: {
             showAudioAux = true
         }) {
-            VStack {
-                HStack {
-                    Button (action: {
-                        miniPlayerStop()
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                    }
-                    
-                    VStack {
-                        Text(AppStyle.Resources.Audio.miniPlayerTitle(AudioPlayback.shared.currentItem?.getTitle() ?? ""))
-                            .lineLimit(1)
-                            .fixedSize(horizontal: true, vertical: true)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                        Text(AppStyle.Resources.Audio.miniPlayerArtist(AudioPlayback.shared.currentItem?.getArtist() ?? ""))
-                            .lineLimit(1)
-                            .fixedSize(horizontal: true, vertical: true)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }.frame(alignment: .leading)
-                    
-                    Spacer()
-                    
-                    Button (action: {
-                        miniPlayerRewind()
-                    }) {
-                        Image(systemName: "gobackward.15")
-                            .imageScale(.medium)
-                    }
-                    
-                    Button (action: {
-                        miniPlayerPausePlay()
-                    }) {
-                        Image(systemName: documentViewOperator.miniPlayerStatus == .playing ? "pause.fill" : "play.fill")
-                            .imageScale(.large)
-                    }
+            HStack {
+                Button (action: {
+                    miniPlayerStop()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
                 }
-                .frame(height: AppStyle.Resources.Audio.miniPlayerHeight)
-                .padding(AppStyle.Resources.Audio.miniPlayerContentPadding)
-                .background(Color(uiColor: .baseGray1) | .black.opacity(0.9))
-                .cornerRadius(AppStyle.Resources.Audio.miniPlayerCornerRadius)
+                
+                VStack {
+                    Text(audioPlayback.player.currentItem?.getTitle() ?? "")
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: true)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                    Text(audioPlayback.player.currentItem?.getArtist() ?? "")
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: true)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }.frame(alignment: .leading)
+                
+                Spacer()
+                
+                Button (action: {
+                    miniPlayerRewind()
+                }) {
+                    Image(systemName: "gobackward.15")
+                        .imageScale(.medium)
+                }
+                
+                Button (action: {
+                    miniPlayerPausePlay()
+                }) {
+                    Image(systemName: audioPlayback.state == .playing ? "pause.fill" : "play.fill")
+                        .imageScale(.large)
+                }
             }
             .frame(height: AppStyle.Resources.Audio.miniPlayerHeight)
+            .padding(.horizontal, AppStyle.Resources.Audio.miniPlayerContentPadding)
+            .background(Color(uiColor: .baseGray1) | .black.opacity(0.9))
             .frame(maxWidth: screenSizeMonitor.screenSize.width - AppStyle.Resources.Audio.miniPlayerWrapperPadding * 2)
-            .background(.black | .white)
             .cornerRadius(AppStyle.Resources.Audio.miniPlayerCornerRadius)
-            .padding(.bottom, documentViewOperator.tabBarHeight + documentViewOperator.bottomSafeAreaInset + AppStyle.Resources.Segment.Spacing.verticalPaddingContent)
-            .padding(.horizontal, AppStyle.Resources.Audio.miniPlayerWrapperPadding)
-            .buttonStyle(PlainButtonStyle())
         }.buttonStyle(PlainButtonStyle())
     }
     
     func miniPlayerPausePlay () {
-        AudioPlayback.shared.togglePlaying()
+        audioPlayback.togglePlay()
     }
     
     func miniPlayerRewind () {
-        AudioPlayback.shared.seek(to: AudioPlayback.shared.currentTime - 15)
+        audioPlayback.player.seek(to: audioPlayback.player.currentTime - 15)
     }
     
     func miniPlayerStop () {
-        AudioPlayback.shared.stop()
-        documentViewOperator.showMiniPlayer = false
+        audioPlayback.stop()
     }
 }

@@ -72,7 +72,8 @@ import Cache
             guard let audioAuxiliary = response.value else {
                 return
             }
-            self.audioAuxiliary = audioAuxiliary
+
+            self.audioAuxiliary = audioAuxiliary.filter { $0.targetIndex.starts(with: documentIndex) }
         }
     }
     
@@ -90,6 +91,7 @@ import Cache
         }
         API.session.request(url).responseDecodable(of: ResourceDocument.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let document = response.value else {
+                print("SSDEBUG", response)
                 return
             }
             self.document = document

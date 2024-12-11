@@ -52,7 +52,7 @@ struct BlockExcerptView: StyledBlock, View {
                     Button(action: {
                         SwiftEntryKit.dismiss()
                     }) {
-                        Image(systemName: "xmark")
+                        Image(systemName: "xmark").renderingMode(.template).foregroundColor(.black | .white)
                     }
                     Spacer()
                 }
@@ -72,9 +72,6 @@ struct BlockExcerptView: StyledBlock, View {
                         Image(systemName: "chevron.down").tint(.black | .white).fontWeight(.bold)
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    
-                    
-                    
                 }
             }.padding(biblePopup ? [.vertical, .horizontal] : .vertical, 20)
             

@@ -107,5 +107,6 @@ struct ResourceLoadingView: View {
         }
         .padding(.horizontal, horizontalPading)
         .scrollIndicators(.hidden)
+        .background(.white | .black)
     }
 }

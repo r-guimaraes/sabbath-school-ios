@@ -84,6 +84,10 @@ extension AppStyle {
             static var buttonSize: CGSize {
                 return CGSize(width: 240, height: 45)
             }
+            
+            static var backgroundColor: Color {
+                return Color(uiColor: .baseGray1 | .black)
+            }
         }
         
         struct About {
@@ -110,6 +114,34 @@ extension AppStyle {
         }
         
         struct Audio {
+            static func title(_ string: String, small: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black | .white
+                result.font = small ? Font.custom("Lato-Medium", size: 18) : Font.custom("Lato-Black", size: 21)
+                return result
+            }
+
+            static func artist(_ string: String, small: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.7)
+                result.font = small ? Font.custom("Lato-Regular", size: 14) : Font.custom("Lato-Regular", size: 17)
+                return result
+            }
+            
+            static func playlistTitle(_ string: String, isCurrent: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black | .white
+                result.font = isCurrent ? Font.custom("Lato-Black", size: 16) : Font.custom("Lato-Medium", size: 16)
+                return result
+            }
+
+            static func playlistArtist(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.7)
+                result.font = Font.custom("Lato-Regular", size: 14)
+                return result
+            }
+            
             static func miniPlayerTitle(_ string: String) -> AttributedString {
                 var result = AttributedString(string)
                 result.foregroundColor = (.black | .white).opacity(0.7)
@@ -124,6 +156,20 @@ extension AppStyle {
                 return result
             }
             
+            static func time(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.font = Font.custom("Lato-Bold", size: 14)
+                return result
+            }
+            
+            static func rate(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black | .white
+                result.font = Font.custom("Lato-Bold", size: 18)
+                return result
+            }
+            
             static var miniPlayerHeight: CGFloat {
                 return 60
             }
@@ -133,7 +179,7 @@ extension AppStyle {
             }
             
             static var miniPlayerCornerRadius: CGFloat {
-                return 10
+                return 15
             }
             
             static var miniPlayerWrapperPadding: CGFloat {
@@ -282,6 +328,13 @@ extension AppStyle {
         }
         
         struct Resource {
+            
+            struct Introduction {
+                static var stylesheet: String {
+                    return "body { font-size: 1.6em; line-height: 1.4em; font-family: 'Lato', sans-serif; color: \((.black | .white).hex()) }"
+                }
+            }
+            
             struct Spacing {
                 static var betweenTitleSubtitleReadButonDescription: CGFloat {
                     return 20.0
@@ -333,10 +386,10 @@ extension AppStyle {
                     return noSplash && Helper.isPad ? .leading : .center
                 }
                 
-                static func frameWidth(_ noSplash: Bool) -> CGFloat {
+                static func frameWidth(_ noSplash: Bool, _ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
                     let width = noSplash && Helper.isPad
-                    ? UIScreen.main.bounds.width - AppStyle.Resources.Resource.Cover.size(.portrait).width - AppStyle.Resources.Resource.Spacing.betweenTitleSubtitleReadButonDescription
-                        : UIScreen.main.bounds.width
+                    ? width - AppStyle.Resources.Resource.Cover.size(.portrait).width - AppStyle.Resources.Resource.Spacing.betweenTitleSubtitleReadButonDescription
+                        : width
                     return width - AppStyle.Resources.Resource.Spacing.paddingForSplashHeader * 2
                 }
             }
@@ -613,8 +666,8 @@ extension AppStyle {
                     return 10.0
                 }
                 
-                static var horizontalPaddingHeader: CGFloat {
-                    return Helper.isPad ? (UIScreen.main.bounds.width * 0.10) + 20.0 : 20.0
+                static func horizontalPaddingHeader(_ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
+                    return Helper.isPad ? (width * 0.10) + 20.0 : 20.0
                 }
                 
                 static var verticalPaddingHeader: CGFloat {
@@ -636,7 +689,7 @@ extension AppStyle {
             
             struct Cover {
                 static func percentageOfScreen(_ hasCover: Bool = true) -> CGFloat {
-                    return hasCover ? 0.5 : 0.3
+                    return hasCover ? 0.5 : 0.2
                 }
                 
                 static func height (_ hasCover: Bool = true) -> CGFloat {
@@ -701,6 +754,81 @@ extension AppStyle {
             
             static var highlightYellow: Color {
                 return Color(hex: "#DBC94C")
+            }
+            
+            static func genericBackgroundColorForInteractiveBlock(theme: ReaderStyle.Theme) -> Color {
+                let light = Color(uiColor: .baseGray1)
+                let sepia = Color(hex: "#e6d7b8")
+                let dark = Color(hex: "#111827")
+                
+                switch theme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return Helper.isDarkMode() ? dark : light
+                }
+            }
+            
+            static func genericForegroundColorForInteractiveBlock(theme: ReaderStyle.Theme) -> Color {
+                let light = Color.black
+                let sepia = Color(hex: "#d7bf8d")
+                let dark = Color.white
+                
+                switch theme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return Helper.isDarkMode() ? dark : light
+                }
+            }
+            
+            struct Reference {
+                static var thumbnailSize: CGSize {
+                    return CGSize(width: 40, height: 40)
+                }
+                
+                static func backgroundColor(theme: ReaderStyle.Theme) -> Color {
+                    return AppStyle.Resources.Block.genericBackgroundColorForInteractiveBlock(theme: theme)
+                }
+            }
+            
+            struct Collapse {
+                static func backgroundColor(theme: ReaderStyle.Theme) -> Color {
+                    return AppStyle.Resources.Block.genericBackgroundColorForInteractiveBlock(theme: theme)
+                }
+            }
+            
+            struct Checklist {
+                static func foregroundColor(theme: ReaderStyle.Theme) -> Color {
+                    return AppStyle.Resources.Block.genericForegroundColorForInteractiveBlock(theme: theme)
+                }
+            }
+            
+            struct Question {
+                static func answerBackgroundColor(theme: ReaderStyle.Theme) -> Color {
+                    let light = Color(hex: "#faf8fa")
+                    let sepia = Color(hex: "#e6d7b8")
+                    let dark = Color(hex: "#111827")
+                    
+                    switch theme {
+                    case .light:
+                        return light
+                    case .sepia:
+                        return sepia
+                    case .dark:
+                        return dark
+                    case .auto:
+                        return Helper.isDarkMode() ? dark : light
+                    }
+                }
             }
         }
         

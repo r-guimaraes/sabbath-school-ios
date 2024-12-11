@@ -29,15 +29,26 @@ protocol PDFAuxiliaryViewControllerDelegate {
 class PDFAuxiliaryViewController: PDFViewController {
     var pdfAuxiliaryViewControllerDelegate: PDFAuxiliaryViewControllerDelegate?
     var viewType: PDFAxiliryViewType = .aux
+    var showNavigationBarButtons: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.setRightBarButtonItems([], for: .document, animated: false)
-        navigationItem.setRightBarButtonItems([settingsButtonItem, outlineButtonItem, annotationButtonItem], for: .document, animated: false)
-        navigationItem.setRightBarButtonItems([thumbnailsButtonItem], for: .thumbnails, animated: false)
-
-        documentInfoCoordinator.availableControllerOptions = [.outline, .bookmarks, .annotations]
+        configureAnnotationToolbar()
+    }
+    
+    @objc func toggleAnnotations () {
+        UsernameHelper.ask(forDefaultAnnotationUsernameIfNeeded: pdfController, completionBlock: { _ in
+            self.annotationToolbarController?.toggleToolbar(animated: false)
+        })
+    }
+    
+    @objc func toggleOutline () {
+        UIApplication.shared.sendAction(outlineButtonItem.action!, to: outlineButtonItem.target, from: nil, for: nil)
+    }
+    
+    @objc func toggleSettings () {
+        UIApplication.shared.sendAction(settingsButtonItem.action!, to: settingsButtonItem.target, from: nil, for: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -45,9 +56,7 @@ class PDFAuxiliaryViewController: PDFViewController {
         
         Preferences.userDefaults.set(configuration.pageTransition.rawValue, forKey: Constants.DefaultKey.pdfConfigurationPageTransition)
         Preferences.userDefaults.set(configuration.pageMode.rawValue, forKey: Constants.DefaultKey.pdfConfigurationPageMode)
-        if viewType == .aux {
-            Preferences.userDefaults.set(configuration.scrollDirection.rawValue, forKey: Constants.DefaultKey.pdfConfigurationScrollDirection)
-        }
+        Preferences.userDefaults.set(configuration.scrollDirection.rawValue, forKey: Constants.DefaultKey.pdfConfigurationScrollDirection)
         Preferences.userDefaults.set(configuration.spreadFitting.rawValue, forKey: Constants.DefaultKey.pdfConfigurationSpreadFitting)
     }
     
@@ -55,5 +64,23 @@ class PDFAuxiliaryViewController: PDFViewController {
     override func handleAutosaveRequest(for document: Document, reason: PSPDFAutosaveReason) {
         super.handleAutosaveRequest(for: document, reason: reason)
         pdfAuxiliaryViewControllerDelegate?.saveUserInput()
+    }
+    
+    public func configureAnnotationToolbar () {
+        documentInfoCoordinator.availableControllerOptions = [.outline, .bookmarks, .annotations]
+        
+        let configuration = AnnotationToolConfiguration(annotationGroups: [
+            AnnotationToolConfiguration.ToolGroup(items: [
+                AnnotationToolConfiguration.ToolItem(type: .ink, variant: .inkPen, configurationBlock: AnnotationToolConfiguration.ToolItem.inkConfigurationBlock())
+            ]),
+            AnnotationToolConfiguration.ToolGroup(items: [
+                AnnotationToolConfiguration.ToolItem(type: .line),
+                AnnotationToolConfiguration.ToolItem(type: .polyLine)
+            ])
+        ])
+        
+        annotationToolbarController?.annotationToolbar.configurations = [configuration]
+        
+        annotationToolbarController?.updateHostView(UIApplication.shared.currentNavigationController()?.topViewController?.view, container: UIApplication.shared.currentNavigationController()?.topViewController, viewController: self)
     }
 }

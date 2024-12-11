@@ -52,8 +52,6 @@ struct BlockPollItemView: View {
     var block: PollItem
     @EnvironmentObject var pollViewModel: PollViewModel
     
-    
-    
     var body: some View {
         Button(action: {
             if !pollViewModel.completed {
@@ -63,7 +61,8 @@ struct BlockPollItemView: View {
             VStack {
                 HStack {
                     Image(systemName: pollViewModel.vote == block.index ? "circle.inset.filled" : "circle").fontWeight(.medium).foregroundColor(pollViewModel.vote == block.index ? .blue : .gray)
-                    Text(block.markdown).multilineTextAlignment(.leading)
+                    
+                    InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
                     
                     Spacer()
                     
@@ -110,7 +109,7 @@ struct BlockPollView: StyledBlock, InteractiveBlock, View {
     
     var body: some View {
         VStack {
-            Text(block.caption)
+            InlineAttributedText(block: AnyBlock(block), markdown: block.caption).frame(maxWidth: .infinity, alignment: .leading)
             
             ForEach(block.items) { pollItem in
                 BlockPollItemView(block: pollItem).environmentObject(pollViewModel)

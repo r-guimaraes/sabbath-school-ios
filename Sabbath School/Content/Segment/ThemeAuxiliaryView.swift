@@ -38,7 +38,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTheme == .light ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -54,7 +54,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTheme == .sepia ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -70,7 +70,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTheme == .dark ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -86,7 +86,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTheme == .auto ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Spacer()
             }
@@ -104,7 +104,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTypeface == .lato ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -116,7 +116,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTypeface == .andada ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -128,7 +128,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTypeface == .ptSans ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -140,7 +140,7 @@ struct ThemeAuxiliaryView: View {
                             .lineLimit(1)
                             .padding(10)
                             .fontWeight(themeManager.currentTypeface == .ptSerif ? .bold : .regular)
-                    }
+                    }.accentColor(.black | .white)
                 }
                 Spacer()
             }
@@ -159,6 +159,7 @@ struct ThemeAuxiliaryView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
+                    .accentColor(.black | .white)
                 }
                 Group {
                     Spacer()
@@ -175,6 +176,7 @@ struct ThemeAuxiliaryView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
+                    .accentColor(.black | .white)
                 }
                 Spacer()
             }
@@ -183,7 +185,7 @@ struct ThemeAuxiliaryView: View {
                     themeManager.setSize(to: .medium)
                 }) {
                    Image(systemName: "arrow.counterclockwise").padding(10)
-               }
+               }.accentColor(.black | .white)
             }
             .fixedSize(horizontal: false, vertical: true)
             Divider()

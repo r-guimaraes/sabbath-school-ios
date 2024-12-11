@@ -26,24 +26,24 @@ import MobileCoreServices
 
 struct Spotlight {
     static func indexResource(resource: Resource, image: UIImage?) {
-        let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeData as String)
+        let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.data.identifier)
         attributeSet.title = resource.title
         attributeSet.contentDescription = resource.subtitle
         attributeSet.identifier = resource.index
         attributeSet.relatedUniqueIdentifier = resource.index
         if let image = image {
-            attributeSet.thumbnailData = UIImage.pngData(image)()
+            attributeSet.thumbnailData = image.pngData()
         }
         Spotlight.indexSpotlight(identifier: resource.index, attributeSet: attributeSet)
     }
     
     static func indexQuarterly(quarterly: Quarterly, image: UIImage) {
-        let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeData as String)
+        let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.data.identifier)
         attributeSet.title = quarterly.title
         attributeSet.contentDescription = quarterly.humanDate
         attributeSet.identifier = quarterly.index
         attributeSet.relatedUniqueIdentifier = quarterly.index
-        attributeSet.thumbnailData = UIImage.pngData(image)()
+        attributeSet.thumbnailData = image.pngData()
         Spotlight.indexSpotlight(identifier: quarterly.index, attributeSet: attributeSet)
     }
     

@@ -61,6 +61,7 @@ struct BlockVideoView: View {
         VStack (spacing: 10) {
             GeometryReader { geometry in
                 VideoPlayer(player: viewModel.getPlayer())
+                    
                     .background(Color.black)
                     .cornerRadius(6)
                     .overlay {
@@ -81,6 +82,7 @@ struct BlockVideoView: View {
                     .onChange(of: geometry.size) { _ in
                         calculateHeight(width: geometry.size.width)
                     }
+                    
             }
             .frame(maxHeight: .infinity)
             .frame(height: height)

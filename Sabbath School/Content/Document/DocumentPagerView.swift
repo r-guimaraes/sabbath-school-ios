@@ -21,32 +21,32 @@
  */
 
 import SwiftUI
-import SwiftUIPager
 
 extension DocumentView {
-    func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {
-        Pager(page: page, data: Array(0..<segments.count), id: \.self, content: { index in
-            if let segment = segments[index] {
+    func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {        
+        TabView (selection: $documentViewOperator.activeTab) {
+            
+            ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
                 switch segment.type {
                 case .story:
                     SegmentViewStory(
-                        segment: segment,
-                        parentOffset: self.$pageOffset,
-                        parentPage: self.$page
+                        segment: segment
                     )
                     .environmentObject(documentViewOperator).tag(index)
                     .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
+
                 case .pdf:
                     SegmentViewPDF(
                         segment: segment,
-                        allowHorizontalSwipe: segments.count == 1,
+                        allowHorizontalSwipe: false,
                         showNavigationBarButtons: isActiveTabPDF
                     )
                     .environmentObject(documentViewOperator).tag(index)
                     .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
                     .environmentObject(viewModel)
-                case .block:
-                    SegmentView(
+
+                case .block, .video:
+                    SegmentViewBlocks(
                         resource: resource,
                         segment: segment,
                         index: index,
@@ -55,55 +55,14 @@ extension DocumentView {
                     .environmentObject(documentViewOperator).tag(index)
                     .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
                     .environmentObject(themeManager)
-                default:
-                    Text("")
                 }
             }
-        })
-        .pageOffset(pageOffset)
-        .preferredItemSize(CGSize(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height))
-        .onPageWillChange({ pageIndex in
-            documentViewOperator.activeTab = pageIndex
-        })
-        .onAppear {
+        }.onAppear {
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: documentViewOperator.activeTab, force: true)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(width: screenSizeMonitor.screenSize.width)
         .background(themeManager.backgroundColor)
-        
-        //                   TabView (selection: $documentViewOperator.activeTab) {
-        //                        ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
-        //                            switch segment.type {
-        //                            case .story:
-        //                                SegmentViewStory(segment: segment, index: index)
-        //                                    .environmentObject(documentViewOperator).tag(index)
-        //                                    .environment(\.defaultBlockStyles, document.style!)
-        //                            case .pdf:
-        //                                NavigationStack {
-        //                                    SegmentViewPDF(segment: segment, index: index, pdfTabbedViewController: $pdfTabbedViewController)
-        //                                        .environmentObject(documentViewOperator).tag(index)
-        //                                        .environment(\.defaultBlockStyles, document.style!)
-        //                                        .environmentObject(viewModel)
-        //                                        .frame(maxWidth: .infinity, alignment: .leading)
-        //                                        .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
-        //                                }
-        //                            case .block:
-        //                                SegmentView(resource: resource, segment: segment, index: index, document: document)
-        //                                    .environmentObject(documentViewOperator).tag(index)
-        //                                    .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
-        //                                    .environmentObject(themeManager)
-        //
-        //                            default:
-        //                                EmptyView()
-        //                            }
-        //                        }
-        //                    }
-        //                    .onAppear {
-        //                        documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: documentViewOperator.activeTab, force: true)
-        //                    }
-        //                    .tabViewStyle(.page(indexDisplayMode: .automatic))
-        //                    .frame(maxWidth: .infinity, alignment: .leading)
-        //                    .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .id(document.id)
     }
 }

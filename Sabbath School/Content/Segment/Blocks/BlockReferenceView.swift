@@ -21,10 +21,12 @@
  */
 
 import SwiftUI
+import NukeUI
 
 struct BlockReferenceView: StyledBlock, View {
     var block: Reference
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         NavigationLink {
@@ -40,10 +42,10 @@ struct BlockReferenceView: StyledBlock, View {
         } label: {
             HStack {
                 if let resource = block.resource {
-                    AsyncImage(url: resource.covers.square) { image in
+                    LazyImage(url: resource.covers.square) { image in
                         image.image?.resizable()
                     }
-                    .frame(width: 40, height: 40)
+                    .frame(width: AppStyle.Resources.Block.Reference.thumbnailSize.width, height: AppStyle.Resources.Block.Reference.thumbnailSize.height)
                     .cornerRadius(6)
                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
                 }
@@ -57,10 +59,11 @@ struct BlockReferenceView: StyledBlock, View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundColor(.black | .white)
-            }.frame(maxWidth: .infinity)
-        }.frame(maxWidth: .infinity)
-            .padding()
-            .foregroundColor(.white)
-            .background(.gray.opacity(0.6))
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(AppStyle.Resources.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
     }
 }

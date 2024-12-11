@@ -105,8 +105,7 @@ struct AnyBlock: BlockProtocol, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
-        let nested = try container.decodeIfPresent(Bool.self, forKey: .nested)
-        
+//        let nested = try container.decodeIfPresent(Bool.self, forKey: .nested)
 //        let style = try container.decodeIfPresent(BlockStyle.self, forKey: .style)
         
         switch type {

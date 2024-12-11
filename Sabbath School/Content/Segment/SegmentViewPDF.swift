@@ -24,7 +24,6 @@ import SwiftUI
 import PSPDFKit
 import PSPDFKitUI
 
-
 struct SegmentViewPDF: View {
     var segment: Segment
     var allowHorizontalSwipe: Bool = false
@@ -39,11 +38,31 @@ struct SegmentViewPDF: View {
                 viewType: allowHorizontalSwipe ? .aux : .segment,
                 showNavigationBarButtons: showNavigationBarButtons,
                 pdfTabbedViewController: $pdfTabbedViewController
-            ).onChange(of: showNavigationBarButtons) { newValue in
-                if newValue {
-                    pdfTabbedViewController?.setButtons()
-                } else {
-                    pdfTabbedViewController?.clearButtons()
+            ).toolbar {
+                if showNavigationBarButtons {
+                    ToolbarItem {
+                        Button(action: {
+                            (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleAnnotations()
+                        }) {
+                            Image(systemName: "pencil.tip.crop.circle").imageScale(.medium)
+                        }
+                    }
+                    
+                    ToolbarItem {
+                        Button(action: {
+                            (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleOutline()
+                        }) {
+                            Image(systemName: "bookmark").imageScale(.medium)
+                        }
+                    }
+                    
+                    ToolbarItem {
+                        Button(action: {
+                            (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleSettings()
+                        }) {
+                            Image(systemName: "gearshape").imageScale(.medium)
+                        }
+                    }
                 }
             }
         }

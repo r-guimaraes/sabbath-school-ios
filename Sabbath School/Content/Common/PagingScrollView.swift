@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Adventech <info@adventech.io>
+ * Copyright (c) 2024 Adventech <info@adventech.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,36 @@
  * THE SOFTWARE.
  */
 
-import Foundation
+import SwiftUI
 
-struct Feature: Codable {
-    let name: String
-    let title: String
-    let description: String
-    let image: URL
+struct PagingModifier: ViewModifier {
+    @ViewBuilder func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content
+                .scrollTargetBehavior(.viewAligned)
+
+        } else {
+            content
+        }
+    }
+}
+
+struct TargetLayoutModifier: ViewModifier {
+    @ViewBuilder func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content.scrollTargetLayout()
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func scrollViewPaging() -> some View {
+        self.modifier(PagingModifier())
+    }
+    
+    func targetLayout() -> some View {
+        self.modifier(TargetLayoutModifier())
+    }
 }

@@ -200,7 +200,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
                 .environment(\.openURL, OpenURLAction { url in
                     handleURL(url: url)
                     return .handled
-                }).onAppear {
+                }).task {
                     if !initialized {
                         initializeText()
                     }
@@ -262,17 +262,20 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         
         for highlight in highlights {
             let range = NSRange(location: highlight.startIndex, length: highlight.length)
+            var backgroundColor: Color
             if let range = Range(range, in: attributedString) {
                 switch highlight.color {
                 case .yellow:
-                    attributedString[range].backgroundColor = AppStyle.Resources.Block.highlightYellow
+                    backgroundColor = AppStyle.Resources.Block.highlightYellow
                 case .blue:
-                    attributedString[range].backgroundColor = AppStyle.Resources.Block.highlightBlue
+                    backgroundColor = AppStyle.Resources.Block.highlightBlue
                 case .orange:
-                    attributedString[range].backgroundColor = AppStyle.Resources.Block.highlighOrange
+                    backgroundColor = AppStyle.Resources.Block.highlighOrange
                 case .green:
-                    attributedString[range].backgroundColor = AppStyle.Resources.Block.highlightGreen
+                    backgroundColor = AppStyle.Resources.Block.highlightGreen
                 }
+                
+                attributedString[range].backgroundColor = backgroundColor
             }
         }
     }
@@ -303,8 +306,10 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
                 .environmentObject(themeManager)
             )
             hostingController.view.layer.cornerRadius = 6
+            
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: Preferences.currentTheme().backgroundColor))
+            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
         } else if let data = block.data,
                   let host = url.host,
                   let paragraphs = data.egw?[host],
@@ -314,7 +319,9 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             )
             hostingController.view.layer.cornerRadius = 6
             
-            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: Preferences.currentTheme().backgroundColor))
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            
+            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
         } else {
             externalURL = url
             externalLinkView = true

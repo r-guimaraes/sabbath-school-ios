@@ -21,7 +21,6 @@
  */
 
 import SwiftUI
-import AsyncDisplayKit
 import UIKit
 
 extension UIApplication {
@@ -58,6 +57,8 @@ extension UIApplication {
         return findTabBarController(controller: rootController)
     }
     
+    
+    
     private func findTabBarController(controller: UIViewController) -> UITabBarController? {
         if let tabBarController = controller as? UITabBarController {
             return tabBarController
@@ -69,133 +70,41 @@ extension UIApplication {
         }
         return nil
     }
-}
-
-
-//extension UIApplication {
-//    var rootViewController: UIViewController? {
-//        // Find the connected scene with a UIWindowScene
-//        guard let windowScene = connectedScenes.first as? UIWindowScene,
-//              let window = windowScene.windows.first else {
-//            return nil
-//        }
-//        return window.rootViewController
-//    }
-//}
-
-class TabBarViewController: ASTabBarController, UITabBarControllerDelegate {
-    private var screenSizeMonitor = ScreenSizeMonitor()
-    private var themeManager = ThemeManager()
     
-    @State private var sspath: [NavigationStep] = []
-    
-    @State private var aijpath: [NavigationStep] = []
-    
-    @State private var pmpath: [NavigationStep] = []
-    
-    @State private var devopath: [NavigationStep] = []
-    
-    
-    var iconMargins: UIEdgeInsets {
-        return UIEdgeInsets(top: Helper.isPad ? 0 : 9, left: 0, bottom: Helper.isPad ? 0 : -9, right: 0)
+    func currentNavigationController() -> UINavigationController? {
+        guard let rootController = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow })?.rootViewController else {
+                return nil
+            }
+        return findNavigationController(controller: rootController)
     }
-    
-    func tabBarControllersFor(aij: Bool = true,
-                              pm: Bool = true,
-                              devo: Bool = true,
-                              ss: Bool = true,
-                              quarterlyIndex: String? = nil,
-                              lessonIndex: String? = nil,
-                              readIndex: Int? = nil,
-                              initiateOpen: Bool = false) -> [UIViewController] {
-        
-        
-        
-        
-        let sabbathSchoolV3 = UIHostingController(rootView: FeedView(resourceType: .ss, path: $sspath)
-            .environmentObject(screenSizeMonitor)
-            .environmentObject(themeManager)
-        )
-        
-        let aliveInJesus = UIHostingController(rootView: FeedView(resourceType: .aij, path: $aijpath)
-            .environmentObject(screenSizeMonitor)
-            .environmentObject(themeManager)
-        )
-        let personalMinistries = UIHostingController(rootView: FeedView(resourceType: .pm, path: $pmpath)
-            .environmentObject(screenSizeMonitor)
-            .environmentObject(themeManager)
-        )
-        let devotional = UIHostingController(rootView: FeedView(resourceType: .devo, path: $devopath)
-            .environmentObject(screenSizeMonitor)
-            .environmentObject(themeManager)
-        )
-        
-        let settings = ASDKNavigationController(rootViewController: SettingsController())
-        
-        sabbathSchoolV3.tabBarItem.image = R.image.iconNavbarSs()
-        sabbathSchoolV3.tabBarItem.title = nil
-        aliveInJesus.tabBarItem.image = R.image.iconNavbarAij()
-        aliveInJesus.tabBarItem.title = nil
-        personalMinistries.tabBarItem.image = R.image.iconNavbarPm()
-        personalMinistries.tabBarItem.title = nil
-        devotional.tabBarItem.image = R.image.iconNavbarDevo()
-        devotional.tabBarItem.title = nil
-        settings.tabBarItem.image = R.image.iconNavbarProfile()
-        settings.tabBarItem.title = nil
-        
-//        if let quarterlyIndex = quarterlyIndex {
-//            let lessonController = LessonWireFrame.createLessonModule(quarterlyIndex: quarterlyIndex, initiateOpenToday: initiateOpen)
-//            sabbathSchool.pushViewController(lessonController, animated: false)
-//            
-//            if let lessonIndex = lessonIndex {
-//                let readController = ReadWireFrame.createReadModule(lessonIndex: lessonIndex, readIndex: readIndex)
-//                sabbathSchool.pushViewController(readController, animated: false)
-//            }
-//        }
-        
-//        sabbathSchool.tabBarItem.imageInsets = self.iconMargins
-        
-        sabbathSchoolV3.tabBarItem.imageInsets = self.iconMargins
-        aliveInJesus.tabBarItem.imageInsets = self.iconMargins
-        personalMinistries.tabBarItem.imageInsets = self.iconMargins
-        devotional.tabBarItem.imageInsets = self.iconMargins
-        settings.tabBarItem.imageInsets = self.iconMargins
-        
-        var viewControllers: [UIViewController] = []
-        
-        if aij {
-            viewControllers.append(aliveInJesus)
+
+    private func findNavigationController(controller: UIViewController) -> UINavigationController? {
+        // If the controller itself is a UINavigationController
+        if let navigationController = controller as? UINavigationController {
+            return navigationController
         }
         
-        if pm {
-            viewControllers.append(personalMinistries)
+        // If the controller is a UITabBarController, check the selected view controller
+        if let tabBarController = controller as? UITabBarController,
+           let selectedController = tabBarController.selectedViewController {
+            return findNavigationController(controller: selectedController)
         }
         
-        if devo {
-            viewControllers.append(devotional)
+        // If the controller is presenting another controller
+        if let presentedController = controller.presentedViewController {
+            return findNavigationController(controller: presentedController)
         }
         
-        if viewControllers.count == 0 {
-            return viewControllers
+        // Recursively search children view controllers
+        for child in controller.children {
+            if let navigationController = findNavigationController(controller: child) {
+                return navigationController
+            }
         }
         
-        if ss {
-            viewControllers.insert(sabbathSchoolV3, at: 0)
-        }
-        
-        viewControllers.append(settings)
-        
-        return viewControllers
-    }
-    
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        if let navController = viewController as? UINavigationController {
-            navController.popToRootViewController(animated: false)
-        }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.delegate = self
+        return nil
     }
 }

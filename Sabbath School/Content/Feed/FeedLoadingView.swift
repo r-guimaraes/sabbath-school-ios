@@ -39,7 +39,7 @@ struct FeedLoadingView: View {
                         .frame(width: screenSizeMonitor.screenSize.width * 0.4, height: 30, alignment: .leading)
                         .shimmering()
                     Spacer()
-                }.padding(.top, 20)
+                }.padding(.top, 0)
                 
                 ForEach(0..<5, id: \.self) { _ in
                     HStack (spacing: spaceBetweenCoverAndTitle) {

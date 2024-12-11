@@ -23,37 +23,17 @@
 import PSPDFKitUI
 
 class PDFAuxiliaryTabbedViewController: PDFTabbedViewController {
-    var showNavigationBarButtons: Bool = true
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.closeMode = .disabled
-        self.view.autoresizingMask = [.flexibleWidth]
         self.allowDraggingTabsToExternalTabbedBar = false
         self.allowDroppingTabsFromExternalTabbedBar = false
         self.allowReorderingDocuments = false
         self.openDocumentActionInNewTab = false
+        self.barHidingMode = .show
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if showNavigationBarButtons {
-            setButtons()
-        }
-    }
-    
-    public func setButtons () {
-        var barButtons: [UIBarButtonItem] = []
-
-        if let pdfController = self.pdfController as? PDFAuxiliaryViewController,
-           let pdfBarItems = pdfController.navigationItem.rightBarButtonItems {
-            barButtons.append(contentsOf: pdfBarItems)
-        }
-        
-        self.parent?.navigationItem.setRightBarButtonItems(barButtons, animated: false)
-    }
-    
-    public func clearButtons () {
-        self.parent?.navigationItem.setRightBarButtonItems([], animated: false)
     }
 }

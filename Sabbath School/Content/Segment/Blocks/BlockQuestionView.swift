@@ -25,6 +25,7 @@ import SwiftUI
 struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
     var block: Question
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     @EnvironmentObject var viewModel: DocumentViewModel
     
@@ -43,8 +44,10 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                     .padding(20)
                 }
                 Divider().background(.gray.opacity(0.4))
-            }.padding(0)
-            .background(Color(UIColor(hex: "#f9f9f9")))
+            }
+            .padding(0)
+//            .background(Color(UIColor(hex: "#f9f9f9")))
+            .background(AppStyle.Resources.Block.genericBackgroundColorForInteractiveBlock(theme: themeManager.currentTheme))
             
             VStack (spacing: 0) {
                 TextEditor(text: $answer)
@@ -60,8 +63,9 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                     .overlay {
                         HStack(spacing: 0) {
                             Divider().background(.red)
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 40)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 40)
                     }.background {
                         VStack {
                             Image("question-line")
@@ -70,24 +74,27 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                         }.padding(0)
                     }
             }.padding(0)
-                .background(Color(UIColor(hex: "#faf8fa")))
-                .frame(alignment: .leading)
-                
-        }.frame(maxWidth: .infinity, alignment: .leading)
-            .cornerRadius(3)
-            .padding(.vertical, 10)
-            .onAppear {
-                loadInputData()
-            }
-            .onChange(of: viewModel.documentUserInput) { newValue in
-                loadInputData()
-            }
+//            .background(Color(UIColor(hex: "#faf8fa")))
+            .background(AppStyle.Resources.Block.Question.answerBackgroundColor(theme: themeManager.currentTheme))
+            .frame(alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cornerRadius(3)
+        .padding(.vertical, 10)
+        .onAppear {
+            loadInputData()
+        }
+        .onChange(of: viewModel.documentUserInput) { newValue in
+            loadInputData()
+        }
     }
     
     func resetTypingTimer() {
         typingTimer?.invalidate()
         typingTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
-            self.saveUserInput(AnyUserInput(UserInputQuestion(blockId: block.id, inputType: .question, answer: self.answer)))
+            DispatchQueue.main.async {
+                self.saveUserInput(AnyUserInput(UserInputQuestion(blockId: block.id, inputType: .question, answer: self.answer)))
+            }
         }
     }
     

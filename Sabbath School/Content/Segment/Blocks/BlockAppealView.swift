@@ -25,6 +25,7 @@ import SwiftUI
 struct BlockAppealView: StyledBlock, InteractiveBlock, View {
     var block: Appeal
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @EnvironmentObject var themeManager: ThemeManager
     
     @EnvironmentObject var viewModel: DocumentViewModel
     
@@ -35,8 +36,12 @@ struct BlockAppealView: StyledBlock, InteractiveBlock, View {
             checked = !checked
             self.saveUserInput(AnyUserInput(UserInputAppeal(blockId: block.id, inputType: .appeal, appeal: checked)))
         }) {
-            HStack(spacing: 5) {
-                Image(systemName: checked ? "checkmark.circle.fill" : "circle").foregroundColor(checked ? .blue : .gray)
+            HStack(spacing: 10) {
+                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
+                    .imageScale(.large)
+                    .foregroundColor(AppStyle.Resources.Block.Checklist.foregroundColor(theme: themeManager.currentTheme))
+                    .animation(.easeInOut(duration: 0.3), value: checked)
+
                 InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
             }
         }.onAppear {

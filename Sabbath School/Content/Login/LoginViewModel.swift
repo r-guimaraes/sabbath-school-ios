@@ -26,6 +26,20 @@ import AuthenticationServices
 import CryptoKit
 import SwiftEntryKit
 
+enum LoginType {
+    case google
+    case apple
+    case anonymous
+    
+    var param: String {
+        switch self {
+        case .google: return "google"
+        case .apple: return "apple"
+        case .anonymous: return "anonymous"
+        }
+    }
+}
+
 class LoginViewModel: NSObject, ObservableObject {
     @Published var loading: Bool = false
     var currentNonce: String?
@@ -144,7 +158,7 @@ class LoginViewModel: NSObject, ObservableObject {
         let heightConstraint = EKAttributes.PositionConstraints.Edge.intrinsic
         attributes.positionConstraints.size = .init(width: widthConstraint, height: heightConstraint)
 
-        let title = EKProperty.LabelContent(text: "There was an error during login".localized(), style: .init(font: R.font.latoBlack(size: 17)!, color: .white))
+        let title = EKProperty.LabelContent(text: "There was an error during login".localized(), style: .init(font: UIFont(name: "Lato-Black", size: 17)!, color: .white))
         let description = EKProperty.LabelContent(text: "", style: .init(font: .systemFont(ofSize: 17), color: .white))
         let image = EKProperty.ImageContent(image: UIImage(systemName: "exclamationmark.circle.fill")!.fillAlpha(fillColor: .white), size: CGSize(width: 28, height: 28))
         let simpleMessage = EKSimpleMessage(image: image, title: title, description: description)

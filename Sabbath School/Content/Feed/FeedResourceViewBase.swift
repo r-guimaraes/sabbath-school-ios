@@ -40,19 +40,29 @@ func FeedResourceCoverView(_ url: URL, _ dimensions: CGSize, _ placeholderColor:
 }
 
 @ViewBuilder
-func FeedResourceTitleView(_ title: String, _ subtitle: String?, _ dimensions: CGSize? = nil, _ direction: FeedGroupDirection, _ enlarge: Bool = false) -> some View {
-    VStack(alignment: .leading, spacing: AppStyle.Resources.Feed.Spacing.betweenTitleAndSubtitle) {
-        Text(AppStyle.Resources.Feed.Title.text(title, enlarge))
-            .lineLimit(AppStyle.Resources.Feed.Title.lineLimit)
-            .multilineTextAlignment(.leading)
-        
-        if let subtitle = subtitle, direction == .vertical {
-            Text(AppStyle.Resources.Feed.Subtitle.text(subtitle))
-                .lineLimit(AppStyle.Resources.Feed.Subtitle.lineLimit)
+func FeedResourceTitleView(_ title: String, _ subtitle: String?, _ dimensions: CGSize? = nil, _ direction: FeedGroupDirection, _ enlarge: Bool = false, externalURL: URL? = nil) -> some View {
+    HStack {
+        VStack(alignment: .leading, spacing: AppStyle.Resources.Feed.Spacing.betweenTitleAndSubtitle) {
+            Text(AppStyle.Resources.Feed.Title.text(title, enlarge))
+                .lineLimit(AppStyle.Resources.Feed.Title.lineLimit)
                 .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            if let subtitle = subtitle, direction == .vertical {
+                Text(AppStyle.Resources.Feed.Subtitle.text(subtitle))
+                    .lineLimit(AppStyle.Resources.Feed.Subtitle.lineLimit)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }.frame(alignment: .leading)
+        
+        Spacer()
+        if externalURL != nil {
+            Image(systemName: "arrow.up.forward.square")
+                .font(.system(size: 16, weight: .light))
+                .foregroundColor(.secondary)
         }
-    }
-    .frame(width: dimensions?.width, alignment: .leading)
+    }.frame(width: dimensions?.width, alignment: .leading)
 }
 
 @ViewBuilder

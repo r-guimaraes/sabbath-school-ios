@@ -41,14 +41,17 @@ struct FeedView: View {
         NavigationStack(path: $path) {
             VStack {
                 if let feed = self.viewModel.feed {
-                    ScrollView {
+                    ScrollView(.vertical, showsIndicators: false) {
                         // Adding VStack to prevent unnecessary spacing between elements in the ScrollView
                         VStack (spacing: 0) {
                             ForEach(feed.groups, id:\.id) { group in
                                 FeedGroupView(resourceType: resourceType, feedGroup: group)
                             }
                         }
-                    }.navigationTitle(self.viewModel.feed!.title)
+                        .frame(maxWidth: .infinity)
+                    }
+                    .navigationTitle(feed.title)
+                    
                 } else {
                     FeedLoadingView()
                 }
@@ -60,7 +63,6 @@ struct FeedView: View {
                case .document(let documentIndex):
                    DocumentView(documentIndex: documentIndex)
                }
-               
             }
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -68,7 +70,7 @@ struct FeedView: View {
                     Button(action: {
                         showSettings = true
                     }) {
-                        Image(uiImage: R.image.iconNavbarSettings()!)
+                        Image("icon-navbar-settings")
                             .renderingMode(.template)
                             .foregroundColor(.black | .white)
                     }
@@ -78,7 +80,7 @@ struct FeedView: View {
                     Button(action: {
                         showLanguage = true
                     }) {
-                        Image(uiImage: R.image.iconNavbarLanguage()!)
+                        Image("icon-navbar-language")
                             .renderingMode(.template)
                             .foregroundColor(.black | .white)
                     }

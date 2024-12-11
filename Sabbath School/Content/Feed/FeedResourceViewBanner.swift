@@ -55,7 +55,7 @@ struct FeedResourceViewBanner: View {
                         }.cornerRadius(6)
                     }
 
-                FeedResourceTitleView(resource.title, nil, dimensions, direction, false)
+                FeedResourceTitleView(resource.title, nil, dimensions, direction, false, externalURL: resource.externalURL)
                     .frame(width: dimensions.width - AppStyle.Resources.Feed.Spacing.horizontalPadding * 2, alignment: .leading)
                     .padding(AppStyle.Resources.Feed.Spacing.insideBanner)
                 

@@ -116,31 +116,31 @@ class BlockStyleTemplate: StyleTemplate {
         self.textSizePoints = { size in
             let sizeMatrix: [ReaderStyle.Size: [TextStyleSize: CGFloat]] = [
                 .tiny: [
-                    .xs: 10,
-                    .sm: 12,
-                    .base: 14,
-                    .lg: 16,
+                    .xs: 14,
+                    .sm: 15,
+                    .base: 17,
+                    .lg: 18,
                     .xl: 21,
                 ],
                 
                 .small: [
-                    .xs: 12,
-                    .sm: 14,
-                    .base: 16,
+                    .xs: 15,
+                    .sm: 17,
+                    .base: 18,
                     .lg: 21,
                     .xl: 24,
                 ],
                 
                 .medium: [
-                    .xs: 14,
-                    .sm: 16,
+                    .xs: 17,
+                    .sm: 18,
                     .base: 21,
                     .lg: 24,
                     .xl: 26,
                 ],
                 
                 .large: [
-                    .xs: 16,
+                    .xs: 18,
                     .sm: 21,
                     .base: 24,
                     .lg: 26,
@@ -275,6 +275,7 @@ class StoryStyleTemplate: BlockStyleTemplate {
             return 28.0
         }
         self.textColorDefault = .white
+        self.textColorThemeOverride = false
         self.textSizeDefault = self.textSizePoints(.base)
     }
 }

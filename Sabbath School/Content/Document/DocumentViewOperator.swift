@@ -59,8 +59,6 @@ class DocumentViewOperator: ObservableObject {
     @Published var showSegmentChipsVals: [Int: Bool] = [:]
     @Published var showSegmentChips: Bool = false
     @Published var showCovers: [Int: Bool] = [:]
-    @Published var showMiniPlayer: Bool = false
-    @Published var miniPlayerStatus: AudioPlayerState = .idle
     
     public func setShowCovers(_ value: Bool, tab: Int? = nil) {
         showCovers[tab ?? activeTab] = value
@@ -120,19 +118,6 @@ class DocumentViewOperator: ObservableObject {
     }
     
     var tabBarHeight: CGFloat {
-        let tabBarController = UITabBarController()
-        return tabBarController.tabBar.frame.height
-    }
-    
-    func updatePlayPauseState(state: AudioPlayerState) {
-        DispatchQueue.main.async {
-            self.miniPlayerStatus = state
-            
-            if AudioPlayback.shared.playerState == .playing {
-                if !self.showMiniPlayer {
-                    self.showMiniPlayer = AudioPlayback.shared.currentItem != nil
-                }
-            }
-        }
+        return UIApplication.shared.currentTabBarController()?.tabBar.frame.height ?? 0
     }
 }

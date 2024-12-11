@@ -36,12 +36,12 @@ struct Helper {
     }
     
     static var isLandscape: Bool {
+        #if os(tvOS)
+        return false
+        #else
         let orientation = UIDevice.current.orientation
         return orientation == .landscapeLeft || orientation == .landscapeRight
-    }
-    
-    static var isPhone: Bool {
-        return UIDevice.current.userInterfaceIdiom == .phone
+        #endif
     }
     
     static func is24hr() -> Bool {
@@ -56,22 +56,6 @@ struct Helper {
     static func isDarkMode() -> Bool {
         guard #available(iOS 13.0, *) else { return false }
         return UITraitCollection.current.userInterfaceStyle == .dark
-    }
-    
-    static func shareTextDialogue(vc: UIViewController, sourceView: UIView, objectsToShare: [Any]) {
-    #if os(iOS)
-        let activityController = UIActivityViewController(
-            activityItems: objectsToShare,
-            applicationActivities: nil)
-        activityController.popoverPresentationController?.sourceRect = sourceView.frame
-        activityController.popoverPresentationController?.sourceView = sourceView
-        if Helper.isPad {
-            activityController.popoverPresentationController?.sourceRect = CGRect(x: sourceView.bounds.midX, y: sourceView.bounds.maxY, width: 0, height: 0)
-        }
-        activityController.popoverPresentationController?.permittedArrowDirections = .any
-        
-        vc.present(activityController, animated: true, completion: nil)
-    #endif
     }
     
     static func getCurrentLessonIndex(lessons: [Lesson]) -> String {
@@ -136,36 +120,10 @@ struct Helper {
         return fileManager.fileExists(atPath: filePath)
     }
     
-    static func TemporaryFileURL(prefix: String?, pathExtension: String) -> URL {
-        let sanePathExtension = pathExtension.hasPrefix(".") ? pathExtension : ".\(pathExtension)"
-        let uuidString = prefix != nil ? NSUUID().uuidString : "_\(NSUUID().uuidString)"
-
-        let tempDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        let tempURL = tempDirectory.appendingPathComponent("\(prefix ?? "")\(uuidString)\(sanePathExtension)", isDirectory: false)
-        return tempURL
-    }
-
-    /// Creates a temporary PDF file URL.
-    static func TemporaryPDFFileURL(prefix: String? = nil) -> URL {
-        return TemporaryFileURL(prefix: prefix, pathExtension: ".pdf")
-    }
-    
     static func SSJSONDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
-    }
-    
-    static func convertQuarterlyIndex(quarterlyIndex: String) -> String {
-        return quarterlyIndex.replacingFirstOccurrence(of: "-", with: "/quarterlies/")
-    }
-    
-    static func convertLessonIndex(lessonIndex: String) -> String {
-        return Helper.convertQuarterlyIndex(quarterlyIndex: lessonIndex).replacingLastOccurrence(of: "-", with: "/lessons/")
-    }
-    
-    static func convertReadIndex(readIndex: String) -> String {
-        return "\(Helper.convertLessonIndex(lessonIndex: readIndex.replacingLastOccurrence(of: "-", with: "/days/")))/read/"
     }
     
     static func parseIndex(index: String) -> ParsedIndex {

@@ -27,7 +27,7 @@ struct AboutViewV2: View {
         ScrollView {
             VStack (spacing: 80) {
                 VStack(spacing: 20) {
-                    Image(uiImage: R.image.sspmLogo()!)
+                    Image("sspm-logo")
                         .resizable()
                         .frame(width: 200, height: 44)
                     Text(
@@ -36,7 +36,7 @@ struct AboutViewV2: View {
                 }
                 
                 VStack(spacing: 20) {
-                    Image(uiImage: R.image.logoAdventech()!)
+                    Image("logo-adventech")
                     
                     Text(
                         AppStyle.Resources.About.text("God's Ministry through Technology".localized())
@@ -44,15 +44,15 @@ struct AboutViewV2: View {
                     
                     HStack (spacing: 20) {
                         Link(destination: URL(string: "https://instagram.com/adventech")!) {
-                            Image(uiImage: R.image.iconInstagram()!)
+                            Image("icon-instagram")
                         }
                         
                         Link(destination: URL(string: "https://www.facebook.com/shabbatschool")!) {
-                            Image(uiImage: R.image.iconFacebook()!)
+                            Image("icon-facebook")
                         }
                         
                         Link(destination: URL(string: "https://github.com/Adventech")!) {
-                            Image(uiImage: R.image.iconGithub()!)
+                            Image("icon-github")
                         }
                     }
                     

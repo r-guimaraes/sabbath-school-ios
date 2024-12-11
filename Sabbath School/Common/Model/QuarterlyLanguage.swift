@@ -30,10 +30,7 @@ struct QuarterlyLanguage: Codable, Hashable, Equatable {
     init(code: String, name: String) {
         self.code = code
         self.name = name
-        let locale = Locale(identifier: code)
-        let currentLocale = Locale.current
-        
-        self.translatedName = currentLocale.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
+        self.translatedName = Locale.current.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
     }
 
     init(from decoder: Decoder) throws {

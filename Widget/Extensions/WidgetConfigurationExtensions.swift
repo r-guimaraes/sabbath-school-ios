@@ -11,8 +11,8 @@ import SwiftUI
 extension WidgetConfiguration {
     func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration {
         if #available(iOSApplicationExtension 17.0, *) {
-//            return self.contentMarginsDisabled()
-            return self
+            return self.contentMarginsDisabled()
+//            return self
         }
         else {
             return self

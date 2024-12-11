@@ -77,7 +77,7 @@ struct AnyUserInput: UserInputProtocol, Decodable, Hashable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let blockId = try container.decode(String.self, forKey: .blockId)
+//        let blockId = try container.decode(String.self, forKey: .blockId)
         let inputType = try container.decode(UserInputType.self, forKey: .inputType)
         
         switch inputType {

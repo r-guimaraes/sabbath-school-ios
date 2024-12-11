@@ -31,16 +31,4 @@ struct Audio: Codable {
     let src: URL
     let image: URL
     let imageRatio: String
-    
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = try values.decode(String.self, forKey: .id)
-        target = try values.decode(String.self, forKey: .target)
-        targetIndex = try values.decode(String.self, forKey: .targetIndex)
-        title = try values.decode(String.self, forKey: .title)
-        artist = try values.decode(String.self, forKey: .artist)
-        src = try values.decode(URL.self, forKey: .src)
-        image = try values.decode(URL.self, forKey: .image)
-        imageRatio = try values.decode(String.self, forKey: .imageRatio)
-    }
 }

@@ -25,10 +25,4 @@ import Foundation
 struct Credits: Codable {
     let name: String
     let value: String
-    
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        name = try values.decode(String.self, forKey: .name)
-        value = try values.decode(String.self, forKey: .value)
-    }
 }

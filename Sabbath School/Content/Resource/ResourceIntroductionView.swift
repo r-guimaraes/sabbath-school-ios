@@ -21,69 +21,72 @@
  */
 
 import SwiftUI
-import AsyncDisplayKit
 import Down
 
-class ResourceIntroductionController: ASDKViewController<ASDisplayNode> {
-    var introduction: String
-    var table = ASTableNode()
-    let collectionViewLayout = UICollectionViewFlowLayout()
-    
-    init(introduction: String) {
-        self.introduction = introduction
-        super.init(node: table)
-        table.dataSource = self
-        table.delegate = self
+struct ResourceIntroductionTextView: UIViewRepresentable {
+    let attributedString: NSAttributedString
+    @Binding var height: CGFloat
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = true
+        textView.backgroundColor = .clear
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        return textView
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("storyboards are incompatible with truth and beauty")
-    }
-}
-
-extension ResourceIntroductionController: ASTableDelegate {
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 1
-    }
-}
-
-extension ResourceIntroductionController: ASTableDataSource {
-    func tableView(_ tableView: ASTableView, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        let cellNodeBlock: () -> ASCellNode = {
-            return ResourceIntroductionViewCompat(introduction: self.introduction)
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        uiView.attributedText = attributedString
+        uiView.invalidateIntrinsicContentSize()
+        
+        let size = uiView.sizeThatFits(CGSize(width: uiView.bounds.width, height: CGFloat.greatestFiniteMagnitude))
+        if height != size.height {
+            DispatchQueue.main.async {
+                self.height = size.height
+            }
         }
-
-        return cellNodeBlock
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
     }
 }
 
-class ResourceIntroductionViewCompat: ASCellNode {
-    let introduction = ASTextNode()
-
-    init(introduction: String) {
-        super.init()
-        self.backgroundColor = AppStyle.Base.Color.background
-        let down = Down(markdownString: introduction)
-        self.introduction.attributedText = try? down.toAttributedString(stylesheet: AppStyle.Quarterly.Style.introductionStylesheet)
-
-        automaticallyManagesSubnodes = true
-    }
-    
-    override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15), child: introduction)
-    }
-}
-
-struct ResourceIntroductionView: UIViewControllerRepresentable {
+struct ResourceIntroductionView: View {
     var introduction: String
+    var attributedString: NSAttributedString
+
+    @State private var textViewHeight: CGFloat = 0
     
-    func makeUIViewController(context: Context) -> ASDKViewController<ASDisplayNode> {
-        return ResourceIntroductionController(introduction: introduction)
+    init (introduction: String) {
+        self.introduction = introduction
+        let down = Down(markdownString: introduction)
+        self.attributedString = try! down.toAttributedString(stylesheet: AppStyle.Resources.Resource.Introduction.stylesheet)
     }
 
-    func updateUIViewController(_ uiViewController: ASDKViewController<ASDisplayNode>, context: Context) {}
+    var body: some View {
+//        ScrollView {
+//            
+//        }
+//        .frame(maxWidth: .infinity)
+//        .frame(maxHeight: .infinity)
+        VStack {
+            ResourceIntroductionTextView(
+                attributedString: attributedString,
+                height: $textViewHeight
+            )
+            .frame(height: textViewHeight)
+            .frame(maxHeight: .infinity)
+        }
+        .frame(height: textViewHeight)
+        .frame(maxHeight: .infinity)
+        .padding()
+    }
 }
+
+struct ResourceIntroductionView_Previews: PreviewProvider {
+    static var previews: some View {
+        ResourceIntroductionView(introduction: "### Hello world")
+    }
+}
+
+

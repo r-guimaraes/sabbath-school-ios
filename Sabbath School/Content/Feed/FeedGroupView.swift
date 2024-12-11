@@ -28,15 +28,36 @@ func FeedGroupConditionalStack<Content: View>(
     resources: [Resource],
     feedGroupDirection: FeedGroupDirection,
     @ViewBuilder content: () -> Content) -> some View {
+        
     if feedGroupDirection == .horizontal {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: AppStyle.Resources.Feed.Spacing.betweenResources, content: content)
                 .padding(AppStyle.Resources.Feed.Spacing.horizontalPadding)
-            
+                .targetLayout()
         }
+        .scrollViewPaging()
     } else {
         VStack(spacing: AppStyle.Resources.Feed.Spacing.betweenResources, content: content)
             .padding(AppStyle.Resources.Feed.Spacing.horizontalPadding)
+    }
+}
+
+@ViewBuilder
+func ResourceLink<Destination: View, Content: View>(
+    externalURL: URL?,
+    destination: Destination,
+    @ViewBuilder content: @escaping () -> Content
+) -> some View {
+    if let url = externalURL {
+        Link(destination: url) {
+            content()
+        }
+    } else {
+        NavigationLink {
+            destination
+        } label: {
+            content()
+        }
     }
 }
 
@@ -71,12 +92,12 @@ struct FeedGroupView: View {
                 VStack {
                     FeedGroupConditionalStack(resources: resources, feedGroupDirection: feedGroup.direction) {
                         ForEach(resources) { resource in
-                            NavigationLink {
-                                ResourceView(resourceIndex: resource.index)
-                            } label: {
+                            ResourceLink(
+                                externalURL: resource.externalURL,
+                                destination: ResourceView(resourceIndex: resource.index)
+                            ) {
                                 FeedResourceView(resource: resource, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction)
                             }
-                            
                             .contextMenu {
                                 NavigationLink {
                                     ResourceView(resourceIndex: resource.index)
@@ -128,5 +149,10 @@ struct FeedGroupView: View {
             }
         }
         .padding(0)
+    }
+    
+    @ViewBuilder
+    func mainItemView(resource: Resource) -> some View {
+        
     }
 }

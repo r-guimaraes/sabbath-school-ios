@@ -39,51 +39,65 @@ struct ResourceSectionView: View {
             }
 
             ForEach(section.documents) { document in
-                NavigationLink {
-                    DocumentView(documentIndex: document.index)
-                } label: {
-                    HStack (spacing: AppStyle.Resources.Resource.Document.Spacing.padding) {
-                        if section.displaySequence {
-                            Text(AppStyle.Resources.Resource.Document.Sequence.text(document.sequence))
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(AppStyle.Resources.Resource.Document.Sequence.lineLimit)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .layoutPriority(2)
-                        }
-                        VStack (spacing: AppStyle.Resources.Resource.Document.Spacing.betweenTitleSubtitleAndDate) {
-                            if let subtitle = document.subtitle {
-                                Text(AppStyle.Resources.Resource.Document.Subtitle.text(subtitle))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
-                                    .lineLimit(AppStyle.Resources.Resource.Document.Subtitle.lineLimit)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            
-                            Text(AppStyle.Resources.Resource.Document.Title.text(document.title))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(AppStyle.Resources.Resource.Document.Title.lineLimit)
-                                .fixedSize(horizontal: false, vertical: true)
-                            
-                            if let startDate = document.startDate,
-                               let endDate = document.endDate,
-                               let stringDate = "\(startDate.date.stringLessonDate()) - \(endDate.date.stringLessonDate())" {
-                                Text(AppStyle.Resources.Resource.Document.Date.text(stringDate))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
-                                    .lineLimit(AppStyle.Resources.Resource.Document.Date.lineLimit)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        .padding(.vertical, AppStyle.Resources.Resource.Document.Spacing.padding)
-                        .frame(maxWidth: .infinity)
-                        .layoutPriority(1)
-                    }.padding(.horizontal, AppStyle.Resources.Resource.Document.Spacing.padding)
-                    
+                ResourceLink(
+                    externalURL: document.externalURL,
+                    destination: DocumentView(documentIndex: document.index)
+                ) {
+                    sectionContentView(document: document)
                 }
                 
                 Divider().opacity(0.5)
             }
         }
+    }
+    
+    @ViewBuilder
+    func sectionContentView(document: ResourceDocument) -> some View {
+        HStack (spacing: AppStyle.Resources.Resource.Document.Spacing.padding) {
+            if section.displaySequence {
+                Text(AppStyle.Resources.Resource.Document.Sequence.text(document.sequence))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(AppStyle.Resources.Resource.Document.Sequence.lineLimit)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .layoutPriority(2)
+            }
+            
+            HStack {
+                VStack (spacing: AppStyle.Resources.Resource.Document.Spacing.betweenTitleSubtitleAndDate) {
+                    if let subtitle = document.subtitle {
+                        Text(AppStyle.Resources.Resource.Document.Subtitle.text(subtitle))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(AppStyle.Resources.Resource.Document.Subtitle.lineLimit)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    
+                    Text(AppStyle.Resources.Resource.Document.Title.text(document.title))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(AppStyle.Resources.Resource.Document.Title.lineLimit)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    if let startDate = document.startDate,
+                       let endDate = document.endDate {
+                        let stringDate = "\(startDate.date.stringLessonDate()) - \(endDate.date.stringLessonDate())"
+                        Text(AppStyle.Resources.Resource.Document.Date.text(stringDate))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(AppStyle.Resources.Resource.Document.Date.lineLimit)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(.vertical, AppStyle.Resources.Resource.Document.Spacing.padding)
+                .frame(maxWidth: .infinity)
+                .layoutPriority(1)
+                Spacer()
+                if document.externalURL != nil {
+                    Image(systemName: "arrow.up.forward.square")
+                        .font(.system(size: 16, weight: .light))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }.padding(.horizontal, AppStyle.Resources.Resource.Document.Spacing.padding)
     }
 }

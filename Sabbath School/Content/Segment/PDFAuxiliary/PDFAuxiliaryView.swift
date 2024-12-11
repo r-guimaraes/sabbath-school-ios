@@ -74,24 +74,31 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
             $0.shouldHideStatusBarWithUserInterface = true
             $0.shouldHideNavigationBarWithUserInterface = true
             $0.userInterfaceViewMode = .always
-            $0.settingsOptions = viewType == .aux ? [.all] :  [.pageTransition, .pageMode, .spreadFitting, .appearance, .brightness]
+            $0.settingsOptions = [.all]
             $0.useParentNavigationBar = true
+
+            if viewType == .segment {
+                $0.additionalContentInsets = .init(top: 125, left: 0, bottom: 0, right: 0)
+            }
             
             $0.pageTransition = Preferences.getPdfPageTransition()
             $0.pageMode = Preferences.getPdfPageMode()
-            $0.scrollDirection = viewType == .aux ? Preferences.getPdfScrollDirection() : .vertical
+            $0.scrollDirection = Preferences.getPdfScrollDirection()
             $0.spreadFitting = Preferences.getPdfSpreadFitting()
         }
         
         let pdfController = PDFAuxiliaryViewController(document: nil, configuration: pdfConfiguration)
         
-        pdfController.view.autoresizingMask = [.flexibleWidth]
         pdfController.pdfAuxiliaryViewControllerDelegate = self
         pdfController.viewType = viewType
+        pdfController.showNavigationBarButtons = showNavigationBarButtons
+        
+        if viewType == .segment {
+            pdfController.delegate = context.coordinator
+        }
 
         let tabbedPDFController = PDFAuxiliaryTabbedViewController(pdfViewController: pdfController)
         tabbedPDFController.documents = documents
-        tabbedPDFController.showNavigationBarButtons = showNavigationBarButtons
         
         DispatchQueue.main.async {
             self.tabbedPDFController = tabbedPDFController
@@ -162,13 +169,15 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
         }
     }
 
-    func updateUIViewController(_ uiViewController: PDFAuxiliaryTabbedViewController, context: Context) { }
+    func updateUIViewController(_ uiViewController: PDFAuxiliaryTabbedViewController, context: Context) {
+        uiViewController.tabbedBar.frame.origin = CGPoint(x: 0, y: 90)
+    }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self, viewModel: viewModel)
     }
     
-    class Coordinator: NSObject {
+    class Coordinator: NSObject, PDFViewControllerDelegate {
         var parent: PDFAuxiliaryViewRepresentable
         var viewModel: DocumentViewModel
         private var cancellable: AnyCancellable?
@@ -181,7 +190,38 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
             DispatchQueue.main.async { [self] in
                 cancellable = viewModel.$documentUserInput.sink { newValue in
                     self.parent.loadUserInput(documentUserInput: newValue)
-                }                
+                }
+            }
+        }
+        
+        func pdfViewController(_ pdfController: PDFViewController, didFinishRenderTaskFor: PDFPageView) {
+            fixTabBar()
+        }
+        
+        func pdfViewController(_ pdfController: PDFViewController, didExecute: Action) {
+            fixTabBar()
+        }
+        
+        func pdfViewController(_ pdfController: PDFViewController, didShowUserInterface: Bool) {
+            fixTabBar()
+        }
+
+        func pdfViewController(_ pdfController:PDFViewController, didCleanupPageView: PDFPageView, forPageAt: Int) {
+            fixTabBar()
+        }
+        
+        func pdfViewController(_ pdfController:PDFViewController, didConfigurePageView: PDFPageView, forPageAt: Int) {
+            fixTabBar()
+        }
+        
+        func pdfViewController(_ pdfController: PDFViewController, didChange: Document?) {
+            fixTabBar()
+        }
+        
+        func fixTabBar () {
+            if let t = parent.tabbedPDFController, parent.viewType == .segment {
+                t.tabbedBar.frame.origin = CGPoint(x: 0, y: 90)
+//                t.tabbedBar.frame.origin = CGPoint(x: 0, y: 0)
             }
         }
         
@@ -218,14 +258,31 @@ struct PDFAuxiliaryView: View {
             showNavigationBarButtons: showNavigationBarButtons,
             pdfTabbedViewController: $pdfTabbedViewController
         )
-        .edgesIgnoringSafeArea(.all)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
-        .onChange(of: showNavigationBarButtons) { newValue in
-            if newValue {
-                pdfTabbedViewController?.setButtons()
-            } else {
-                pdfTabbedViewController?.clearButtons()
+        .toolbar {
+            ToolbarItem {
+                Button(action: {
+                    (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleAnnotations()
+                }) {
+                    Image(systemName: "pencil.tip.crop.circle").imageScale(.medium)
+                }
+            }
+            
+            ToolbarItem {
+                Button(action: {
+                    (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleOutline()
+                }) {
+                    Image(systemName: "bookmark").imageScale(.medium)
+                }
+            }
+            
+            ToolbarItem {
+                Button(action: {
+                    (pdfTabbedViewController?.pdfController as? PDFAuxiliaryViewController)?.toggleSettings()
+                }) {
+                    Image(systemName: "gearshape").imageScale(.medium)
+                }
             }
         }
     }

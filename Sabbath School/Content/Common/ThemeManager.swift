@@ -22,6 +22,102 @@
 
 import SwiftUI
 
+struct ReaderStyle {
+    enum Theme: String {
+        case light
+        case sepia
+        case dark
+        case auto
+
+//        static var items: [Theme] {
+//            return [
+//                .light,
+//                .sepia,
+//                .dark,
+//                .auto
+//            ]
+//        }
+//
+//        var backgroundColor: UIColor {
+//            switch self {
+//            case .light: return AppStyle.Reader.Color.white
+//            case .sepia: return AppStyle.Reader.Color.sepia
+//            case .dark: return AppStyle.Reader.Color.dark
+//            case .auto: return AppStyle.Reader.Color.auto
+//            }
+//        }
+//
+//        var navBarColor: UIColor {
+//            switch self {
+//            case .light: return AppStyle.Reader.Color.white
+//            case .sepia: return AppStyle.Reader.Color.sepia
+//            case .dark: return AppStyle.Reader.Color.dark
+//            case .auto: return AppStyle.Reader.Color.auto
+//            }
+//        }
+//
+//        var navBarTextColor: UIColor {
+//            switch self {
+//            case .light: return .black
+//            case .sepia: return .black
+//            case .dark: return .white
+//            case .auto:
+//                return Preferences.darkModeEnable() ? UIColor.white:UIColor.black
+//            }
+//        }
+    }
+
+    enum Typeface: String {
+        case andada
+        case lato
+        case ptSerif = "pt-serif"
+        case ptSans = "pt-sans"
+
+//        static var items: [Typeface] {
+//            return [
+//                .andada,
+//                .lato,
+//                .ptSerif,
+//                .ptSans
+//            ]
+//        }
+    }
+
+    enum Size: String, CaseIterable {
+        case tiny
+        case small
+        case medium
+        case large
+        case huge
+
+//        static var items: [Size] {
+//            return [
+//                .tiny,
+//                .small,
+//                .medium,
+//                .large,
+//                .huge
+//            ]
+//        }
+    }
+
+//    enum Highlight: String {
+//        case green
+//        case blue
+//        case orange
+//        case yellow
+//
+//        static var items: [Highlight] {
+//            return [
+//                .green,
+//                .blue,
+//                .orange,
+//                .yellow
+//            ]
+//        }
+//    }
+}
+
 class ThemeManager: ObservableObject {
     @Published var currentTheme: ReaderStyle.Theme = .auto
     @Published var backgroundColor: Color = Preferences.darkModeEnable() ? .black : .white

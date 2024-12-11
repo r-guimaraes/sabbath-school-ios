@@ -40,17 +40,21 @@ import SwiftUI
     }
     
     func downloadFont(from url: URL, completion: @escaping (URL?) -> Void) {
+        let fileManager = FileManager.default
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
+        
+        if fileManager.fileExists(atPath: destinationURL.path) {
+            completion(destinationURL)
+            return
+        }
+        
         let task = URLSession.shared.downloadTask(with: url) { location, response, error in
-            let fileManager = FileManager.default
-            let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let destinationURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
-
             do {
-                if fileManager.fileExists(atPath: destinationURL.path) {
-                    completion(destinationURL)
-                    return
-                }
-                
+                let fileManager = FileManager.default
+                let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+                let destinationURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
+
                 guard let location = location, error == nil else {
                     completion(nil)
                     return

@@ -24,6 +24,14 @@ import Foundation
 import Combine
 import SwiftUI
 
+func getAppVisibleSize() -> CGSize {
+    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+          let window = windowScene.windows.first else {
+        return UIScreen.main.bounds.size
+    }
+    return window.bounds.size
+}
+
 class ScreenSizeMonitor: ObservableObject {
     @Published var screenSize: CGSize = UIScreen.main.bounds.size
     
@@ -32,14 +40,14 @@ class ScreenSizeMonitor: ObservableObject {
     init() {
         NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
             .sink { [weak self] _ in
-                self?.updateScreenSize()
+                self?.updateAppSize()
             }
             .store(in: &cancellables)
     }
     
-    private func updateScreenSize() {
+    func updateAppSize() {
         DispatchQueue.main.async {
-            self.screenSize = UIScreen.main.bounds.size
+            self.screenSize = getAppVisibleSize()
         }
     }
     

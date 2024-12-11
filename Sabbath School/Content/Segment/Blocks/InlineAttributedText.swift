@@ -47,6 +47,7 @@ struct InlineTextViewWrapper: UIViewRepresentable {
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainer.widthTracksTextView = true
         textView.textContainer.lineBreakMode = .byWordWrapping
+        textView.accessibilityElementsHidden = true
 
         textView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
         
@@ -292,7 +293,6 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         )
           .frame(height: height, alignment: .leading)
           .padding(0)
-        
     }
     
     private func handleURL(url: URL) {

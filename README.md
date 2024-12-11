@@ -1,6 +1,6 @@
 Sabbath School for iOS
 ============
-[![Travis](https://img.shields.io/travis/Adventech/sabbath-school-ios.svg)](https://travis-ci.org/Adventech/sabbath-school-ios) [![GitHub Stars](https://img.shields.io/github/stars/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/issues) [![Itunes App Store](https://img.shields.io/itunes/v/895272167.svg)](https://itunes.apple.com/us/app/sabbath-school/id895272167?mt=8) [![license](https://img.shields.io/github/license/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/blob/master/LICENSE.md)
+[![GitHub Stars](https://img.shields.io/github/stars/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/issues) [![Itunes App Store](https://img.shields.io/itunes/v/895272167.svg)](https://itunes.apple.com/us/app/sabbath-school/id895272167?mt=8) [![license](https://img.shields.io/github/license/Adventech/sabbath-school-ios.svg)](https://github.com/Adventech/sabbath-school-ios/blob/master/LICENSE.md)
 
 ## Your support is important for us
 
@@ -27,11 +27,8 @@ This is Sabbath School for iOS by Adventech. Humble attempt to make difference w
 - [x] Previous quarterlies 📚
 - [x] Multiple Bible versions ✝️
 - [x] Reading themes 🕶
-- [ ] Progress analytics 📊
-- [ ] List notes & highlights ⭐️
-- [ ] Apple TV support 📺
-- [ ] Push notifications 🔔
-- [ ] Spotlight search 🔎
+- [x] Apple TV support 📺
+- [x] Spotlight search 🔎
 
 ## Special thanks
 

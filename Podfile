@@ -4,7 +4,6 @@ inhibit_all_warnings!
 
 target 'Sabbath School' do
   pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/pspdfkit-ios/14.2.1.podspec'
-  pod 'Down'
   pod 'FontBlaster'
   pod 'GoogleSignIn'
   pod 'Hue'
@@ -30,19 +29,5 @@ post_install do |installer|
       fix_config(config)
      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
     end
-
-    if target.name == 'Armchair'
-      target.build_configurations.each do |config|
-        if config.name == 'Debug'
-          config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDebug'
-        else
-          config.build_settings['OTHER_SWIFT_FLAGS'] = ''
-        end
-      end
-    end
   end
-end
-
-target 'SnapshotUITests' do
-    pod 'SimulatorStatusMagic', :configurations => ['Debug']
 end

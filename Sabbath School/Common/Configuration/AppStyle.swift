@@ -20,841 +20,870 @@
  * THE SOFTWARE.
  */
 
-import Foundation
+import SwiftUI
 
-struct AppStyle {
-    
+infix operator |: AdditionPrecedence
+
+public extension Color {
+    static func | (lightMode: Color, darkMode: Color) -> Color {
+        return Color(UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .light ? UIColor(lightMode) : UIColor(darkMode)
+        })
+    }
 }
 
-//
-//struct AppStyle {
-//    struct Base {
-//        struct Button {
-//            static func pillButtonUIEdgeInsets() -> UIEdgeInsets {
-//                return UIEdgeInsets(top: 0, left: 40, bottom: 8, right: 8)
-//            }
-//        }
-//        
-//        struct Color {
-//            static var navigationTitle: UIColor {
-//                return .black | .white
-//            }
-//            
-//            static var navigationTint: UIColor {
-//                return AppStyle.Base.Color.navigationTitle
-//            }
-//            
-//            static var background: UIColor {
-//                return .white | .black
-//            }
-//            
-//            static var text: UIColor {
-//                return .baseGray3 | .baseGray1
-//            }
-//            
-//            static var tableCellBackground: UIColor {
-//                return .white | .black
-//            }
-//            
-//            static var control: UIColor {
-//                return .baseGray1 | .baseGray5
-//            }
-//            
-//            static var controlActive: UIColor {
-//                return AppStyle.Base.Color.tint | .baseGray1
-//            }
-//            
-//            static var controlActive2: UIColor {
-//                return AppStyle.Base.Color.tint | .white
-//            }
-//            
-//            static var tableCellBackgroundHighlighted: UIColor {
-//                return AppStyle.Base.Color.control
-//            }
-//            
-//            static var tableSeparator: UIColor {
-//                return .baseGray1 | .baseGray5
-//            }
-//            
-//            static var shimmering: UIColor {
-//                return AppStyle.Base.Color.control
-//            }
-//            
-//            static var tint: UIColor {
-//                return AppStyle.Base.Color.navigationTint
-//            }
-//        }
-//        
-//        struct Text {
-//            static func navBarButton(string: String, color: UIColor = AppStyle.Base.Color.navigationTitle) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: color,
-//                    .font: R.font.latoRegular(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Login {
-//        struct Color {
-//            static var facebookBlue: UIColor {
-//                return UIColor(hex: "#3B529A")
-//            }
-//            
-//            static var background: UIColor {
-//                return .baseGray1 | .black
-//            }
-//            
-//            static var foreground: UIColor {
-//                return .baseBlue | .white
-//            }
-//        }
-//        
-//        struct Text {
-//            static func signInButton(string: String, color: UIColor = .baseGray3) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: color,
-//                    .font: R.font.latoBold(size: 16)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func signInButtonAnonymous(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoBold(size: 16)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func appName(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Login.Color.foreground,
-//                    .font: R.font.latoBold(size: 26)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Language {
-//        struct Color {
-//            static var background: UIColor {
-//                return AppStyle.Base.Color.tableCellBackground
-//            }
-//            
-//            static var backgroundHighlighted: UIColor {
-//                return AppStyle.Base.Color.tableCellBackgroundHighlighted
-//            }
-//        }
-//        
-//        struct Text {
-//            static func name(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoRegular(size: 17)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func translated(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 13)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func search() -> [String: Any] {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoRegular(size: 17)!
-//                ]
-//                return AppStyle.convertTypingAttribute(attributes)
-//            }
-//            
-//            static func searchPlaceholder(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 17)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Quarterly {
-//        struct Size {
-//            static func coverImage() -> CGSize {
-//                let defaultSize = CGSize(width: 187, height: 276)
-//                if Helper.isPad { return defaultSize }
-//                
-//                let width = UIScreen.main.bounds.width / 2.7
-//                
-//                return CGSize(width: width, height: width / (defaultSize.width / defaultSize.height))
-//            }
-//            
-//            static func xPadding() -> CGFloat {
-//                return Helper.isPad ? 20 : 10
-//            }
-//            
-//            static func xInset() -> CGFloat {
-//                return 10
-//            }
-//        }
-//        
-//        struct Button {
-//            static func openButtonUIEdgeInsets() -> UIEdgeInsets {
-//                return AppStyle.Base.Button.pillButtonUIEdgeInsets()
-//            }
-//        }
-//        
-//        struct Color {
-//            static var background: UIColor {
-//                return AppStyle.Base.Color.tableCellBackground
-//            }
-//            
-//            static var backgroundHighlighted: UIColor {
-//                return AppStyle.Base.Color.tableCellBackgroundHighlighted
-//            }
-//            
-//            static var gradientStart: UIColor {
-//                return .white | .black
-//            }
-//            
-//            static var gradientEnd: UIColor {
-//                return UIColor.baseWhite1.lighter() | .black
-//            }
-//            
-//            static var seeAll: UIColor {
-//                return UIColor.baseBlue | .white
-//            }
-//            
-//            static var seeAllIcon: UIColor {
-//                return UIColor.baseGray2.lighter(componentDelta: 0.2) | UIColor.white
-//            }
-//            
-//            static var introduction: UIColor {
-//                return UIColor(hex: "#222222") | UIColor(hex: "#ADADAD")
-//            }
-//        }
-//        
-//        struct Text {
-//            static func introduction(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoMedium(size: 18)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func mainTitle(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.navigationTitle,
-//                    .font: R.font.latoBlack(size: 36)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func groupName(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: .baseBlue | UIColor.baseGray2,
-//                    .font: R.font.latoBold(size: 13)!
-//                ]
-//                return NSAttributedString(string: string.uppercased(), attributes: attributes)
-//            }
-//            
-//            static func seeMore(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Quarterly.Color.seeAll,
-//                    .font: R.font.latoRegular(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func titleV2(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.navigationTitle,
-//                    .font: R.font.latoBold(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func title(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoBold(size: 24)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func featuredTitle(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.white,
-//                    .font: R.font.latoBold(size: 30)!,
-//                    .paragraphStyle: style
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func humanDate(string: String, color: UIColor = UIColor.white.withAlphaComponent(0.7)) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: color,
-//                    .font: R.font.latoBold(size: 13)!
-//                ]
-//                return NSAttributedString(string: string.uppercased(), attributes: attributes)
-//            }
-//            
-//            static func openButton(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.white,
-//                    .font: R.font.latoBold(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func gcPopupText(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .left
-//                style.lineSpacing = 6
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 18)!,
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//        
-//        struct Style {
-//            static var introductionStylesheet: String {
-//                return "body { font-size: 1.6em; line-height: 1.4em; font-family: 'Lato', sans-serif; color: \(AppStyle.Quarterly.Color.introduction.hex()) }"
-//            }
-//        }
-//    }
-//    
-//    struct Lesson {
-//        struct Size {
-//            static func coverImage() -> CGSize {
-//                let defaultSize = CGSize(width: 187, height: 276)
-//                if Helper.isPad { return defaultSize }
-//                
-//                let width = UIScreen.main.bounds.width / 2.7
-//                
-//                return CGSize(width: width, height: width / (defaultSize.width / defaultSize.height))
-//            }
-//            
-//            static func splashCoverImageHeight() -> CGFloat {
-//                return UIScreen.main.bounds.height / 1.7
-//            }
-//            
-//            static func featureImage() -> CGSize {
-//                return CGSize(width: 16, height: 12)
-//            }
-//        }
-//        
-//        struct Button {
-//            static func readButtonUIEdgeInsets() -> UIEdgeInsets {
-//                return AppStyle.Base.Button.pillButtonUIEdgeInsets()
-//            }
-//        }
-//        
-//        struct Color {
-//            static var background: UIColor {
-//                return AppStyle.Base.Color.tableCellBackground
-//            }
-//            
-//            static var backgroundHighlighted: UIColor {
-//                return AppStyle.Base.Color.tableCellBackgroundHighlighted
-//            }
-//            
-//            static var copyright: UIColor {
-//                return .baseGray2 | .baseGray3
-//            }
-//            
-//            static var publishingHouseInfo: UIColor {
-//                return .baseGray2 | .baseGray3
-//            }
-//            
-//            static var backgroundFooter: UIColor {
-//                return .baseGray1 | UIColor.black.lighter()
-//            }
-//        }
-//        
-//        struct Text {
-//            static func readButton(string: String) -> NSAttributedString {
-//                return AppStyle.Quarterly.Text.openButton(string: string)
-//            }
-//            
-//            static func title(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoMedium(size: 18)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func dateRange(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 16)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func introduction(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.white,
-//                    .font: R.font.latoMedium(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func index(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2.withAlphaComponent(0.5),
-//                    .font: R.font.latoBold(size: 22)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func creditsName(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoBold(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func creditsValue(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func copyright(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Lesson.Color.copyright,
-//                    .font: R.font.latoRegular(size: 15)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func publishingHouseInfo(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Lesson.Color.copyright,
-//                    .font: R.font.latoRegular(size: 13)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Read {
-//        struct Color {
-//            static var background: UIColor {
-//                return .baseWhite1 | .baseGray5
-//            }
-//            
-//            static var tint: UIColor {
-//                return AppStyle.Base.Color.tint | .white
-//            }
-//        }
-//        
-//        struct Text {
-//            static func title(string: String, color: UIColor = .white) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: color,
-//                    .font: R.font.latoBold(size: 36)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func date(string: String) -> NSAttributedString {
-//                return AppStyle.Quarterly.Text.humanDate(string: string, color: UIColor.white.withAlphaComponent(0.7))
-//            }
-//        }
-//    }
-//    
-//    struct ReadOptions {
-//        struct Text {
-//            static func button() -> [NSAttributedString.Key: Any] {
-//                return [
-//                    .font: R.font.latoRegular(size: 16)!,
-//                    .foregroundColor: UIColor.baseGray2
-//                ]
-//            }
-//            
-//            static func buttonSelected() -> [NSAttributedString.Key: Any] {
-//                return [
-//                    .font: R.font.latoRegular(size: 16)!,
-//                    .foregroundColor: AppStyle.Base.Color.controlActive2
-//                ]
-//            }
-//            
-//            static func fontSizeSmallest(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 16)!,
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .paragraphStyle: style
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func fontSizeLargest(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoBold(size: 24)!,
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .paragraphStyle: style
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Reader {
-//        struct Color {
-//            static var white: UIColor {
-//                return UIColor(hex: "#FDFDFD")
-//            }
-//
-//            static var dark: UIColor {
-//                return UIColor(hex: "#000000")
-//            }
-//
-//            static var sepia: UIColor {
-//                return UIColor(hex: "#FBF0D9")
-//            }
-//
-//            static var auto: UIColor {
-//                Preferences.darkModeEnable() ? dark:white
-//            }
-//        }
-//    }
-//    
-//    struct Bible {
-//        struct Text {
-//            static func title(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: R.font.latoRegular(size: 17)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Audio {
-//        struct Color {
-//            static var topIndicator: UIColor {
-//                return .baseGray1 | .baseGray2
-//            }
-//            
-//            static var progressThumb: UIColor {
-//                return UIColor.baseWhite1.darker() | .baseGray1
-//            }
-//            
-//            static var progressTint: UIColor {
-//                return .baseGray1 | .baseGray3
-//            }
-//            
-//            static var auxControls: UIColor {
-//                return .baseBlue | UIColor.baseGray2
-//            }
-//            
-//            static var miniPlayerBackground: UIColor {
-//                return .baseGray1 | UIColor.black.lighter()
-//            }
-//        }
-//        
-//        struct Size {
-//            static func coverImage(coverRatio: String = "portrait", isMini: Bool = false) -> CGSize {
-//                let isSquare: Bool = coverRatio == "square"
-//                
-//                let defaultSize = isSquare ? CGSize(width: 276, height: 276) : CGSize(width: 187, height: 276)
-//                
-//                var width = Helper.isPad ? defaultSize.width : UIScreen.main.bounds.width / (isSquare ? 1.5 : 2.7)
-//                var height = Helper.isPad ? defaultSize.height : width / (defaultSize.width / defaultSize.height)
-//                
-//                if isMini {
-//                    width /= 2
-//                    height /= 2
-//                }
-//                
-//                return CGSize(width: width, height: height)
-//            }
-//            
-//            static func miniPlayerWidth(constrainedWidth: CGFloat) -> CGFloat {
-//                return constrainedWidth > 650 ? 650 : constrainedWidth
-//            }
-//        }
-//        
-//        struct Text {
-//            static func title(string: String, alignment: NSTextAlignment = .center, small: Bool = false) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = alignment
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: small ? R.font.latoMedium(size: 18)! : R.font.latoBlack(size: 21)!,
-//                    .paragraphStyle: style
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func artist(string: String, alignment: NSTextAlignment = .center, small: Bool = false) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = alignment
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: small ? R.font.latoRegular(size: 14)! : R.font.latoRegular(size: 17)!,
-//                    .paragraphStyle: style
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func playlistTitle(string: String, isCurrent: Bool = false) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .font: isCurrent ? R.font.latoBlack(size: 16)! : R.font.latoMedium(size: 16)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func playlistArtist(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 14)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func miniPlayerTitle(string: String, isCurrent: Bool = false) -> NSAttributedString {
-//                return AppStyle.Audio.Text.playlistTitle(string: string, isCurrent: isCurrent)
-//            }
-//
-//            static func miniPlayerArtist(string: String) -> NSAttributedString {
-//                return AppStyle.Audio.Text.playlistArtist(string: string)
-//            }
-//            
-//            static func time(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseWhite1.darker() | .baseGray2,
-//                    .font: R.font.latoBold(size: 14)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func rate(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Audio.Color.auxControls,
-//                    .font: R.font.latoBold(size: 18)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Video {
-//        struct Size {
-////            static func thumbnail(viewMode: VideoCollectionItemViewMode = .horizontal, constrainedWidth: CGFloat = 0.0) -> CGSize {
-////                let defaultSize = CGSize(width: 276, height: 149)
-////                
-////                let ratio: CGFloat = viewMode == .vertical ? 2.7 : 1.2
-////                
-////                var maxWidth: CGFloat = viewMode == .vertical && constrainedWidth > 0 ? constrainedWidth : UIScreen.main.bounds.width
-////                
-////                if Helper.isPad && viewMode == .horizontal {
-////                    maxWidth = defaultSize.width
-////                }
-////                
-////                let width = maxWidth / ratio
-////                
-////                let height = width / (defaultSize.width / defaultSize.height)
-////                
-////                return CGSize(width: width, height: height)
-////            }
-//        }
-//        
-//        struct Text {
-//            static func collectionTitle(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: .baseBlue | UIColor.baseGray2,
-//                    .font: R.font.latoBold(size: 13)!
-//                ]
-//                return NSAttributedString(string: string.uppercased(), attributes: attributes)
-//            }
-//            
-//            static func title(string: String, featured: Bool = false) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: AppStyle.Base.Color.navigationTitle,
-//                    .font: R.font.latoBold(size: featured ? 19 : 16)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func subtitle(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoRegular(size: 14)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func duration(string: String) -> NSAttributedString {
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.white,
-//                    .font: R.font.latoMedium(size: 12)!
-//                ]
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct About {
-//        struct Text {
-//            static func slogan(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 15)!,
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func url(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 18)!,
-//                    .foregroundColor: AppStyle.Base.Color.controlActive2,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func text(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .left
-//                style.lineSpacing = 6
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 18)!,
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func signature(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .left
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoBold(size: 18)!,
-//                    .foregroundColor: AppStyle.Base.Color.text,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    struct Settings {
-//        struct Text {
-//            static func header(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .left
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoMedium(size: 12)!,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string.uppercased(), attributes: attributes)
-//            }
-//
-//            static func footer(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .left
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .font: R.font.latoMedium(size: 12)!,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func copyright(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 11)!,
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//
-//            static func title(string: String, danger: Bool = false) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 16)!,
-//                    .foregroundColor: danger ? UIColor.baseRed : AppStyle.Base.Color.text,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//            
-//            static func detail(string: String) -> NSAttributedString {
-//                let style = NSMutableParagraphStyle()
-//                style.alignment = .center
-//
-//                let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: R.font.latoRegular(size: 15)!,
-//                    .foregroundColor: UIColor.baseGray2,
-//                    .paragraphStyle: style
-//                ]
-//
-//                return NSAttributedString(string: string, attributes: attributes)
-//            }
-//        }
-//    }
-//    
-//    static func convertTypingAttribute(_ attributes: [NSAttributedString.Key: Any]) -> [String: Any] {
-//        var typingAttribute: [String: Any] = [:]
-//        
-//        for key in attributes.keys {
-//            guard let attr = attributes[key] else { continue }
-//            typingAttribute[key.rawValue] = attr
-//        }
-//        
-//        return typingAttribute
-//    }
-//}
+
+struct AppStyle {
+    struct Base {
+        static var backgroundColor: Color {
+            return .white | .black
+        }
+        
+        static func navigationTitle(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = Font.custom("Lato-Black", size: 36)
+            return result
+        }
+    }
+    
+    struct Login {
+        static func appName(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .baseBlue | .white
+            result.font = Font.custom("Lato-Bold", size: 26)
+            return result
+        }
+        
+        static func signInButton(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .baseGray3
+            result.font = Font.custom("Lato-Bold", size: 16)
+            return result
+        }
+        
+        static func signInButtonAnonymous(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .baseGray3 | .baseGray1
+            result.font = Font.custom("Lato-Bold", size: 16)
+            return result
+        }
+        
+        static var verticalSpacing: CGFloat {
+            return 10.0
+        }
+        
+        static var appLogoHeight: CGFloat {
+            return 120.0
+        }
+        
+        static var appLogoSpacing: CGFloat {
+            return 40.0
+        }
+        
+        static var buttonSize: CGSize {
+            return CGSize(width: 240, height: 45)
+        }
+        
+        static var backgroundColor: Color {
+            return Color(uiColor: .baseGray1 | .black)
+        }
+    }
+    
+    struct About {
+        static func text(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.5)
+            result.font = Font.custom("Lato-Regular", size: 18)
+            return result
+        }
+        
+        static func url(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = Font.custom("Lato-Black", size: 18)
+            return result
+        }
+        
+        static func signature(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.5)
+            result.font = Font.custom("Lato-Bold", size: 18)
+            return result
+        }
+    }
+    
+    struct Audio {
+        static func title(_ string: String, small: Bool = false) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = small ? Font.custom("Lato-Medium", size: 18) : Font.custom("Lato-Black", size: 21)
+            return result
+        }
+
+        static func artist(_ string: String, small: Bool = false) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.7)
+            result.font = small ? Font.custom("Lato-Regular", size: 14) : Font.custom("Lato-Regular", size: 17)
+            return result
+        }
+        
+        static func playlistTitle(_ string: String, isCurrent: Bool = false) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = isCurrent ? Font.custom("Lato-Black", size: 16) : Font.custom("Lato-Medium", size: 16)
+            return result
+        }
+
+        static func playlistArtist(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.7)
+            result.font = Font.custom("Lato-Regular", size: 14)
+            return result
+        }
+        
+        static func miniPlayerTitle(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.7)
+            result.font = Font.custom("Lato-Bold", size: 16)
+            return result
+        }
+        
+        static func miniPlayerArtist(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.7)
+            result.font = Font.custom("Lato-Regular", size: 15)
+            return result
+        }
+        
+        static func time(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.5)
+            result.font = Font.custom("Lato-Bold", size: 14)
+            return result
+        }
+        
+        static func rate(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = Font.custom("Lato-Bold", size: 18)
+            return result
+        }
+        
+        static var miniPlayerHeight: CGFloat {
+            return 60
+        }
+        
+        static var miniPlayerContentPadding: CGFloat {
+            return 10
+        }
+        
+        static var miniPlayerCornerRadius: CGFloat {
+            return 15
+        }
+        
+        static var miniPlayerWrapperPadding: CGFloat {
+            return 20
+        }
+    }
+    
+    struct Language {
+        static func name(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = .black | .white
+            result.font = Font.custom("Lato-Regular", size: 17)
+            return result
+        }
+        
+        static func translated(_ string: String) -> AttributedString {
+            var result = AttributedString(string)
+            result.foregroundColor = (.black | .white).opacity(0.5)
+            result.font = Font.custom("Lato-Regular", size: 13)
+            return result
+        }
+    }
+    
+    struct Feed {
+        struct Spacing {
+            static var horizontalPadding: CGFloat {
+                return 20.0
+            }
+            
+            static var betweenResources: CGFloat {
+                return 20.0
+            }
+            
+            static var insideBanner: CGFloat {
+                return 15.0
+            }
+            
+            static func betweenCoverAndTitle(_ direction: FeedGroupDirection) -> CGFloat {
+                return direction == .horizontal ? 10.0 : 15.0
+            }
+            
+            static var betweenTitleAndSubtitle: CGFloat {
+                return 5.0
+            }
+        }
+        
+        struct GroupTitle {
+            static func text(_ string: String) -> AttributedString {
+                var result = AttributedString(string.uppercased())
+                result.foregroundColor = .baseBlue | .white.opacity(0.5)
+                result.font = Font.custom("Lato-Bold", size: 13)
+                return result
+            }
+        }
+        
+        struct SeeAllTitle {
+            static func text(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .baseBlue | .white
+                result.font = Font.custom("Lato-Regular", size: 15)
+                return result
+            }
+        }
+        
+        struct Title {
+            static func text(_ string: String, _ larger: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black | .white
+                result.font = Font.custom("Lato-Bold", size: larger ? 20 : 15)
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 2
+            }
+        }
+        
+        struct Subtitle {
+            static func text(_ string: String, _ larger: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.font = Font.custom("Lato-Regular", size: 14)
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 2
+            }
+        }
+        
+        struct Cover {
+            // Calculates and returnes the size for the cover used in the Feed
+            static func size(_ coverType: ResourceCoverType,
+                             _ direction: FeedGroupDirection,
+                             _ viewType: FeedGroupViewType,
+                             _ initialWidth: CGFloat = UIScreen.main.bounds.width) -> CGSize {
+                let COVER_MAX_WIDTH = 210.0
+                var width: CGFloat = initialWidth - 40 // TODO: spacing * 2
+                var height = 200.0
+                
+                if direction == .vertical {
+                    switch coverType {
+                    case .landscape:
+                        if (viewType == .tile) {
+                            width = width * 0.35
+                        }
+                        height = width / coverType.aspectRatio
+                    case .portrait:
+                        width = width * 0.30
+                    case .square:
+                        width = width * 0.30
+                    case .splash:
+                        height = width / coverType.aspectRatio
+                    }
+                }
+                
+                if direction == .horizontal {
+                    switch coverType {
+                    case .landscape:
+                        if (Helper.isPad) {
+                            width = width * 0.4
+                        } else {
+                            width = viewType == .banner ? width * 0.9 : width * 0.70
+                        }
+                        
+                    case .portrait:
+                        width = width * 0.40
+                    case .square:
+                        width = width * 0.40
+                    case .splash:
+                        height = width / coverType.aspectRatio
+                    }
+                }
+                
+                if (Helper.isPad
+                    && ((direction == .horizontal && (viewType == .square || viewType == .folio))
+                    || (direction == .vertical && (viewType == .square || viewType == .folio)))) {
+                    width = min(width, COVER_MAX_WIDTH)
+                }
+                
+                height = width / coverType.aspectRatio
+                
+                return CGSize(width: width, height: height)
+            }
+        }
+    }
+    
+    struct Resource {
+        
+        struct Introduction {
+            static var stylesheet: String {
+                return "body { font-size: 1.6em; line-height: 1.4em; font-family: 'Lato', sans-serif; color: \((.black | .white).hex()) }"
+            }
+        }
+        
+        struct Spacing {
+            static var betweenTitleSubtitleReadButonDescription: CGFloat {
+                return 20.0
+            }
+            
+            static var topPaddingForNonSplashImage: CGFloat {
+                return 120.0
+            }
+            
+            static var paddingForNonSplashHeader: CGFloat {
+                return Helper.isPad ? 80.0 : 0
+            }
+            
+            static var paddingForSplashHeader: CGFloat {
+                return 20.0
+            }
+            
+            static var paddingForFooter: CGFloat {
+                return 20.0
+            }
+        }
+        
+        struct Splash {
+            static var height: CGFloat {
+                return UIScreen.main.bounds.height * (Helper.isPad && Helper.isLandscape ? 0.8 : 0.6)
+            }
+            
+            static var gradientBlurHeight: CGFloat {
+                return AppStyle.Resource.Splash.height * 0.5
+            }
+        }
+        
+        struct Cover {
+            // Calculates and returnes the size for the cover used in the Resource for non splash
+            static func size(_ coverType: ResourceCoverType) -> CGSize {
+                let width: CGFloat = Helper.isPad ? 200 : UIScreen.main.bounds.width / 2.5
+                let height = width / coverType.aspectRatio
+                
+                return CGSize(width: width, height: height)
+            }
+        }
+        
+        struct Header {
+            static func frameAlignment(_ noSplash: Bool) -> Alignment {
+                return noSplash && Helper.isPad ? .leading : .center
+            }
+            
+            static func textAlignment(_ noSplash: Bool) -> TextAlignment {
+                return noSplash && Helper.isPad ? .leading : .center
+            }
+            
+            static func frameWidth(_ noSplash: Bool, _ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
+                let width = noSplash && Helper.isPad
+                ? width - AppStyle.Resource.Cover.size(.portrait).width - AppStyle.Resource.Spacing.betweenTitleSubtitleReadButonDescription
+                    : width
+                return width - AppStyle.Resource.Spacing.paddingForSplashHeader * 2
+            }
+        }
+        
+        struct Title {
+            static func text(_ string: String, _ style: Style?) -> AttributedString {
+                var result = Styler.getStyledText(string, style, ResourceTitleStyleTemplate())
+                if style == nil {
+                    result.foregroundColor = .white
+                    result.font = Font.custom("Lato-Black", size: 30)
+                }
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 3
+            }
+        }
+        
+        struct Subtitle {
+            static func text(_ string: String, _ style: Style?) -> AttributedString {
+                var result = Styler.getStyledText(string, style, ResourceSubtitleStyleTemplate())
+                if style == nil {
+                    result.foregroundColor = .white.opacity(0.7)
+                    result.font = Font.custom("Lato-Bold", size: 13)
+                }
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 2
+            }
+        }
+        
+        struct Description {
+            static func text(_ string: String, _ style: Style?) -> AttributedString {
+                var result = Styler.getStyledText(string, style, ResourceDescriptionStyleTemplate())
+                if style == nil {
+                    result.foregroundColor = .white
+                    result.font = Font.custom("Lato-Medium", size: 15)
+                }
+                return result
+            }
+            
+            static func textMoreButton(_ string: String, _ color: Color = .white) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = color
+                result.font = Font.custom("Lato-MediumItalic", size: 15)
+                result.underlineStyle = .single
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 3
+            }
+        }
+        
+        struct ReadButton {
+            static func text(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .white
+                result.font = Font.custom("Lato-Bold", size: 15)
+                return result
+            }
+            
+            static var lineLimit: Int {
+                return 1
+            }
+            
+            static var width: CGFloat {
+                return 200
+            }
+            
+            static var shadowRadius: CGFloat {
+                return 20.0
+            }
+            
+            static var horizontalPadding: CGFloat {
+                return 35.0
+            }
+            
+            static var verticalPadding: CGFloat {
+                return 8.0
+            }
+        }
+        
+        struct Credits {
+            static var spacingBetweenCredits: CGFloat {
+                return 20
+            }
+            
+            static func creditName(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.7)
+                result.font = Font.custom("Lato-Bold", size: 15)
+                return result
+            }
+            
+            static func creditValue(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.font = Font.custom("Lato-Regular", size: 15)
+                return result
+            }
+        }
+        
+        struct Features {
+            static var spacingBetweenSplashFeatures: CGFloat {
+                return 10
+            }
+            
+            static var spacingBetweenFeatures: CGFloat {
+                return 20
+            }
+            
+            static var spacingBetweenFeatureNameAndDescription: CGFloat {
+                return 10
+            }
+            
+            static var size: CGSize {
+                return CGSize(width: 16, height: 12)
+            }
+            
+            static func splashFeatureColor(_ featureColor: String? = nil) -> Color {
+                return Color(hex: featureColor ?? "#ffffff").opacity(0.7)
+            }
+            
+            static var color: Color {
+                return (.black | .white).opacity(0.7)
+            }
+            
+            static func featureName(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.7)
+                result.font = Font.custom("Lato-Bold", size: 15)
+                return result
+            }
+            
+            static func featureDescription(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.font = Font.custom("Lato-Regular", size: 15)
+                return result
+            }
+        }
+        
+        struct Section {
+            struct Title {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string.uppercased())
+                    result.foregroundColor = (.black | .white).opacity(0.4)
+                    result.font = Font.custom("Lato-Bold", size: 13)
+                    return result
+                }
+                
+                static var lineLimit: Int {
+                    return 2
+                }
+                
+                static var background: Color {
+                    return Color(.black | .white).opacity(0.03)
+                }
+                
+                static var padding: CGFloat {
+                    return 20.0
+                }
+            }
+            
+            struct Dropdown {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string)
+                    result.foregroundColor = .black | .white
+                    result.font = Font.custom("Lato-Bold", size: 18)
+                    return result
+                }
+                
+                static var chevronTint: Color {
+                    return .black | .white
+                }
+                
+                static var lineLimit: Int {
+                    return 1
+                }
+                
+                static var padding: CGFloat {
+                    return 20.0
+                }
+            }
+        }
+        
+        struct Document {
+            struct Spacing {
+                static var padding: CGFloat {
+                    return 20.0
+                }
+                
+                static var betweenTitleSubtitleAndDate: CGFloat {
+                    return 5.0
+                }
+            }
+            
+            struct Title {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string)
+                    result.foregroundColor = .black | .white
+                    result.font = Font.custom("Lato-Medium", size: 18)
+                    return result
+                }
+                
+                static var lineLimit: Int {
+                    return 2
+                }
+            }
+            
+            struct Subtitle {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string)
+                    result.foregroundColor = (.black | .white).opacity(0.5)
+                    result.font = Font.custom("Lato-Regular", size: 16)
+                    return result
+                }
+                
+                static var lineLimit: Int {
+                    return 1
+                }
+            }
+            
+            struct Date {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string)
+                    result.foregroundColor = (.black | .white).opacity(0.5)
+                    result.font = Font.custom("Lato-Regular", size: 16)
+                    return result
+                }
+                
+                static var lineLimit: Int {
+                    return 1
+                }
+            }
+            
+            struct Sequence {
+                static func text(_ string: String) -> AttributedString {
+                    var result = AttributedString(string)
+                    result.foregroundColor = (.black | .white).opacity(0.3)
+                    result.font = Font.custom("Lato-Bold", size: 22)
+                    return result
+                }
+                
+                static var lineLimit: Int {
+                    return 1
+                }
+            }
+        }
+        
+        struct Copyright {
+            static func text(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.font = Font.custom("Lato-Regular", size: 15)
+                return result
+            }
+        }
+        
+        struct Footer {
+            static var color: Color {
+                return (.black | .white).opacity(0.1)
+            }
+        }
+    }
+    
+    struct Segment {
+        struct Spacing {
+            static var betweenTitleDateAndSubtitle: CGFloat {
+                return 10.0
+            }
+            
+            static func horizontalPaddingHeader(_ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
+                return Helper.isPad ? (width * 0.10) + 20.0 : 20.0
+            }
+            
+            static var verticalPaddingHeader: CGFloat {
+                return 20.0
+            }
+            
+            static var verticalPaddingContent: CGFloat {
+                return 20.0
+            }
+            
+            static func horizontalPaddingContent(_ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
+                return Helper.isPad ? width * 0.10 : 0.0
+            }
+            
+            static var betweenBlocks: CGFloat {
+                return 20.0
+            }
+        }
+        
+        struct Cover {
+            static func percentageOfScreen(_ hasCover: Bool = true) -> CGFloat {
+                return hasCover ? 0.5 : 0.2
+            }
+            
+            static func height (_ hasCover: Bool = true) -> CGFloat {
+                return UIScreen.main.bounds.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
+            }
+        }
+        
+        struct Title {
+            static func text(_ string: String, _ hasCover: Bool, _ style: Style?) -> AttributedString {
+                let template = SegmentTitleStyleTemplate(hasCover: hasCover)
+                return Styler.getStyledText(string, style, template)
+            }
+            
+            static var lineLimit: Int {
+                return 3
+            }
+        }
+        
+        struct Subtitle {
+            static func text(_ string: String, _ hasCover: Bool, _ style: Style?) -> AttributedString {
+                let template = SegmentSubtitleStyleTemplate(hasCover: hasCover)
+                return Styler.getStyledText(string.uppercased(), style, template)
+            }
+            
+            static var lineLimit: Int {
+                return 2
+            }
+        }
+        
+        struct Date {
+            static func text(_ string: String, _ hasCover: Bool, _ style: Style?) -> AttributedString {
+                let template = SegmentSubtitleStyleTemplate(hasCover: hasCover)
+                return Styler.getStyledText(string.uppercased(), style, template)
+            }
+            
+            static var lineLimit: Int {
+                return 2
+            }
+        }
+    }
+    
+    struct Block {
+        static func text(_ text: String, _ style: Style?, _ block: AnyBlock?, _ template: StyleTemplate = BlockStyleTemplate()) -> AttributedString {
+            return Styler.getStyledText(text, style, template, block)
+        }
+        
+        static func heading(_ text: String, _ style: Style?, _ block: AnyBlock?, _ depth: HeadingDepth) -> AttributedString {
+            return AppStyle.Block.text(text, style, block, HeadingStyleTemplate(depth: depth))
+        }
+        
+        static var highlightGreen: Color {
+            return Color(hex: "#53E23F")
+        }
+        
+        static var highlighOrange: Color {
+            return Color(hex: "#F59569")
+        }
+        
+        static var highlightBlue: Color {
+            return Color(hex: "#3ACEFF")
+        }
+        
+        static var highlightYellow: Color {
+            return Color(hex: "#DBC94C")
+        }
+        
+        static func genericBackgroundColorForInteractiveBlock(theme: ReaderStyle.Theme) -> Color {
+            let light = Color(uiColor: .baseGray1)
+            let sepia = Color(hex: "#e6d7b8")
+            let dark = Color(hex: "#111827")
+            
+            switch theme {
+            case .light:
+                return light
+            case .sepia:
+                return sepia
+            case .dark:
+                return dark
+            case .auto:
+                return Helper.isDarkMode() ? dark : light
+            }
+        }
+        
+        static func genericForegroundColorForInteractiveBlock(theme: ReaderStyle.Theme) -> Color {
+            let light = Color.black
+            let sepia = Color(hex: "#d7bf8d")
+            let dark = Color.white
+            
+            switch theme {
+            case .light:
+                return light
+            case .sepia:
+                return sepia
+            case .dark:
+                return dark
+            case .auto:
+                return Helper.isDarkMode() ? dark : light
+            }
+        }
+        
+        struct Reference {
+            static var thumbnailSize: CGSize {
+                return CGSize(width: 40, height: 40)
+            }
+            
+            static func backgroundColor(theme: ReaderStyle.Theme) -> Color {
+                return AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: theme)
+            }
+        }
+        
+        struct Collapse {
+            static func backgroundColor(theme: ReaderStyle.Theme) -> Color {
+                return AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: theme)
+            }
+        }
+        
+        struct Checklist {
+            static func foregroundColor(theme: ReaderStyle.Theme) -> Color {
+                return AppStyle.Block.genericForegroundColorForInteractiveBlock(theme: theme)
+            }
+        }
+        
+        struct Question {
+            static func answerBackgroundColor(theme: ReaderStyle.Theme) -> Color {
+                let light = Color(hex: "#faf8fa")
+                let sepia = Color(hex: "#e6d7b8")
+                let dark = Color(hex: "#111827")
+                
+                switch theme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return Helper.isDarkMode() ? dark : light
+                }
+            }
+        }
+    }
+    
+    struct ThemeAux {
+        static func sizeIndicator(active: Bool) -> Color {
+            var color: Color = .black | .white
+            if !active {
+                color = color.opacity(0.2)
+            }
+            return color
+        }
+    }
+    
+    struct VideoAux {
+        struct Size {
+            static func thumbnail(viewMode: VideoCollectionItemViewMode = .horizontal, constrainedWidth: CGFloat = 0.0) -> CGSize {
+                let defaultSize = CGSize(width: 276, height: 149)
+                
+                let ratio: CGFloat = viewMode == .vertical ? 2.7 : 1.2
+                
+                var maxWidth: CGFloat = viewMode == .vertical && constrainedWidth > 0 ? constrainedWidth : UIScreen.main.bounds.width
+                
+                if Helper.isPad && viewMode == .horizontal {
+                    maxWidth = defaultSize.width
+                }
+                
+                let width = maxWidth / ratio
+                
+                let height = width / (defaultSize.width / defaultSize.height)
+                
+                return CGSize(width: width, height: height)
+            }
+        }
+        
+        struct Text {
+            static func collectionArtist(_ string: String) -> AttributedString {
+                var result = AttributedString(string.uppercased())
+                result.foregroundColor = .baseBlue | .white.opacity(0.5)
+                result.font = Font.custom("Lato-Bold", size: 13)
+                return result
+            }
+            
+            static func title(_ string: String, _ featured: Bool = false) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black | .white
+                result.font = Font.custom("Lato-Bold", size: 16) // 19 for featured
+                return result
+            }
+            
+            static func subtitle(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .black.opacity(0.7) | .white.opacity(0.7)
+                result.font = Font.custom("Lato-Regular", size: 14) // 19 for featured
+                return result
+            }
+        }
+    }
+}

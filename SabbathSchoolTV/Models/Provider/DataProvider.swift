@@ -23,7 +23,6 @@
 import Foundation
 import Alamofire
 import SwiftUI
-import SDWebImageWebPCoder
 import Combine
 import Cache
 
@@ -38,8 +37,6 @@ class DataProvider: ObservableObject {
         APICache.configure()
         videosStorage = APICache.storage?.transformCodable(ofType: [VideoJSON].self)
         languageStorage = APICache.storage?.transformCodable(ofType: [String].self)
-        
-        setupImageCache()
     }
     
     func loadVideos() {
@@ -125,12 +122,6 @@ class DataProvider: ObservableObject {
 }
 
 private extension DataProvider {
-    func setupImageCache() {
-        let WebPCoder = SDImageWebPCoder.shared
-        SDImageCodersManager.shared.addCoder(WebPCoder)
-        SDWebImageDownloader.shared.setValue("image/webp,image/*,*/*;q=0.8", forHTTPHeaderField:"Accept")
-    }
-    
     func getSelectedLanguageCode() -> String {
         let selectedLanguage = UserDefaults.standard.string(forKey: "languageCode")
         

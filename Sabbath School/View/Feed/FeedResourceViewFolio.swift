@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Adventech <info@adventech.io>
+ * Copyright (c) 2024 Adventech <info@adventech.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,27 @@
  */
 
 import SwiftUI
-import Combine
-import Foundation
-import NukeUI
 
-struct VideoItemView: View {
-    let clip: Clip
+struct FeedResourceViewFolio: View {
+    var resource: Resource
+    var direction: FeedGroupDirection
     
     var body: some View {
-        VStack {
-            LazyImage(url: URL(string: clip.thumbnail)) { state in
-                if let image = state.image {
-                    image.resizable()
-                } else {
-                    ShimmerEffectBox()
+        FeedResourceViewBase(direction: direction,
+                             viewType: .folio,
+                             coverType: .portrait,
+                             content: { dimensions in
+            VStack(spacing: 0) {
+                FeedResourceConditionalStack(
+                    spacing: AppStyle.Feed.Spacing.betweenCoverAndTitle(direction),
+                    direction: direction
+                ) {
+                    FeedResourceCoverView(resource.covers.portrait, dimensions, resource.primaryColor)
+                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction, direction == .vertical, externalURL: resource.externalURL)
+                    
                 }
+                .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }
-            .frame(width: 384, height: 215)
-            
-            Text(clip.title)
-                .fontWeight(.medium)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity ,alignment: .leading)
-                .frame(width: 384)
-        }
+        })
     }
 }

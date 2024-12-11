@@ -21,9 +21,7 @@
  */
 
 import SwiftUI
-import SDWebImageSwiftUI
-import Combine
-import Foundation
+import Nuke
 
 enum TabMenu: Int {
     case videos = 0
@@ -31,9 +29,7 @@ enum TabMenu: Int {
 }
 
 struct ContentView: View {
-    
     @ObservedObject var dataProvider = DataProvider()
-    @ObservedObject var imageLoader: ImageLoader = ImageLoader()
     @State var image: UIImage = UIImage()
     
     @State private var tabSelection = TabMenu.videos.rawValue
@@ -53,7 +49,15 @@ struct ContentView: View {
                             LazyVStack(spacing: 16) {
                                 ForEach(dataProvider.sections) { section in
                                     VideoListView(section: section, didTapLink: { backgroundImage in
-                                        imageLoader.loadImage(urlString: backgroundImage.thumbnail)
+                                        do {
+                                            let imageTask = ImagePipeline.shared.imageTask(with: URL(string: backgroundImage.thumbnail)!)
+                                            let fetchedImage = try await imageTask.image
+                                            DispatchQueue.main.async {
+                                                self.image = fetchedImage
+                                            }
+                                        } catch {
+                                            print("Failed to load image: \(error)")
+                                        }
                                     })
                                 }
                             }
@@ -87,7 +91,6 @@ struct ContentView: View {
                                     .frame(width: 500)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 10)
-                                    
                                 }
                             }
                         }
@@ -105,10 +108,6 @@ struct ContentView: View {
                 }
                 .onAppear {
                     dataProvider.loadVideos()
-                }
-                
-                .onReceive(imageLoader.didChange) { data in
-                    self.image = data
                 }
                 .background(
                     LinearGradient(gradient: Gradient(colors: [.blue.opacity(0.1), .purple.opacity(0.1), .yellow.opacity(0.1)]), startPoint: .top, endPoint: .bottom)

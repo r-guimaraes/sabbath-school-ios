@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Adventech <info@adventech.io>
+ * Copyright (c) 2024 Adventech <info@adventech.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,24 @@
  */
 
 import SwiftUI
-import Combine
-import Foundation
-import NukeUI
 
-struct VideoItemView: View {
-    let clip: Clip
-    
+struct ResourceCreditsView: View {
+    var credits: [ResourceCredit]
     var body: some View {
-        VStack {
-            LazyImage(url: URL(string: clip.thumbnail)) { state in
-                if let image = state.image {
-                    image.resizable()
-                } else {
-                    ShimmerEffectBox()
-                }
+        VStack(spacing: AppStyle.Resource.Credits.spacingBetweenCredits) {
+            ForEach(credits, id: \.name) { credit in
+                VStack (alignment: .leading, spacing: 5) {
+                    Text(AppStyle.Resource.Credits.creditName(credit.name))
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Text(AppStyle.Resource.Credits.creditValue(credit.value))
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }.frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(width: 384, height: 215)
-            
-            Text(clip.title)
-                .fontWeight(.medium)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity ,alignment: .leading)
-                .frame(width: 384)
         }
     }
 }

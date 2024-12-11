@@ -55,22 +55,6 @@ class Configuration: NSObject {
     static func configurePDF() {
         SDK.setLicenseKey("cJGk5VhG4CHpFwBMb0qi8Y93Ac2y4XnKQlN166tNY6-N3pQQGrBTxVzbGwG3afxZ4dIEXSyZgJRs6kgai-Uq_N6oYsuxEchhj5ANVamABFWDRTVfEqNNl1Tx9rpp-Xnno8Q2dbYpMlAiAcnLYfjIfX9iWe8DSp-G9f7XapAE4f9Hf5freAttn5dThUxB-tQLgxK4kpH0HE_WxWjQB4wqW6XIv7Nh8PYXdJ8rYagOBLuw8ze2gyhzkxIkUNtNEHw6XpwS30RQjC-OJZsmle5DQklmWDtVXdA5cI60B3_WyK5zIQP39FAgntA7_DSv57AJRypjHHW2URyZTqH3b-7lCYsZgHbZzT75Y9G5k_XUTitiQH5xCg5tgdVylj_1jLc8Vt-ryjKzC95fDwzEJgCU2p12dR-JVNMAOq6iAYGDWQFJeGJkuZztPa38QqfM3eXxxLgZ8Fookb6mbF2IArWggnouAQombQnvSvVrNcD-28NS6cDms4KkRs2PrJCx9wDilgC70iGbhbdD3oFonjkClLL51KvbA8KMbKsJAVzE415gbTJ8L0U2QC6q2FbZ8XauTCczx5RRAg-34OoGigRf8HyM-QWNTU_IqAZv1LMqCxk=",
                           options: [.fileCoordinationEnabled: false])
-        
-//        SDK.shared.imageLoadingHandler = { imageName in
-//            if imageName == "edit_annotations" {
-//                return UIImage(systemName: "")
-//            }
-//            
-//            if imageName == "outline" {
-//                return R.image.iconPdfBookmarks()
-//            }
-//            
-//            if imageName == "settings" {
-//                return R.image.iconNavbarSettings()
-//            }
-//            
-//            return nil
-//        }
     }
     
     static func configureMisc() {

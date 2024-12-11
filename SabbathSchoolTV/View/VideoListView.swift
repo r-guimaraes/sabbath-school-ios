@@ -25,7 +25,7 @@ import SwiftUI
 struct VideoListView: View {
     
     let section: VideoSection
-    let didTapLink: ((Clip) -> Void)?
+    let didTapLink: ((Clip) async -> Void)?
     
     @FocusState private var isFocused
     
@@ -48,7 +48,9 @@ struct VideoListView: View {
                                 .padding()
                         }
                         .buttonStyle(PlainNavigationLinkButtonStyle(didTapLink: {
-                            didTapLink?(clip)
+                            Task {
+                                await didTapLink?(clip)
+                            }
                         }))
                         .animation(.default)
                         

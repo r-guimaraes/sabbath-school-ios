@@ -4,7 +4,6 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
-  - Down (0.11.0)
   - FontBlaster (5.1.1)
   - GoogleSignIn (6.0.0):
     - AppAuth (~> 1.4)
@@ -19,19 +18,16 @@ PODS:
     - PSPDFKit/Core (= 14.2.1)
   - PSPDFKit/Core (14.2.1)
   - QuickLayout (3.0.0)
-  - SimulatorStatusMagic (2.6)
   - SwiftAudio (0.11.2)
   - SwiftDate (6.3.1)
   - SwiftEntryKit (1.2.7):
     - QuickLayout (= 3.0.0)
 
 DEPENDENCIES:
-  - Down
   - FontBlaster
   - GoogleSignIn
   - Hue
   - PSPDFKit (from `https://customers.pspdfkit.com/pspdfkit-ios/14.2.1.podspec`)
-  - SimulatorStatusMagic
   - SwiftAudio
   - SwiftDate
   - SwiftEntryKit
@@ -39,14 +35,12 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
-    - Down
     - FontBlaster
     - GoogleSignIn
     - GTMAppAuth
     - GTMSessionFetcher
     - Hue
     - QuickLayout
-    - SimulatorStatusMagic
     - SwiftAudio
     - SwiftDate
     - SwiftEntryKit
@@ -57,7 +51,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
-  Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FontBlaster: 8897ebdbb4b6ace3ab78c92b665d88c954f19e4a
   GoogleSignIn: b7779a809e1dfb32ebb43131b10d8bfcd53c1383
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
@@ -65,11 +58,10 @@ SPEC CHECKSUMS:
   Hue: c129cb67be7d093a82bbbc30ce8a96757bf6f37a
   PSPDFKit: 58284e6cf1ccf3bcd08d0a423609b7bc1f2f101f
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  SimulatorStatusMagic: 9f5294c12ca99c6cadb243a60362a66000df540c
   SwiftAudio: 217f5f184b27a0e25ff0fe7647021f05a21c06c9
   SwiftDate: 72d28954e8e1c6c1c0f917ccc8005e4f83c7d4b2
   SwiftEntryKit: 537c92699d6034efb1ef9c32b11e0b37c97aa589
 
-PODFILE CHECKSUM: a17f883502d23191e6d88d0d829d0e13ca76ac3d
+PODFILE CHECKSUM: 30ebad73277223ca04c3ada3dc3423c88febbd8d
 
 COCOAPODS: 1.16.2

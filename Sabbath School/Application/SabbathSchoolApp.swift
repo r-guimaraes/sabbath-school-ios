@@ -52,7 +52,7 @@ struct SabbathSchoolApp: App {
     
     @StateObject private var accountManager = AccountManager()
     @StateObject private var languageManager = LanguageManager()
-    @StateObject private var audioPlaybackV2 = AudioPlaybackV2()
+    @StateObject private var audioPlaybackV2 = AudioPlayback()
     
     private var screenSizeMonitor = ScreenSizeMonitor()
     private var themeManager = ThemeManager()
@@ -60,7 +60,6 @@ struct SabbathSchoolApp: App {
     @StateObject private var resourceInfoViewModel: ResourceInfoViewModel = ResourceInfoViewModel()
     
     @State private var selected: TabSelection = .ss
-    @State private var statusBarStyle: UIStatusBarStyle = .lightContent
 
     @State private var sspath: [NavigationStep] = []
     @State private var aijpath: [NavigationStep] = []
@@ -123,7 +122,7 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        SettingsViewV2()
+                                        SettingsView()
                                             .tag(TabSelection.profile)
                                             .tabItem {
                                                 VStack {
@@ -153,7 +152,7 @@ struct SabbathSchoolApp: App {
                     }
                     .id(shortcutLaunched)
                 } else {
-                    LoginViewV2(accountManager: accountManager)
+                    LoginView(accountManager: accountManager)
                         .transition(.opacity)
                 }
             }

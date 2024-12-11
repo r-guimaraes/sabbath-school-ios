@@ -132,11 +132,11 @@ struct DocumentView: View {
         .navigationBarItems(leading: btnBack)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(documentViewOperator.navigationBarTitle)
-//        .safeAreaInset(edge: .top) {
-//            if documentViewOperator.shouldShowSegmentChips() {
-//                segmentChipsView()
-//            }
-//        }
+        .safeAreaInset(edge: .top) {
+            if documentViewOperator.shouldShowSegmentChips() {
+                segmentChipsView()
+            }
+        }
         .onChange(of: colorScheme) { newColorScheme in
             themeManager.setTheme(to: themeManager.currentTheme)
         }
@@ -144,6 +144,9 @@ struct DocumentView: View {
             if newValue == false && audioPlayback.state != .playing {
                 audioPlayback.stop()
             }
+        }
+        .onAppear {
+            themeManager.setTheme(to: themeManager.currentTheme)
         }
     }
 

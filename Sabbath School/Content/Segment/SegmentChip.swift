@@ -40,10 +40,9 @@ struct SegmentChip: View {
                             .padding([.horizontal], 8)
                             .background(index == documentViewOperator.activeTab ? Color.black : Color.white)
                             .foregroundColor(index == documentViewOperator.activeTab ? .white : .black)
-                            .font(.caption)
+                            .font(.custom("Lato-Regular", size: 15))
                             .cornerRadius(3)
                     }
-                    
                 }
             }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
         }

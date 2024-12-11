@@ -46,6 +46,8 @@ class QuickActionSettings: ObservableObject {
 @main
 struct SabbathSchoolApp: App {
     @Environment(\.scenePhase) var phase
+    @Environment(\.colorScheme) var colorScheme
+    
     @UIApplicationDelegateAdaptor(AppDelegateV2.self) var appDelegate
     
     @StateObject private var accountManager = AccountManager()
@@ -132,10 +134,8 @@ struct SabbathSchoolApp: App {
                                     }
                                 }
                                 .onAppear {
-                                    if #available(iOS 15.0, *) {
-                                        let appearance = UITabBarAppearance()
-                                        UITabBar.appearance().scrollEdgeAppearance = appearance
-                                    }
+                                    let appearance = UITabBarAppearance()
+                                    UITabBar.appearance().scrollEdgeAppearance = appearance
                                 }
                                 .accentColor(.black | .white)
                                 .transition(.opacity)

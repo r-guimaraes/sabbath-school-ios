@@ -8,8 +8,6 @@ disabled_rules: # rule identifiers to exclude from running
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Pods
   - Fastlane
-  - Genstrings.swift
-  - R.generated.swift
 file_length:
   warning: 800
   error: 1400

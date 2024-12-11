@@ -19,6 +19,7 @@
 		2F3F167E2D09E17F005E0232 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EDDA4C92A83B8F70078B29E /* Assets.xcassets */; };
 		2F3F16822D09E3FB005E0232 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3F16812D09E3FB005E0232 /* Nuke */; };
 		2F3F16842D09E3FB005E0232 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3F16832D09E3FB005E0232 /* NukeUI */; };
+		2F3F168A2D0A1117005E0232 /* FullScreenImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -339,6 +340,7 @@
 		2F1C33BB2D00CF0A008D30C0 /* LanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageView.swift; sourceTree = "<group>"; };
 		2F1C33BE2D021034008D30C0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2F1E105E2D068357004CF872 /* SegmentViewVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentViewVideo.swift; sourceTree = "<group>"; };
+		2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewer.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -1243,6 +1245,7 @@
 		7A280FEC1EDCFB38003C7458 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */,
 				2FC5CAC32D09DA8400FB1D87 /* AlwaysPopover.swift */,
 				2F96FF5926C8477F0045DC6D /* ESTMusicIndicator */,
 				2FA1FFE726F6BA6700E80868 /* Downloader.swift */,
@@ -1780,6 +1783,7 @@
 				2FC5CAC62D09DAEE00FB1D87 /* EnvironmentValues.swift in Sources */,
 				FE5CC763268972CA00B9F061 /* QuarterlyGroup.swift in Sources */,
 				2F75267B2CCFFFBA0027FD1E /* SegmentStyleTemplate.swift in Sources */,
+				2F3F168A2D0A1117005E0232 /* FullScreenImageViewer.swift in Sources */,
 				2FBF2AF72D0277CA007F5615 /* DocumentViewOperator.swift in Sources */,
 				2FC5CAC02D09D96800FB1D87 /* UIApplication.swift in Sources */,
 				FE863F2A2662BD9F00ADCA36 /* Animation.swift in Sources */,

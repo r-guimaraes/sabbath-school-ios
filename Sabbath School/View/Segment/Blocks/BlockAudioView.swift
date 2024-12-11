@@ -105,9 +105,8 @@ struct BlockAudioView: View {
                         .frame(width: 20, height: 20)
                 }
                 
-//                Text("Current time")
-                
                 Text("\(formatTime(viewModel.currentTime))")
+                    .font(.custom("Lato-Regular", size: 14))
                 
                 Spacer()
                 
@@ -123,11 +122,12 @@ struct BlockAudioView: View {
                                                    withConfiguration: progressCircleConfig), for: .normal)
                     }
                 }
-//                Text("Time")
             }.padding(10).background(.gray.opacity(0.15)).cornerRadius(6)
             
             if let caption = block.caption {
                 Text(caption)
+                    .font(.custom("Lato-Italic", size: 14))
+                    .foregroundColor((.black | .white).opacity(0.7))
             }
         }
     }

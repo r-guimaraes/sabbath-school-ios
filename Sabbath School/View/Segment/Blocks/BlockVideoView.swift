@@ -61,7 +61,6 @@ struct BlockVideoView: View {
         VStack (spacing: 10) {
             GeometryReader { geometry in
                 VideoPlayer(player: viewModel.getPlayer())
-                    
                     .background(Color.black)
                     .cornerRadius(6)
                     .overlay {
@@ -89,6 +88,8 @@ struct BlockVideoView: View {
             
             if let caption = block.caption {
                 Text(caption)
+                    .font(.custom("Lato-Italic", size: 14))
+                    .foregroundColor((.black | .white).opacity(0.7))
             }
         }
     }

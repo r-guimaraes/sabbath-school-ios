@@ -21,71 +21,82 @@
  */
 
 import SwiftUI
-import Down
 
-struct ResourceIntroductionTextView: UIViewRepresentable {
-    let attributedString: NSAttributedString
-    @Binding var height: CGFloat
+extension AttributedString {
+    init(styledMarkdown markdownString: String) throws {
+        var output = try AttributedString(
+            markdown: markdownString,
+            options: .init(
+                allowsExtendedAttributes: true,
+                interpretedSyntax: .full,
+                failurePolicy: .returnPartiallyParsedIfPossible
+            ),
+            baseURL: nil
+        )
 
-    func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.isScrollEnabled = true
-        textView.backgroundColor = .clear
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        return textView
-    }
-
-    func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.attributedText = attributedString
-        uiView.invalidateIntrinsicContentSize()
-        
-        let size = uiView.sizeThatFits(CGSize(width: uiView.bounds.width, height: CGFloat.greatestFiniteMagnitude))
-        if height != size.height {
-            DispatchQueue.main.async {
-                self.height = size.height
+        for (intentBlock, intentRange) in output.runs[AttributeScopes.FoundationAttributes.PresentationIntentAttribute.self].reversed() {
+            guard let intentBlock = intentBlock else { continue }
+            for intent in intentBlock.components {
+                switch intent.kind {
+                case .header(level: let level):
+                    switch level {
+                    case 1:
+                        output[intentRange].font = .custom("Lato-Bold", size: 28)
+                    case 2:
+                        output[intentRange].font = .custom("Lato-Bold", size: 25)
+                    case 3:
+                        output[intentRange].font = .custom("Lato-Bold", size: 23)
+                    case 4:
+                        output[intentRange].font = .custom("Lato-Bold", size: 21)
+                    case 5:
+                        output[intentRange].font = .custom("Lato-Bold", size: 19)
+                    case 6:
+                        output[intentRange].font = .custom("Lato-Bold", size: 17)
+                    default:
+                        break
+                    }
+                default:
+                    break
+                }
+            }
+            
+            if intentRange.lowerBound != output.startIndex {
+                output.characters.insert(contentsOf: "\n", at: intentRange.lowerBound)
             }
         }
+        
+        self = output
     }
 }
 
 struct ResourceIntroductionView: View {
     var introduction: String
-    var attributedString: NSAttributedString
-
-    @State private var textViewHeight: CGFloat = 0
+    @State private var strings: [String]
     
     init (introduction: String) {
         self.introduction = introduction
-        let down = Down(markdownString: introduction)
-        self.attributedString = try! down.toAttributedString(stylesheet: AppStyle.Resources.Resource.Introduction.stylesheet)
+        self._strings = State(initialValue: introduction.split(separator: "\n\n").map { String($0) })
     }
 
     var body: some View {
-//        ScrollView {
-//            
-//        }
-//        .frame(maxWidth: .infinity)
-//        .frame(maxHeight: .infinity)
-        VStack {
-            ResourceIntroductionTextView(
-                attributedString: attributedString,
-                height: $textViewHeight
-            )
-            .frame(height: textViewHeight)
-            .frame(maxHeight: .infinity)
-        }
-        .frame(height: textViewHeight)
-        .frame(maxHeight: .infinity)
-        .padding()
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 20) {
+                ForEach(strings, id: \.self) { string in
+                    Text(try! AttributedString(styledMarkdown: string))
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.custom("Lato-Regular", size: 20))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top)
+        }.padding(.horizontal)
     }
 }
 
 struct ResourceIntroductionView_Previews: PreviewProvider {
     static var previews: some View {
-        ResourceIntroductionView(introduction: "### Hello world")
+        ResourceIntroductionView(introduction: "# Hello world\n\n## Hello world\n\n### Hello World\n\nThis is the day")
     }
 }
 

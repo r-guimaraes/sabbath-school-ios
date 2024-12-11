@@ -80,7 +80,9 @@ struct ResourceSectionView: View {
                     
                     if let startDate = document.startDate,
                        let endDate = document.endDate {
-                        let stringDate = "\(startDate.date.stringLessonDate()) - \(endDate.date.stringLessonDate())"
+                        let compare = Calendar.current.compare(startDate.date, to: endDate.date, toGranularity: .day)
+                        let stringDate = compare == .orderedSame ? "\(startDate.date.stringReadDate())" : "\(startDate.date.stringLessonDate()) - \(endDate.date.stringLessonDate())"
+                        
                         Text(AppStyle.Resource.Document.Date.text(stringDate))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .multilineTextAlignment(.leading)

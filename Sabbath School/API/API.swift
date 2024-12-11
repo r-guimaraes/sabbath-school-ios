@@ -138,6 +138,8 @@ class API: NSObject {
     
     static let session: Session = {
         let configuration = URLSessionConfiguration.af.default
-        return Session.default
+        configuration.urlCache = nil
+        let responseCacher = ResponseCacher(behavior: .doNotCache)
+        return Session(configuration: configuration, cachedResponseHandler: responseCacher)
     }()
 }

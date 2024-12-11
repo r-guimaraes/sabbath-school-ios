@@ -38,7 +38,7 @@ struct LanguageItemView: View {
             }
             Spacer()
             if language.isSelected {
-                Image("icon-checkmark")
+                Image(systemName: "checkmark")
             }
         }
     }

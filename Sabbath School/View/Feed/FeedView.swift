@@ -70,9 +70,8 @@ struct FeedView: View {
                     Button(action: {
                         showSettings = true
                     }) {
-                        Image("icon-navbar-settings")
-                            .renderingMode(.template)
-                            .foregroundColor(.black | .white)
+                        Image(systemName: "gearshape")
+                            .imageScale(.medium)
                     }
                 }
                 

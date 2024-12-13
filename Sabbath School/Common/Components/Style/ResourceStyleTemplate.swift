@@ -57,6 +57,8 @@ class ResourceTitleStyleTemplate: StyleTemplate {
     var backgroundColorDefault: Color
     
     var backgroundImageEnabled: Bool
+    var backgroundImageDefault: URL?
+    
     var roundedCornersEnabled: Bool
     var roundedCornersDefault: CGFloat
     var roundedCornersEnabledValue: CGFloat
@@ -116,6 +118,8 @@ class ResourceTitleStyleTemplate: StyleTemplate {
         self.backgroundColorDefault = .clear
         
         self.backgroundImageEnabled = false
+        self.backgroundImageDefault = nil
+        
         self.roundedCornersEnabled = false
         self.roundedCornersDefault = 0
         self.roundedCornersEnabledValue = 0

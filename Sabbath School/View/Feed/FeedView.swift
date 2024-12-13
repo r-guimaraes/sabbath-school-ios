@@ -85,6 +85,9 @@ struct FeedView: View {
                     }
                 }
             }
+            .refreshable {
+                await retrieveContent()
+            }
         }
         .sheet(isPresented: $showLanguage) {
             LanguageView()
@@ -93,11 +96,15 @@ struct FeedView: View {
             SettingsView()
         }
         .task {
-            await viewModel.retrieveFeed(resourceType: self.resourceType, language: PreferencesShared.currentLanguage().code)
+            await retrieveContent()
         }
         .onAppear {
             UIApplication.shared.currentTabBarController()?.tabBar.isHidden = false
         }
+    }
+    
+    func retrieveContent() async {
+        await viewModel.retrieveFeed(resourceType: self.resourceType, language: PreferencesShared.currentLanguage().code)
     }
 }
 

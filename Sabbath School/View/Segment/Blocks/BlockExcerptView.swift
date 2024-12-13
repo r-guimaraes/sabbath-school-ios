@@ -26,6 +26,8 @@ import SwiftEntryKit
 struct BlockExcerptView: StyledBlock, View {
     var block: Excerpt
     var biblePopup: Bool
+    @EnvironmentObject var themeManager: ThemeManager
+    
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -34,7 +36,17 @@ struct BlockExcerptView: StyledBlock, View {
     init(block: Excerpt, biblePopup: Bool = false) {
         self.block = block
         self.biblePopup = biblePopup
-        self._selectedOption = State(initialValue: BlockExcerptView.selectFirstOption(for: block))
+                
+        let bibleVersion = Preferences.userDefaults.value(forKey: Preferences.getPreferredBibleVersionKey()) as? String
+        self._selectedOption = State(initialValue: bibleVersion ?? BlockExcerptView.selectFirstOption(for: block))
+        
+        if bibleVersion == nil {
+            self.setPreferredBibleVersion()
+        }
+    }
+    
+    private func setPreferredBibleVersion() {
+        Preferences.userDefaults.set(selectedOption, forKey: Preferences.getPreferredBibleVersionKey())
     }
     
     private static func selectFirstOption(for block: Excerpt) -> String? {
@@ -52,24 +64,40 @@ struct BlockExcerptView: StyledBlock, View {
                     Button(action: {
                         SwiftEntryKit.dismiss()
                     }) {
-                        Image(systemName: "xmark").renderingMode(.template).foregroundColor(.black | .white)
+                        Image(systemName: "xmark")
+                            .foregroundColor(themeManager.getTextColor())
                     }
                     Spacer()
                 }
                 Menu {
                     ForEach(block.options, id: \.self) { option in
-                        Button(option) {
+                        Button(action: {
                             selectedOption = option
+                            setPreferredBibleVersion ()
+                        }) {
+                            HStack {
+                                Text(option)
+                                
+                                Spacer()
+                                
+                                if option == selectedOption {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
                         }
                     }
                 }
                 label : {
                     HStack {
-                        Text(selectedOption ?? "").font(.headline)
-                            .foregroundColor(.black | .white) // Custom color
+                        Text(selectedOption ?? "")
+                            .font(.custom("Lato-Bold", size: 18))
+                            .foregroundColor(themeManager.getTextColor())
                             .frame(alignment: .leading)
                             .lineLimit(1)
-                        Image(systemName: "chevron.down").tint(.black | .white).fontWeight(.medium)
+                        
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(themeManager.getTextColor())
+                            .fontWeight(.medium)
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 }
@@ -91,6 +119,11 @@ struct BlockExcerptView: StyledBlock, View {
                     BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block))
                 }
             }
+        }
+        .if(biblePopup) { view in
+            view
+                .background(themeManager.backgroundColor)
+                .cornerRadius(6)
         }
     }
 }

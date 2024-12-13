@@ -82,7 +82,7 @@ struct ResourceView: View {
         VStack(spacing: 0) {
             if let resource = self.viewModel.resource {
                 ScrollViewReader { scroll in
-                    ScrollView {
+                    ScrollView(.vertical, showsIndicators: false) {
                         ZStack (alignment: .bottom) {
                             ParallaxHeader(
                                 coordinateSpace: CoordinateSpaces.scrollView,

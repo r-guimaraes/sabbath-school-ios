@@ -57,6 +57,8 @@ protocol StyleTemplate {
     var backgroundColorDefault: Color { get set }
     
     var backgroundImageEnabled: Bool { get set }
+    var backgroundImageDefault: URL? { get set }
+    
     var roundedCornersEnabled: Bool { get set }
     var roundedCornersDefault: CGFloat { get set }
     var roundedCornersEnabledValue: CGFloat { get set }

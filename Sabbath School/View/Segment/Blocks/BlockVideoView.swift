@@ -24,86 +24,42 @@ import SwiftUI
 import AVFoundation
 import AVKit
 
-class VideoPlayerViewModel: ObservableObject {
-    private var player: AVPlayer?
-    private var playerItem: AVPlayerItem?
-    @Published var played: Bool = false
-    
-    
-    init(url: URL) {
-        setupVideoPlayer(url: url)
-    }
-    
-    private func setupVideoPlayer(url: URL) {
-        playerItem = AVPlayerItem(url: url)
-        player = AVPlayer(playerItem: playerItem)
-    }
-    
-    func getPlayer() -> AVPlayer? {
-        return player
-    }
-}
-
 struct BlockVideoView: View {
     var block: VideoBlock
     
-    @ObservedObject var viewModel: VideoPlayerViewModel
+    @EnvironmentObject var themeManager: ThemeManager
     
-    @State var width: CGFloat = 0
-    @State var height: CGFloat = 0
-    
-    init(block: VideoBlock) {
-        self.block = block
-        viewModel = VideoPlayerViewModel(url: block.src)
-    }
+    @StateObject private var viewModel = VideoPlayerSegmentViewModel()
     
     var body: some View {
         VStack (spacing: 10) {
-            GeometryReader { geometry in
-                VideoPlayer(player: viewModel.getPlayer())
+            if let player = viewModel.player {
+                FullscreenVideoPlayer(player: player)
                     .background(Color.black)
                     .cornerRadius(6)
                     .overlay {
                         if !viewModel.played {
                             Button {
-                                viewModel.played = true
-                                viewModel.getPlayer()?.play()
+                                viewModel.play()
                             } label: {
                                 Image(systemName: "play.fill").tint(.white).font(.system(size: 53))
                             }
                         }
                     }
-                    .frame(width: width, height: height)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .onAppear {
-                        calculateHeight(width: geometry.size.width)
-                    }
-                    .onChange(of: geometry.size) { _ in
-                        calculateHeight(width: geometry.size.width)
-                    }
-                    
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(16/9, contentMode: .fill)
+                
+                if let caption = block.caption {
+                    Text(caption)
+                        .font(.custom("Lato-Italic", size: 14))
+                        .foregroundColor(themeManager.getTextColor().opacity(0.7))
+                }
             }
-            .frame(maxHeight: .infinity)
-            .frame(height: height)
-            
-            if let caption = block.caption {
-                Text(caption)
-                    .font(.custom("Lato-Italic", size: 14))
-                    .foregroundColor((.black | .white).opacity(0.7))
+        }.task {
+            if viewModel.player == nil {
+                viewModel.setupVideoPlayer(block.src, block.caption)
             }
         }
-    }
-    
-    private func formatTime(_ time: Double) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-    
-    private func calculateHeight(width: CGFloat) {
-        self.width = width
-        
-        height = width / (16/9)
     }
 }
 

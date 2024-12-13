@@ -22,6 +22,8 @@
 
 import SwiftUI
 import AVKit
+import NukeUI
+import MediaPlayer
 
 struct FullscreenVideoPlayer: UIViewControllerRepresentable {
     let player: AVPlayer
@@ -29,51 +31,146 @@ struct FullscreenVideoPlayer: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let controller = AVPlayerViewController()
         controller.player = player
-        controller.showsPlaybackControls = true
+        controller.beginAppearanceTransition(true, animated: false)
         return controller
     }
 
-    func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
-        // No update needed
+    func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) { }
+}
+
+class VideoPlayerSegmentViewModel: ObservableObject {
+    @Published var player: AVPlayer?
+    @Published var played: Bool = false
+    @Published var artwork: UIImage? = nil
+    
+    func setupVideoPlayer(_ url: URL, _ title: String? = nil) {
+        let playerItem = AVPlayerItem(url: url)
+        
+        if let title = title {
+            let titleMetadata = AVMutableMetadataItem()
+            titleMetadata.identifier = AVMetadataIdentifier.commonIdentifierTitle
+            titleMetadata.value = title as NSString
+            
+            playerItem.externalMetadata = [titleMetadata]
+        }
+        
+        player = AVPlayer(playerItem: playerItem)
+    }
+        
+    func setupVideoPlayer(_ video: VideoClipSegment) {
+        let playerItem = AVPlayerItem(url: video.hls ?? video.src)
+        
+        var items: [AVMutableMetadataItem] = []
+        
+        if let title = video.title {
+            let titleMetadata = AVMutableMetadataItem()
+            titleMetadata.identifier = AVMetadataIdentifier.commonIdentifierTitle
+            titleMetadata.value = title as NSString
+            items.append(titleMetadata)
+        }
+        
+        if let artist = video.artist {
+            let artistMetadata = AVMutableMetadataItem()
+            artistMetadata.identifier = AVMetadataIdentifier.commonIdentifierArtist
+            artistMetadata.value = artist as NSString
+            items.append(artistMetadata)
+        }
+        
+        if items.count > 0 {
+            playerItem.externalMetadata = items
+        }
+        
+        player = AVPlayer(playerItem: playerItem)
+    }
+    
+    func play() {
+        played = true
+        player?.play()
+        
+        if artwork != nil {
+            setThumbnail()
+        }
+    }
+    
+    func setThumbnail () {
+        if let artwork = artwork {
+            let artworkMetadata = AVMutableMetadataItem()
+            artworkMetadata.identifier = AVMetadataIdentifier.commonIdentifierArtwork
+            artworkMetadata.value = artwork.pngData() as (NSCopying & NSObjectProtocol)?
+            
+            player?.currentItem?.externalMetadata.append(artworkMetadata)
+        }
+    }
+    
+    func getPlayer() -> AVPlayer? {
+        return player
     }
 }
 
 struct SegmentViewVideo: View {
-    var video: [VideoClipSegment]
+    var video: [VideoClipSegment]?
     
-    @ObservedObject var viewModel: VideoPlayerViewModel
+    @EnvironmentObject var themeManager: ThemeManager
     
+    @StateObject private var viewModel = VideoPlayerSegmentViewModel()
+    
+    @State private var selectedVideo: VideoClipSegment
     @State private var isFullscreen = false
     
-    init(video: [VideoClipSegment]) {
+    init(video: [VideoClipSegment]?) {
         self.video = video
-        print("SSDEBUG", video.first!.src)
-        viewModel = VideoPlayerViewModel(url: URL(string: "https://sabbath-school-media-tmp.s3.amazonaws.com/en/365/365-en-2024-04-08.mp4")!)
+        
+        // TODO: avoid ugly code
+        self.selectedVideo = self.video?[safe: 0] ?? VideoClipSegment(
+            src: URL(string: "https://this-should-not-happen.com")!,
+            artist: nil,
+            title: nil,
+            thumbnail: nil,
+            hls: nil
+        )
     }
     
     var body: some View {
-        VStack {
-            Button("Go Fullscreen") {
-                    isFullscreen.toggle()
-                }
-            
-            VideoPlayer(player: viewModel.getPlayer())
-                .background(Color.black)
-                .cornerRadius(6)
-                .overlay {
-                    if !viewModel.played {
-                        Button {
-                            viewModel.played = true
-                            viewModel.getPlayer()?.play()
-                        } label: {
-                            Image(systemName: "play.fill").tint(.white).font(.system(size: 53))
+        if let _ = video {
+            VStack {
+                if let _ = viewModel.player {
+                    FullscreenVideoPlayer(player: viewModel.player!)
+                        .background(Color.black)
+                        .cornerRadius(6)
+                        .overlay {
+                            if !viewModel.played {
+                                ZStack(alignment: .center) {
+                                    if let thumbnail = video?.first?.thumbnail {
+                                        LazyImage(url: thumbnail) { image in
+                                            image.image?.resizable()
+                                                .scaledToFill()
+                                                .onAppear {
+                                                    if let thumbnail = image.imageContainer?.image {
+                                                        viewModel.artwork = thumbnail
+                                                    }
+                                                }
+                                        }.cornerRadius(6)
+                                    }
+                                    
+                                    Button {
+                                        viewModel.play()
+                                    } label: {
+                                        Image(systemName: "play.fill").tint(.white).font(.system(size: 53))
+                                    }
+                                }
+                            }
                         }
-                    }
-                }.frame(width: 300, height: 300/1.5)
-                .fullScreenCover(isPresented: $isFullscreen) {
-                    FullscreenVideoPlayer(player: viewModel.getPlayer()!)
-                        .edgesIgnoringSafeArea(.all)
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(16/9, contentMode: .fill)
                 }
+            }
+            .padding()
+            .background(themeManager.backgroundColor)
+            .task {
+                if viewModel.player == nil {
+                    viewModel.setupVideoPlayer(selectedVideo)
+                }
+            }
         }
     }
 }

@@ -23,11 +23,13 @@
 import SwiftUI
 
 struct PagingModifier: ViewModifier {
+    let safeAreaPadding: CGFloat
+    
     @ViewBuilder func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
             content
                 .scrollTargetBehavior(.viewAligned)
-
+                .safeAreaPadding(.horizontal, safeAreaPadding)
         } else {
             content
         }
@@ -35,21 +37,25 @@ struct PagingModifier: ViewModifier {
 }
 
 struct TargetLayoutModifier: ViewModifier {
+    let safeAreaPadding: CGFloat
+    
     @ViewBuilder func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
             content.scrollTargetLayout()
+                .padding(.vertical, safeAreaPadding)
+                
         } else {
-            content
+            content.padding(safeAreaPadding)
         }
     }
 }
 
 extension View {
-    func scrollViewPaging() -> some View {
-        self.modifier(PagingModifier())
+    func scrollViewPaging(safeAreaPadding: CGFloat) -> some View {
+        self.modifier(PagingModifier(safeAreaPadding: safeAreaPadding))
     }
     
-    func targetLayout() -> some View {
-        self.modifier(TargetLayoutModifier())
+    func targetLayout(safeAreaPadding: CGFloat) -> some View {
+        self.modifier(TargetLayoutModifier(safeAreaPadding: safeAreaPadding))
     }
 }

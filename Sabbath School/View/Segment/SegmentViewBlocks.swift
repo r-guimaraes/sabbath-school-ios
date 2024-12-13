@@ -23,26 +23,52 @@
 import SwiftUI
 import NukeUI
 
+private enum CoordinateSpaces {
+    case scrollView
+}
+
 struct SegmentViewBlocks: View {
-    var resource: Resource
     var segment: Segment
-    var index: Int
-    var document: ResourceDocument
     
-    @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
-    
-    @EnvironmentObject var documentViewOperator: DocumentViewOperator
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     @EnvironmentObject var audioPlayback: AudioPlayback
     
-    private enum CoordinateSpaces {
-        case scrollView
+    var body: some View {
+        if let blocks = segment.blocks {
+            VStack (spacing: AppStyle.Segment.Spacing.betweenBlocks)  {
+                ForEach(blocks) { block in
+                    BlockWrapperView(block: block)
+                        .environment(\.themeManager, themeManager)
+                        .environment(\.defaultBlockStyles, defaultStyles)
+                        .id(block.id)
+                }
+            }
+            .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent +
+                     (audioPlayback.shouldShowMiniPlayer() ? 80 * 2 : 80)
+            )
+            .padding(.top, AppStyle.Segment.Spacing.verticalPaddingContent)
+            .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width))
+        }
     }
+}
+
+struct BottomClipShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addRect(CGRect(x: rect.minX, y: rect.minY - 1000, width: rect.width, height: rect.height + 1000))
+        return path
+    }
+}
+
+struct SegmentViewCover: View {
+    var segment: Segment
+    var document: ResourceDocument
+    var resource: Resource
     
     private var hasCover: Bool {
-        return segment.cover != nil || document.cover != nil
+        return segment.type == .block && (segment.cover != nil || document.cover != nil)
     }
     
     private var titleBelowCover: Bool {
@@ -54,80 +80,50 @@ struct SegmentViewBlocks: View {
         return segment.style ?? document.style ?? resource.style
     }
     
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    
+    @EnvironmentObject var documentViewOperator: DocumentViewOperator
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    @EnvironmentObject var audioPlayback: AudioPlayback
+    
     var body: some View {
-        ScrollView (.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                if let cover = segment.cover ?? document.cover, hasCover {
-                    ZStack (alignment: .bottom) {
-                        ParallaxHeader(
-                            coordinateSpace: CoordinateSpaces.scrollView,
-                            defaultHeight: AppStyle.Segment.Cover.height()
-                        ) {
-                            LazyImage(url: cover) { image in
-                                image.image?.resizable().scaledToFill()
-                            }
-                        }.id(segment.index)
-                        
-                        if !titleBelowCover {
-                            SegmentHeader(segment.markdownTitle ?? segment.title,
-                                          segment.date,
-                                          segment.markdownSubtitle ?? segment.subtitle,
-                                          hasCover && !titleBelowCover,
-                                          segment.style ?? resource.style)
-                        }
-                    }.frame(height: AppStyle.Segment.Cover.height())
-                }
-                
-                VStack {
-                    if !hasCover || titleBelowCover {
-                        SegmentHeader(segment.markdownTitle ?? segment.title,
-                                      segment.date,
-                                      segment.markdownSubtitle ?? segment.subtitle,
-                                      hasCover && !titleBelowCover,
-                                      segment.style ?? resource.style)
-                        .padding(.top, hasCover || (hasCover && titleBelowCover) || segment.video != nil ? 20 : AppStyle.Segment.Cover.height(false))
+        if let cover = segment.cover ?? document.cover, hasCover {
+            ZStack (alignment: .bottom) {
+                ParallaxHeader(
+                    coordinateSpace: CoordinateSpaces.scrollView,
+                    defaultHeight: AppStyle.Segment.Cover.height()
+                ) {
+                    LazyImage(url: cover) { image in
+                        image.image?.resizable().scaledToFill()
                     }
-                }.background(
-                    themeManager.backgroundColor
-                )
-                
-                if let video = segment.video {
-                    SegmentViewVideo(video: video)
                 }
+                .clipShape(BottomClipShape())
+                .id(segment.index)
                 
-                if let blocks = segment.blocks {
-                    VStack (spacing: AppStyle.Segment.Spacing.betweenBlocks)  {
-                        ForEach(blocks) { block in
-                            BlockWrapperView(block: block)
-                                .environment(\.themeManager, themeManager)
-                                .environment(\.defaultBlockStyles, defaultStyles)
-                                .id(block.id)
-                        }
-                    }
-                    .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent + 
-                             (audioPlayback.shouldShowMiniPlayer() ? 80 * 2 : 80)
-                    )
-                    .padding(.top, AppStyle.Segment.Spacing.verticalPaddingContent)
-                    .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width))
-                    .background(themeManager.backgroundColor)
+                if !titleBelowCover {
+                    SegmentHeader(segment.markdownTitle ?? segment.title,
+                                  segment.date,
+                                  segment.markdownSubtitle ?? segment.subtitle,
+                                  hasCover && !titleBelowCover,
+                                  segment.style ?? resource.style)
                 }
             }
-            .onChange(of: sizeCategory) { newValue in }
-            .background(GeometryReader { geometry in
-                Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
-                    if index == documentViewOperator.activeTab {
-                        let multiplier = segment.video != nil && !hasCover ? 0.05 : AppStyle.Segment.Cover.percentageOfScreen(hasCover)
-                        
-                        let visibility = scrollOffset <= -1 * (screenSizeMonitor.screenSize.height * multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
-                        
-                        if visibility != documentViewOperator.shouldShowNavigationBar {
-                            documentViewOperator.setShowNavigationBar(visibility)
-                        }
-                    }
-                }
-            })
+            .frame(height: AppStyle.Segment.Cover.height())
+            
+            
         }
-        .id(segment.id)
+        
+        VStack {
+            if !hasCover || titleBelowCover {
+                SegmentHeader(segment.markdownTitle ?? segment.title,
+                              segment.date,
+                              segment.markdownSubtitle ?? segment.subtitle,
+                              hasCover && !titleBelowCover,
+                              segment.style ?? resource.style)
+                .padding(.top, hasCover || (hasCover && titleBelowCover) ? 20 : AppStyle.Segment.Cover.height(false))
+            }
+        }
     }
     
     func SegmentHeader(_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?) -> some View {
@@ -165,5 +161,73 @@ struct SegmentViewBlocks: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
         .padding(.vertical, AppStyle.Segment.Spacing.verticalPaddingHeader)
+    }
+}
+
+struct SegmentViewBase<Content: View>: View {
+    var resource: Resource
+    var segment: Segment
+    var index: Int
+    var document: ResourceDocument
+    
+    let content: (SegmentViewCover, SegmentViewBlocks, SegmentViewVideo) -> Content
+    
+    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @Environment(\.colorScheme) var colorScheme
+    
+    @EnvironmentObject var documentViewOperator: DocumentViewOperator
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    @EnvironmentObject var audioPlayback: AudioPlayback
+    
+    @State var scrollOffset: CGFloat = 0
+    
+    private var hasCover: Bool {
+        return segment.type == .block && (segment.cover != nil || document.cover != nil)
+    }
+    
+    var body: some View {
+        ScrollView (.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                content(
+                    SegmentViewCover(segment: segment, document: document, resource: resource),
+                    SegmentViewBlocks(segment: segment),
+                    SegmentViewVideo(video: segment.video)
+                )
+            }
+            .onChange(of: sizeCategory) { newValue in }
+            .background(GeometryReader { geometry in
+                Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
+                    if index == documentViewOperator.activeTab {
+                        self.scrollOffset = scrollOffset
+                        
+                        let multiplier = AppStyle.Segment.Cover.percentageOfScreen(hasCover)
+                        
+                        let visibility = scrollOffset <= -1 * (screenSizeMonitor.screenSize.height * multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
+                        
+                        if visibility != documentViewOperator.shouldShowNavigationBar {
+                            documentViewOperator.setShowNavigationBar(visibility)
+                        }
+                    }
+                }
+            })
+        }
+        .background {
+            if let background = segment.background ?? document.background,
+               themeManager.currentTheme == .light || (
+                colorScheme == .light && themeManager.currentTheme == .auto
+               )
+            {
+                AsyncImage(url: background) { image in
+                    image.image?
+                        .resizable()
+                        .scaledToFill()
+                }
+            }
+        }
+        .background(themeManager.backgroundColor)
+        .clipped()
+        .id(segment.id)
     }
 }

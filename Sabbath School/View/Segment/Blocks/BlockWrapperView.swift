@@ -26,6 +26,8 @@ import SwiftUI
 struct BlockWrapperView: StyledBlock, View {
     var block: AnyBlock
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
+    @Environment(\.colorScheme) var colorScheme
+    
     @EnvironmentObject var themeManager: ThemeManager
     
     @State private var dropShadow = false
@@ -128,6 +130,20 @@ struct BlockWrapperView: StyledBlock, View {
                 }
             }
             .padding(Styler.getBlockPadding(defaultStyles, block))
+            
+            .background {
+                if let background = Styler.getBlockBackgroundImage(defaultStyles, block),
+                   themeManager.currentTheme == .light || (
+                    colorScheme == .light && themeManager.currentTheme == .auto)
+                {
+                    AsyncImage(url: background) { image in
+                        image.image?
+                            .resizable()
+                            .scaledToFill()
+                    }.background(.blue)
+                        
+                }
+            }
             .background(Styler.getBlockBackgroundColor(defaultStyles, block))
             .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, block))
             .if(dropShadow) { view in
@@ -136,6 +152,19 @@ struct BlockWrapperView: StyledBlock, View {
         }
         .padding(Styler.getWrapperPadding(defaultStyles, block))
         .cornerRadius(Styler.getWrapperCornerRadius(defaultStyles, block))
+        .background {
+            if let background = Styler.getWrapperBackgroundImage(defaultStyles, block),
+               themeManager.currentTheme == .light || (
+                colorScheme == .light && themeManager.currentTheme == .auto)
+            {
+                AsyncImage(url: background) { image in
+                    image.image?
+                        .resizable()
+                        .scaledToFill()
+                }
+                    
+            }
+        }
         .background(Styler.getWrapperBackgroundColor(defaultStyles, block))
         .id(refreshView)
         .onChange(of: themeManager.currentTheme) { newValue in

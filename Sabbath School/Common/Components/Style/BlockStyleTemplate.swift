@@ -57,6 +57,8 @@ class BlockStyleTemplate: StyleTemplate {
     var backgroundColorDefault: Color
     
     var backgroundImageEnabled: Bool
+    var backgroundImageDefault: URL?
+    
     var roundedCornersEnabled: Bool
     var roundedCornersDefault: CGFloat
     var roundedCornersEnabledValue: CGFloat
@@ -189,6 +191,8 @@ class BlockStyleTemplate: StyleTemplate {
         self.backgroundColorDefault = .clear
         
         self.backgroundImageEnabled = true
+        self.backgroundImageDefault = nil
+        
         self.roundedCornersEnabled = true
         self.roundedCornersDefault = 0
         self.roundedCornersEnabledValue = 6.0

@@ -27,6 +27,8 @@ struct BlockImageView: StyledBlock, View {
     var block: BlockImage
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
+    @EnvironmentObject var themeManager: ThemeManager
+    
     @State private var isFullScreen: Bool = false
     @State private var image: Image? = nil
     
@@ -56,7 +58,7 @@ struct BlockImageView: StyledBlock, View {
             if let caption = block.caption {
                 Text(caption)
                     .font(.custom("Lato-Italic", size: 14))
-                    .foregroundColor((.black | .white).opacity(0.7))
+                    .foregroundColor(themeManager.getTextColor().opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -79,6 +79,7 @@ struct Segment: Codable, Identifiable, Equatable, Hashable {
     let date: ServerDate?
     let pdf: [PDFAux]?
     let video: [VideoClipSegment]?
+    let background: URL?
     
     public var hasCover: Bool {
         return cover != nil

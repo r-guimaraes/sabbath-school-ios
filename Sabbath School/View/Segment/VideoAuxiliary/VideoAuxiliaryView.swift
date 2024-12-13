@@ -56,7 +56,7 @@ struct VideoAuxiliaryView: View {
                     .frame(width: 50, height: 5)
     
                 VStack (spacing: 40) {
-                    Text(AppStyle.Base.navigationTitle("Video"))
+                    Text(AppStyle.Base.navigationTitle("Video".localized()))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(20)
@@ -190,9 +190,8 @@ struct VideoAuxiliaryView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .targetLayout()
-                }.scrollViewPaging()
+                    .targetLayout(safeAreaPadding: 20)
+                }.scrollViewPaging(safeAreaPadding: 20)
             }
         }
     }

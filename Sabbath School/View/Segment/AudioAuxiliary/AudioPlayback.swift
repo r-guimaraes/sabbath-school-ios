@@ -134,7 +134,7 @@ class AudioPlayback: ObservableObject {
     }
     
     func shouldShowMiniPlayer() -> Bool {
-        return state != .idle
+        return state == .paused || state == .playing || state == .loading || state == .buffering
     }
     
     func updateRate(_ newRate: PlaybackRate) {

@@ -23,17 +23,15 @@
 import SwiftUI
 
 extension DocumentView {
-    func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {        
+    func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {
         TabView (selection: $documentViewOperator.activeTab) {
-            
             ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
                 switch segment.type {
                 case .story:
                     SegmentViewStory(
                         segment: segment
                     )
-                    .environmentObject(documentViewOperator).tag(index)
-                    .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
+                    .tag(index)
 
                 case .pdf:
                     SegmentViewPDF(
@@ -41,25 +39,43 @@ extension DocumentView {
                         allowHorizontalSwipe: false,
                         showNavigationBarButtons: isActiveTabPDF
                     )
-                    .environmentObject(documentViewOperator).tag(index)
-                    .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
+                    .tag(index)
                     .environmentObject(viewModel)
-
-                case .block, .video:
-                    SegmentViewBlocks(
+                    
+                case .video:
+                    SegmentViewBase(
                         resource: resource,
                         segment: segment,
                         index: index,
                         document: document
-                    )
-                    .environmentObject(documentViewOperator).tag(index)
-                    .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
-                    .environmentObject(themeManager)
+                    ) { cover, blocks, video in
+                        VStack(spacing: 0) {
+                            cover
+                            video
+                            blocks
+                        }
+                    }
+
+                case .block:
+                    SegmentViewBase(
+                        resource: resource,
+                        segment: segment,
+                        index: index,
+                        document: document
+                    ) { cover, blocks, _ in
+                        VStack(spacing: 0) {
+                            cover
+                            blocks
+                        }
+                    }
+                    .tag(index)
                 }
             }
         }.onAppear {
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: documentViewOperator.activeTab, force: true)
         }
+        .environmentObject(documentViewOperator)
+        .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
         .background(themeManager.backgroundColor)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .tabViewStyle(.page(indexDisplayMode: .never))

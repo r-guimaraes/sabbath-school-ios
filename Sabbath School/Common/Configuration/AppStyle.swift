@@ -775,7 +775,7 @@ struct AppStyle {
         
         static func genericForegroundColorForInteractiveBlock(theme: ReaderStyle.Theme) -> Color {
             let light = Color.black
-            let sepia = Color(hex: "#d7bf8d")
+            let sepia = Color(hex: "#5b4636")
             let dark = Color.white
             
             switch theme {

@@ -22,6 +22,16 @@
 
 import Foundation
 
+struct AudioBlockCredit: Codable {
+    let key: String
+    let value: String
+}
+
+struct AudioBlockCredits: Codable {
+    let credits: [AudioBlockCredit]
+    let copyright: String?
+}
+
 struct AudioBlock: BlockProtocol {
     let id: String
     var type: BlockType
@@ -30,4 +40,5 @@ struct AudioBlock: BlockProtocol {
     let src: URL
     let caption: String?
     let nested: Bool?
+    let credits: AudioBlockCredits?
 }

@@ -33,6 +33,7 @@ struct ResourceBibleView: View {
 
 struct ResourceEGWView: View {
     var paragraphs: [AnyBlock]
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         VStack (spacing: 0) {
@@ -40,7 +41,8 @@ struct ResourceEGWView: View {
                 Button(action: {
                     SwiftEntryKit.dismiss()
                 }) {
-                    Image(systemName: "xmark").renderingMode(.template).foregroundColor(.black | .white)
+                    Image(systemName: "xmark")
+                        .foregroundColor(themeManager.getTextColor())
                 }
                 Spacer()
             }.padding(.vertical, 20)
@@ -53,6 +55,9 @@ struct ResourceEGWView: View {
                     }
                 }.padding(.bottom, 20)
             }
-        }.padding(.horizontal, 20)
+        }
+        .padding(.horizontal, 20)
+        .background(themeManager.backgroundColor)
+        .cornerRadius(6)
     }
 }

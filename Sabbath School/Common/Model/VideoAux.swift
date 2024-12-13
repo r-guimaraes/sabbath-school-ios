@@ -38,8 +38,9 @@ struct VideoAux: Codable, Hashable {
 }
 
 struct VideoClipSegment: Codable, Hashable {
-    let id: String
-    let artist: String
-    let title: String
     let src: URL
+    let artist: String?
+    let title: String?
+    let thumbnail: URL?
+    let hls: URL?
 }

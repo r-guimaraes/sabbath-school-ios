@@ -51,10 +51,10 @@ func FeedGroupConditionalStack<Content: View>(
     if feedGroupDirection == .horizontal {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: AppStyle.Feed.Spacing.betweenResources, content: content)
-                .padding(AppStyle.Feed.Spacing.horizontalPadding)
-                .targetLayout()
+                .targetLayout(safeAreaPadding: AppStyle.Feed.Spacing.horizontalPadding)
         }
-        .scrollViewPaging()
+        .scrollViewPaging(safeAreaPadding: AppStyle.Feed.Spacing.horizontalPadding)
+        
     } else {
         VStack(spacing: AppStyle.Feed.Spacing.betweenResources, content: content)
             .padding(AppStyle.Feed.Spacing.horizontalPadding)

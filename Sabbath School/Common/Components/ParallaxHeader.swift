@@ -43,9 +43,10 @@ struct ParallaxHeader<Content: View, Space: Hashable>: View {
                 .frame(
                     width: proxy.size.width,
                     height: proxy.size.height + heightModifier
-                )
+                )            
                 .offset(y: offset)
-        }.frame(height: defaultHeight)
+        }
+        .frame(height: defaultHeight)
     }
     
     private func offset(for proxy: GeometryProxy) -> CGFloat {

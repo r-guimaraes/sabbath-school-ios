@@ -431,6 +431,67 @@ extension Styler {
         
         return backgroundColor
     }
+    
+    static func getBlockBackgroundImage(_ style: Style?, _ block: AnyBlock?) -> URL? {
+        return Styler.getBlockBackgroundImage(style, block, BlockStyleTemplate(), \.block?.backgroundImage)
+    }
+    
+    static func getWrapperBackgroundImage(_ style: Style?, _ block: AnyBlock?) -> URL? {
+        return Styler.getBlockBackgroundImage(style, block, BlockStyleTemplate(), \.wrapper?.backgroundImage)
+    }
+    
+    static func getBlockBackgroundImage(_ style: Style?, _ block: AnyBlock?, _ template: StyleTemplate, _ backgroundColorKeyPath: KeyPath<BlockStyle, URL?>) -> URL? {
+        let defaultBackgroundImage = template.backgroundImageDefault
+        let themeManager = ThemeManager()
+        
+        func resolveBackgroundImage(_ style: Style?, _ defaultBackgroundImage: URL?, _ filter: ((_ style: Style?) -> BlockStyle?)? = nil) -> URL? {
+            
+            var target = style?[keyPath: template.blockStyleKeyPath]
+            
+            if filter != nil {
+                target = filter?(style)
+            }
+            
+            guard let url = target?[keyPath: backgroundColorKeyPath] else {
+                return defaultBackgroundImage
+            }
+            return url
+        }
+        
+        if (!template.backgroundImageEnabled) {
+            return template.backgroundImageDefault
+        }
+        
+        var backgroundImage = resolveBackgroundImage(style, defaultBackgroundImage)
+        
+        let allowColorChange = themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Preferences.darkModeEnable())
+        
+        if let block = block {
+            // Global default style for that type of block
+            backgroundImage = resolveBackgroundImage(style, backgroundImage, { style in
+                return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style
+            })
+            
+            if block.nested != nil {
+                backgroundImage = resolveBackgroundImage(style, backgroundImage, { _ in
+                    return style?.blocks?.nested?.all
+                })
+                
+                backgroundImage = resolveBackgroundImage(style, backgroundImage, { style in
+                    return style?.blocks?.nested?.blocks?.first { $0.type == block.type }?.style
+                })
+            }
+            
+            // Style for that specific block
+            if let addedBlockStyle = block.style {
+                backgroundImage = resolveBackgroundImage(style, backgroundImage, { style in
+                    return addedBlockStyle
+                })
+            }
+        }
+        
+        return backgroundImage
+    }
 }
 
 extension AttributedString {

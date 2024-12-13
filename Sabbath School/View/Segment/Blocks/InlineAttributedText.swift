@@ -162,6 +162,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.openURL) private var openURL
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var themeManager: ThemeManager
     
@@ -175,10 +176,6 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     @State private var attributedStringWithoutHighlights: AttributedString = AttributedString("")
     
     @State private var initialized = false
-    
-    @State private var externalLinkView = false
-    @State private var externalURL: URL?
-    
     
     init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil) {
         self.block = block
@@ -232,10 +229,6 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
                     if !paragraphViewModel.savingMode { return }
                     
                     saveUserInput(AnyUserInput(UserInputHighlights(blockId: block.id, inputType: .highlights, highlights: newValue)))
-                }.sheet(isPresented: $externalLinkView, onDismiss: {
-                    externalURL = nil
-                }) {
-                    ExternalLinkView(url: $externalURL)
                 }
     }
     
@@ -301,15 +294,16 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
            let bible = data.bible?[host],
            url.absoluteString.contains("sspmBible") {
             
-            let hostingController = UIHostingController(rootView: ResourceBibleView(block: bible)
-                .environmentObject(viewModel)
-                .environmentObject(themeManager)
+            let hostingController = UIHostingController(
+                rootView: ResourceBibleView(block: bible)
+                    .environmentObject(viewModel)
+                    .environmentObject(themeManager)
             )
             hostingController.view.layer.cornerRadius = 6
             
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
+            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor())))
         } else if let data = block.data,
                   let host = url.host,
                   let paragraphs = data.egw?[host],
@@ -323,8 +317,8 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             
             SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
         } else {
-            externalURL = url
-            externalLinkView = true
+            openURL(url)
+            
         }
     }
     

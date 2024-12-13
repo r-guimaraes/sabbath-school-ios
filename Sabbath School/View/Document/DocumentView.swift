@@ -58,7 +58,7 @@ struct DocumentView: View {
             .renderingMode(.original)
             .foregroundColor(documentViewOperator.shouldShowNavigationBar
                              ? colorScheme == .dark ? .white : .black
-                             : (documentViewOperator.shouldShowCovers() ? .white : .black))
+                             : colorScheme == .dark ? .white : (documentViewOperator.shouldShowCovers() ? .white : .black))
             .aspectRatio(contentMode: .fit)
             .id(documentViewOperator.shouldShowNavigationBar)
             .transition(.opacity.animation(.easeInOut))
@@ -140,14 +140,30 @@ struct DocumentView: View {
         .onChange(of: colorScheme) { newColorScheme in
             themeManager.setTheme(to: themeManager.currentTheme)
         }
-        .onChange(of: showAudioAux) { newValue in
-            if newValue == false && audioPlayback.state != .playing {
-                audioPlayback.stop()
-            }
-        }
         .onAppear {
             themeManager.setTheme(to: themeManager.currentTheme)
         }
+//        .sheet(isPresented: .constant(true)) {
+//            if let resource = resourceViewModel.resource,
+//               let document = viewModel.document,
+//               let segments = document.segments,
+//               let segment = segments[safe: 2] {
+//                SegmentViewBase(
+//                    resource: resource,
+//                    segment: segment,
+//                    index: -1,
+//                    document: document
+//                ) { cover, blocks, _ in
+//                    VStack(spacing: 0) {
+//                        cover
+//                        blocks
+//                    }
+//                }
+//                .environmentObject(viewModel)
+//                .environmentObject(documentViewOperator)
+//                .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
+//            }
+//        }
     }
 
     func setup() async {
@@ -168,10 +184,10 @@ struct DocumentView: View {
                         }
                         
                         for (index, segment) in segments.enumerated() {
-                            documentViewOperator.setShowTabBar(segment.type == .block || segment.type == .pdf, tab: index)
+                            documentViewOperator.setShowTabBar(segment.type == .block || segment.type == .video || segment.type == .pdf, tab: index)
                             documentViewOperator.navigationBarTitles[index] = segment.title
                             documentViewOperator.setShowSegmentChips(showChips && (segment.type == .block || segment.type == .video), tab: index)
-                            documentViewOperator.setShowCovers(((document.cover != nil) || (segment.cover != nil)), tab: index)
+                            documentViewOperator.setShowCovers(segment.type == .block && ((document.cover != nil) || (segment.cover != nil)), tab: index)
                             documentViewOperator.setShowNavigationBar(segment.type == .pdf, tab: index)
                         }
                     }

@@ -119,7 +119,7 @@ struct AudioAuxiliaryView: View {
                             }) {
                                 VStack {
                                     HStack {
-                                        VStack {
+                                        VStack(spacing: 10) {
                                             Text(AppStyle.Audio.playlistTitle(audioItem.title, isCurrent: currentIndex == index))
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                                 .fixedSize(horizontal: false, vertical: true)
@@ -164,6 +164,7 @@ struct AudioAuxiliaryView: View {
                             Image(systemName: audioPlayback.state == .playing ? "pause.fill" : "play.fill")
                                 .font(.system(size: 50))
                                 .fontWeight(.bold)
+                                .frame(maxWidth: 50, maxHeight: 50)
                         }
                         
                         Button (action: {
@@ -176,21 +177,14 @@ struct AudioAuxiliaryView: View {
                     
                     VStack {
                         
-                        if audioPlayback.duration > audioPlayback.currentTime {
-                            Slider(value: $audioPlayback.currentTime, in: 0...audioPlayback.duration, onEditingChanged: { editing in
-                                if editing {
-                                    audioPlayback.isScrubbing = true
-                                } else {
-                                    audioPlayback.isScrubbing = false
-                                    audioPlayback.player.seek(to: audioPlayback.currentTime)
-                                }
-                            }).onAppear {
-                                let progressCircleConfig = UIImage.SymbolConfiguration(scale: .small)
-                                UISlider.appearance()
-                                    .setThumbImage(UIImage(systemName: "circle.fill",
-                                                           withConfiguration: progressCircleConfig), for: .normal)
+                        Slider(value: audioPlayback.duration > audioPlayback.currentTime ? $audioPlayback.currentTime : .constant(0), in: 0...(audioPlayback.duration > audioPlayback.currentTime ? audioPlayback.duration : 1), onEditingChanged: { editing in
+                            if editing {
+                                audioPlayback.isScrubbing = true
+                            } else {
+                                audioPlayback.isScrubbing = false
+                                audioPlayback.player.seek(to: audioPlayback.currentTime)
                             }
-                        }
+                        })
                         
                         HStack {
                             Text(AppStyle.Audio.time(audioPlayback.currentTime.secondsToString().formatTimeDroppingLeadingZeros()))

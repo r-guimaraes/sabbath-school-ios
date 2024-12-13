@@ -48,10 +48,10 @@ extension DocumentView {
                         segment: segment,
                         index: index,
                         document: document
-                    ) { cover, blocks, video in
+                    ) { cover, blocks, video, title in
                         VStack(spacing: 0) {
-                            cover
-                            video
+                            video.padding(.top, documentViewOperator.shouldShowSegmentChips() ? documentViewOperator.chipsBarHeight + 100 : 100)
+                            title
                             blocks
                         }
                     }
@@ -62,7 +62,7 @@ extension DocumentView {
                         segment: segment,
                         index: index,
                         document: document
-                    ) { cover, blocks, _ in
+                    ) { cover, blocks, _, _ in
                         VStack(spacing: 0) {
                             cover
                             blocks

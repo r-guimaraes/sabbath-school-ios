@@ -38,11 +38,11 @@ struct SegmentChip: View {
                         Text(segment.title)
                             .padding([.vertical], 4)
                             .padding([.horizontal], 8)
-                            .background(index == documentViewOperator.activeTab ? Color.black : Color.white)
-                            .foregroundColor(index == documentViewOperator.activeTab ? .white : .black)
+                            .background(index == documentViewOperator.activeTab ? .black | .white : .white | Color(uiColor: .darkGray))
+                            .foregroundColor(index == documentViewOperator.activeTab ? .white | .black : .black | .white)
                             .font(.custom("Lato-Regular", size: 15))
                             .cornerRadius(3)
-                    }
+                    }.shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
         }

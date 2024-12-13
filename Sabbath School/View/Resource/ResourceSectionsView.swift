@@ -101,12 +101,12 @@ struct ResourceSectionsView: View {
                         transaction.animation = nil
                     }
                     
-                    ResourceSectionView(section: selectedSection!, displaySectionName: false)
+                    ResourceSectionView(section: selectedSection!, resourceKind: resource.kind, displaySectionName: false)
                 }
             } else {
                 if let sections = resource.sections {
                     ForEach(sections) { section in
-                        ResourceSectionView(section: section)
+                        ResourceSectionView(section: section, resourceKind: resource.kind)
                     }
                 }
             }

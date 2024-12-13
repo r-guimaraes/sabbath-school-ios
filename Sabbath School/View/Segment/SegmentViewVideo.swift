@@ -149,15 +149,17 @@ struct SegmentViewVideo: View {
                                                         viewModel.artwork = thumbnail
                                                     }
                                                 }
-                                        }.cornerRadius(6)
+                                        }
                                     }
+                                    
+                                    Color.black.opacity(0.5)
                                     
                                     Button {
                                         viewModel.play()
                                     } label: {
                                         Image(systemName: "play.fill").tint(.white).font(.system(size: 53))
                                     }
-                                }
+                                }.cornerRadius(6)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -165,7 +167,6 @@ struct SegmentViewVideo: View {
                 }
             }
             .padding()
-            .background(themeManager.backgroundColor)
             .task {
                 if viewModel.player == nil {
                     viewModel.setupVideoPlayer(selectedVideo)

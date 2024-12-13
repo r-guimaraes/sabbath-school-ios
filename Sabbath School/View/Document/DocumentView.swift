@@ -87,9 +87,15 @@ struct DocumentView: View {
                         ScrollView(.init()) {
                             pagerView(resource, document, segments)
                         }
-                        if audioPlayback.shouldShowMiniPlayer() {
-                            miniPlayerView()
-                                .padding(.bottom, documentViewOperator.tabBarHeight + 20)
+                        
+                        if let segment = segments[safe: documentViewOperator.activeTab] {
+                            
+                            if audioPlayback.shouldShowMiniPlayer() && (
+                                segment.type != .story || (segment.type == .story && documentViewOperator.shouldShowNavigationBar)
+                            ) {
+                                miniPlayerView()
+                                    .padding(.bottom, documentViewOperator.tabBarHeight + 20)
+                            }
                         }
                     }
                 }
@@ -188,7 +194,7 @@ struct DocumentView: View {
                             documentViewOperator.navigationBarTitles[index] = segment.title
                             documentViewOperator.setShowSegmentChips(showChips && (segment.type == .block || segment.type == .video), tab: index)
                             documentViewOperator.setShowCovers(segment.type == .block && ((document.cover != nil) || (segment.cover != nil)), tab: index)
-                            documentViewOperator.setShowNavigationBar(segment.type == .pdf, tab: index)
+                            documentViewOperator.setShowNavigationBar(segment.type == .pdf || segment.type == .video, tab: index)
                         }
                     }
                     await resourceViewModel.downloadFonts(resourceIndex: document.resourceIndex)

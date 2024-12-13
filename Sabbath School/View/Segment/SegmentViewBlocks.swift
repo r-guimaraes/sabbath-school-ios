@@ -126,7 +126,65 @@ struct SegmentViewCover: View {
         }
     }
     
-    func SegmentHeader(_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?) -> some View {
+//    func SegmentHeader(_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?) -> some View {
+//        VStack (spacing: AppStyle.Segment.Spacing.betweenTitleDateAndSubtitle) {
+//            if let subtitle = subtitle {
+//                VStack (spacing: 0) {
+//                    Text(AppStyle.Segment.Subtitle.text(subtitle, hasCover, style))
+//                        .multilineTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate()))
+//                        .lineLimit(AppStyle.Segment.Subtitle.lineLimit)
+//                        .fixedSize(horizontal: false, vertical: true)
+//                }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate())))
+//            }
+//            
+//            if let date = date {
+//                VStack (spacing: 0) {
+//                    Text(AppStyle.Segment.Date.text(
+//                        date.date.stringReadDate()
+//                            .replacingLastOccurrence(of: Constants.StringsToBeReplaced.saturday,
+//                                                     with: Constants.StringsToBeReplaced.sabbath),
+//                        hasCover, style)
+//                    )
+//                    .multilineTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate()))
+//                    .lineLimit(AppStyle.Segment.Date.lineLimit)
+//                    .fixedSize(horizontal: false, vertical: true)
+//                }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate())))
+//            }
+//            
+//            VStack {
+//                Text(AppStyle.Segment.Title.text(title, hasCover, style))
+//                    .multilineTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate()))
+//                    .lineLimit(AppStyle.Segment.Title.lineLimit)
+//                    .fixedSize(horizontal: false, vertical: true)
+//            }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate())))
+//        }
+//        .frame(maxWidth: .infinity, alignment: .leading)
+//        .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
+//        .padding(.vertical, AppStyle.Segment.Spacing.verticalPaddingHeader())
+//    }
+}
+
+struct SegmentHeader: View {
+    var title: String
+    var date: ServerDate?
+    var subtitle: String?
+    var hasCover: Bool
+    var style: Style?
+    var verticalPadding: CGFloat
+
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
+    
+    init (_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?, _ verticalPadding: CGFloat = AppStyle.Segment.Spacing.verticalPaddingHeader()) {
+        self.title = title
+        self.date = date
+        self.subtitle = subtitle
+        self.hasCover = hasCover
+        self.style = style
+        self.verticalPadding = verticalPadding
+    }
+    
+    var body: some View {
         VStack (spacing: AppStyle.Segment.Spacing.betweenTitleDateAndSubtitle) {
             if let subtitle = subtitle {
                 VStack (spacing: 0) {
@@ -160,7 +218,7 @@ struct SegmentViewCover: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
-        .padding(.vertical, AppStyle.Segment.Spacing.verticalPaddingHeader)
+        .padding(.vertical, verticalPadding)
     }
 }
 
@@ -170,7 +228,7 @@ struct SegmentViewBase<Content: View>: View {
     var index: Int
     var document: ResourceDocument
     
-    let content: (SegmentViewCover, SegmentViewBlocks, SegmentViewVideo) -> Content
+    let content: (SegmentViewCover, SegmentViewBlocks, SegmentViewVideo, SegmentHeader) -> Content
     
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
@@ -193,18 +251,24 @@ struct SegmentViewBase<Content: View>: View {
                 content(
                     SegmentViewCover(segment: segment, document: document, resource: resource),
                     SegmentViewBlocks(segment: segment),
-                    SegmentViewVideo(video: segment.video)
+                    SegmentViewVideo(video: segment.video),
+                    SegmentHeader(segment.markdownTitle ?? segment.title,
+                                  segment.date,
+                                  segment.markdownSubtitle ?? segment.subtitle,
+                                  false,
+                                  segment.style ?? resource.style,
+                                  0)
                 )
             }
             .onChange(of: sizeCategory) { newValue in }
             .background(GeometryReader { geometry in
                 Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
-                    if index == documentViewOperator.activeTab {
+                    if index == documentViewOperator.activeTab, segment.type != .video {
                         self.scrollOffset = scrollOffset
                         
-                        let multiplier = AppStyle.Segment.Cover.percentageOfScreen(hasCover)
+                        let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
                         
-                        let visibility = scrollOffset <= -1 * (screenSizeMonitor.screenSize.height * multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
+                        let visibility = scrollOffset <= -1 * (multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
                         
                         if visibility != documentViewOperator.shouldShowNavigationBar {
                             documentViewOperator.setShowNavigationBar(visibility)

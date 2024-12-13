@@ -41,6 +41,10 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
     
     @EnvironmentObject var viewModel: DocumentViewModel
     
+    func getNavbarMaxY() -> CGFloat {
+        return UIApplication.shared.currentNavigationController()?.topViewController?.navigationController?.navigationBar.frame.maxY ?? 100
+    }
+    
     func makeUIViewController(context: Context) -> PDFAuxiliaryTabbedViewController {
         var downloader: Downloader?
         var documents: [Document] = []
@@ -78,7 +82,10 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
             $0.useParentNavigationBar = true
 
             if viewType == .segment {
-                $0.additionalContentInsets = .init(top: 125, left: 0, bottom: 80, right: 0)
+                // 35 is the height of the tabbar
+                let topInset: CGFloat = 35 + getNavbarMaxY()
+
+                $0.additionalContentInsets = .init(top: topInset, left: 0, bottom: 80, right: 0)
             }
             
             $0.pageTransition = Preferences.getPdfPageTransition()
@@ -220,8 +227,7 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
         
         func fixTabBar () {
             if let t = parent.tabbedPDFController, parent.viewType == .segment {
-                t.tabbedBar.frame.origin = CGPoint(x: 0, y: 90)
-//                t.tabbedBar.frame.origin = CGPoint(x: 0, y: 0)
+                t.tabbedBar.frame.origin = CGPoint(x: 0, y: parent.getNavbarMaxY())
             }
         }
         

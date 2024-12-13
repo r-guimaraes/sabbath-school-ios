@@ -366,20 +366,19 @@ extension Styler {
         return padding
     }
     
-    static func getBlockBackgroundColor(_ style: Style?, _ block: AnyBlock?) -> Color {
-        return Styler.getBackgroundColor(style, block, BlockStyleTemplate(), \.block?.backgroundColor)
+    static func getBlockBackgroundColor(_ style: Style?, _ block: AnyBlock?, _ allowColorChange: Bool? = nil) -> Color {
+        return Styler.getBackgroundColor(style, block, BlockStyleTemplate(), \.block?.backgroundColor, allowColorChange)
     }
     
-    static func getWrapperBackgroundColor(_ style: Style?, _ block: AnyBlock?) -> Color {
-        return Styler.getBackgroundColor(style, block, BlockStyleTemplate(), \.wrapper?.backgroundColor)
+    static func getWrapperBackgroundColor(_ style: Style?, _ block: AnyBlock?, _ allowColorChange: Bool? = nil) -> Color {
+        return Styler.getBackgroundColor(style, block, BlockStyleTemplate(), \.wrapper?.backgroundColor, allowColorChange)
     }
     
-    static func getBackgroundColor(_ style: Style?, _ block: AnyBlock?, _ template: StyleTemplate, _ backgroundColorKeyPath: KeyPath<BlockStyle, String?>) -> Color {
+    static func getBackgroundColor(_ style: Style?, _ block: AnyBlock?, _ template: StyleTemplate, _ backgroundColorKeyPath: KeyPath<BlockStyle, String?>, _ allowColorChange: Bool? = nil) -> Color {
         let defaultBackgroundColor = template.backgroundColorDefault
         let themeManager = ThemeManager()
         
         func resolveBackgroundColor(_ style: Style?, _ defaultBackgroundColor: Color, _ filter: ((_ style: Style?) -> BlockStyle?)? = nil) -> Color {
-            
             var target = style?[keyPath: template.blockStyleKeyPath]
             
             if filter != nil {
@@ -399,7 +398,7 @@ extension Styler {
         
         var backgroundColor = resolveBackgroundColor(style, defaultBackgroundColor)
         
-        let allowColorChange = themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Preferences.darkModeEnable())
+        let allowColorChange = allowColorChange ?? (themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Preferences.darkModeEnable()))
         
         if let block = block {
             // Global default style for that type of block

@@ -250,27 +250,13 @@ struct SegmentViewImageStory: StyledBlock, View {
                                 imageLoader.loadImage(from: block.image)
                             }
                     }
-//                    LazyImage(url: block.image) { state in
-//                        if let image = state.image {
-//                            image
-//                                .resizable()
-//                                .scaledToFill()
-//                                .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
-//                                .offset(x: imageOffset <= 0 ? imageOffset : 0, y: 0)
-//                        } else {
-//                            ProgressView()
-//                        }
-//                    }
-//                    .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
-//                    .edgesIgnoringSafeArea(.top)
-//                    .id(block.id)
                 }
                 .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height)
                 .ignoresSafeArea(.all)
                 .clipped()
                 
                 Rectangle()
-                    .fill(Styler.getBlockBackgroundColor(defaultStyles, AnyBlock(block)))
+                    .fill(Styler.getBlockBackgroundColor(defaultStyles, AnyBlock(block), true))
                     .frame(width: screenSizeMonitor.screenSize.width, height: UIFont(name: "Lato-Regular", size: 28)!.lineHeight * 3 + 120)
             }
             .edgesIgnoringSafeArea(.all)

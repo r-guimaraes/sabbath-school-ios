@@ -21,9 +21,12 @@
  */
 
 import SwiftUI
+import NukeUI
 
 struct ResourceSectionView: View {
     var section: ResourceSection
+    var resourceKind: ResourceKind
+    
     var displaySectionName: Bool = true
     
     var body: some View {
@@ -90,16 +93,31 @@ struct ResourceSectionView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .padding(.vertical, AppStyle.Resource.Document.Spacing.padding)
                 .frame(maxWidth: .infinity)
                 .layoutPriority(1)
                 Spacer()
-                if document.externalURL != nil {
-                    Image(systemName: "arrow.up.forward.square")
-                        .font(.system(size: 16, weight: .light))
-                        .foregroundColor(.secondary)
+                
+                Group {
+                    if document.externalURL != nil {
+                        Image(systemName: "arrow.up.forward.square")
+                            .font(.system(size: 16, weight: .light))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let cover = document.cover, resourceKind == .blog {
+                        LazyImage(url: cover) { image in
+                            image.image?
+                                .resizable()
+                                .aspectRatio(16/9, contentMode: .fill)
+                                .frame(width: 80)
+                        }
+                        .frame(width: 80)
+                        .aspectRatio(16/9, contentMode: .fill)
+                        .cornerRadius(6)
+                        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+                    }
                 }
-            }
+            }.padding(.vertical, AppStyle.Resource.Document.Spacing.padding)
         }.padding(.horizontal, AppStyle.Resource.Document.Spacing.padding)
     }
 }

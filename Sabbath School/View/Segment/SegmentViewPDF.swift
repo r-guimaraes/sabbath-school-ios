@@ -38,7 +38,8 @@ struct SegmentViewPDF: View {
                 viewType: allowHorizontalSwipe ? .aux : .segment,
                 showNavigationBarButtons: showNavigationBarButtons,
                 pdfTabbedViewController: $pdfTabbedViewController
-            ).toolbar {
+            )
+            .toolbar {
                 if showNavigationBarButtons {
                     ToolbarItem {
                         Button(action: {

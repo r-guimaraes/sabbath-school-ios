@@ -130,7 +130,6 @@ struct BlockWrapperView: StyledBlock, View {
                 }
             }
             .padding(Styler.getBlockPadding(defaultStyles, block))
-            
             .background {
                 if let background = Styler.getBlockBackgroundImage(defaultStyles, block),
                    themeManager.currentTheme == .light || (

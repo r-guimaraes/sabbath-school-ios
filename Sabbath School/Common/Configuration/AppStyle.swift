@@ -670,7 +670,7 @@ struct AppStyle {
                 return Helper.isPad ? (width * 0.10) + 20.0 : 20.0
             }
             
-            static var verticalPaddingHeader: CGFloat {
+            static func verticalPaddingHeader() -> CGFloat {
                 return 20.0
             }
             
@@ -688,11 +688,14 @@ struct AppStyle {
         }
         
         struct Cover {
-            static func percentageOfScreen(_ hasCover: Bool = true) -> CGFloat {
+            static func percentageOfScreen(_ hasCover: Bool = true, _ segmentType: SegmentType = .block) -> CGFloat {
+                if segmentType == .video {
+                    return 0.1
+                }
                 return hasCover ? 0.5 : 0.2
             }
             
-            static func height (_ hasCover: Bool = true) -> CGFloat {
+            static func height (_ hasCover: Bool = true, _ segmentType: SegmentType = .block) -> CGFloat {
                 return UIScreen.main.bounds.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
             }
         }

@@ -34,7 +34,7 @@ struct BlockImageView: StyledBlock, View {
     
     var body: some View {
         VStack {
-            LazyImage(url: block.src) { state in
+            AsyncImage(url: block.src) { state in
                 if let image = state.image {
                     image
                         .resizable()
@@ -46,6 +46,7 @@ struct BlockImageView: StyledBlock, View {
                     ProgressView()
                 }
             }
+            .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, AnyBlock(block)))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onTapGesture {
                 if image != nil {

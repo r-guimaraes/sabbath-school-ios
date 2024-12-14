@@ -51,10 +51,16 @@ struct BlockReferenceView: StyledBlock, View {
                 }
                 
                 VStack (alignment: .leading, spacing: 5) {
-                    InlineAttributedText(block: AnyBlock(self.block), markdown: block.title, selectable: false, lineLimit: 1)
+                    Text(block.title)
+                        .lineLimit(1)
+                        .font(.custom("Lato-Regular", size: 16))
+                        .foregroundColor(themeManager.getTextColor())
                     
                     if let subtitle = block.subtitle {
-                        InlineAttributedText(block: AnyBlock(self.block), markdown: subtitle, selectable: false, lineLimit: 2)
+                        Text(block.title)
+                            .lineLimit(1)
+                            .font(.custom("Lato-Medium", size: 14))
+                            .foregroundColor(themeManager.getTextColor().opacity(0.7))
                     }
                 }
                 Spacer()
@@ -63,7 +69,7 @@ struct BlockReferenceView: StyledBlock, View {
             .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(10)
         .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
     }
 }

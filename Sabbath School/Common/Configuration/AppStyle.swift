@@ -795,7 +795,7 @@ struct AppStyle {
         
         struct Reference {
             static var thumbnailSize: CGSize {
-                return CGSize(width: 40, height: 40)
+                return CGSize(width: 60, height: 60)
             }
             
             static func backgroundColor(theme: ReaderStyle.Theme) -> Color {

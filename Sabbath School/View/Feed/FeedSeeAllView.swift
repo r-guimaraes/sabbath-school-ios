@@ -43,7 +43,7 @@ struct FeedSeeAllView: View {
     var body: some View {
         VStack(spacing: 0) {
             if let feedGroup = self.viewModel.feedGroup {
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: false) {
                     // Adding VStack to prevent unnecessary spacing between elements in the ScrollView
                     VStack (spacing: 0) {
                         FeedGroupView(
@@ -54,19 +54,28 @@ struct FeedSeeAllView: View {
                         )
                     }
                 }
+                .refreshable {
+                    await retrieveContent()
+                }
                 .navigationTitle(feedGroup.title ?? (viewModel.feed?.title ?? "test"))
+            } else {
+                FeedLoadingView()
             }
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
         .navigationBarTitleDisplayMode(.large)
         .task {
-             await viewModel.retrieveSeeAllFeed(
-                resourceType: self.resourceType,
-                feedGroupId: self.feedGroupId,
-                language: PreferencesShared.currentLanguage().code
-             )
+            await retrieveContent()
         }
+    }
+    
+    func retrieveContent() async {
+        await viewModel.retrieveSeeAllFeed(
+           resourceType: self.resourceType,
+           feedGroupId: self.feedGroupId,
+           language: PreferencesShared.currentLanguage().code
+        )
     }
 }
 

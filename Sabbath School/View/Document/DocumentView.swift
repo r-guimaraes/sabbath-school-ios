@@ -138,8 +138,50 @@ struct DocumentView: View {
         .navigationBarItems(leading: btnBack)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(documentViewOperator.navigationBarTitle)
+        .toolbar {
+            if let document = viewModel.document,
+               let segments = document.segments,
+               documentViewOperator.shouldShowNavigationBar && documentViewOperator.segmentChipsEnabled {
+                ToolbarItem(placement: .principal) {
+                    if documentViewOperator.segmentChipsStyle == .menu {
+                        Menu {
+                            ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+                                Button(action: {
+                                    documentViewOperator.activeTab = index
+                                }){
+                                    Group {
+                                        Text(segment.title)
+                                        
+                                        if let date = segment.date {
+                                            Text(date.date.stringReadDate()
+                                                .replacingLastOccurrence(of: Constants.StringsToBeReplaced.saturday,
+                                                                         with: Constants.StringsToBeReplaced.sabbath))
+                                        }
+                                    }
+                                    
+                                    if index == documentViewOperator.activeTab {
+                                        Image(systemName: "checkmark")
+                                            .tint(AppStyle.Resource.Section.Dropdown.chevronTint)
+                                    }
+                                }
+                            }
+                        } label: {
+                            documentTitle
+                                // for some reason iOS does not truncate the toolbar item label text, so we have to do it ourselves
+                                .frame(maxWidth: screenSizeMonitor.screenSize.width*0.5)
+                        }
+                    } else {
+                        documentTitle
+                        .onTapGesture {
+                            if !documentViewOperator.segmentChipsEnabled { return }
+                            documentViewOperator.showSegmentChips.toggle()
+                        }
+                    }
+                }
+            }
+        }
         .safeAreaInset(edge: .top) {
-            if documentViewOperator.shouldShowSegmentChips() {
+            if documentViewOperator.showSegmentChips {
                 segmentChipsView()
             }
         }
@@ -171,6 +213,21 @@ struct DocumentView: View {
 //            }
 //        }
     }
+    
+    var documentTitle: some View {
+        HStack {
+            Text(documentViewOperator.navigationBarTitle)
+                .lineLimit(1)
+                .font(.headline)
+                
+            
+            if documentViewOperator.segmentChipsEnabled {
+                Image(systemName: documentViewOperator.showSegmentChips ? "chevron.up" : "chevron.down")
+                    .imageScale(.small)
+                    .foregroundColor((.black | .white).opacity(0.5))
+            }
+        }
+    }
 
     func setup() async {
         if viewModel.document != nil { return }
@@ -180,19 +237,12 @@ struct DocumentView: View {
                 if let document = viewModel.document {
                     documentViewOperator.activeTab = viewModel.selectedSegmentIndex ?? 0
                     if let segments = document.segments {
-                        let showChips = segments.count > 1
-                        
-                        if let showSegmentChips = document.showSegmentChips,
-                           showSegmentChips {
-                            documentViewOperator.showSegmentChips = showChips
-                        } else {
-                            documentViewOperator.showSegmentChips = false
-                        }
+                        documentViewOperator.segmentChipsEnabled = segments.count > 1
+                        documentViewOperator.segmentChipsStyle = document.segmentChipsStyle ?? documentViewOperator.segmentChipsStyle
                         
                         for (index, segment) in segments.enumerated() {
                             documentViewOperator.setShowTabBar(segment.type == .block || segment.type == .video || segment.type == .pdf, tab: index)
                             documentViewOperator.navigationBarTitles[index] = segment.title
-                            documentViewOperator.setShowSegmentChips(showChips && (segment.type == .block || segment.type == .video), tab: index)
                             documentViewOperator.setShowCovers(segment.type == .block && ((document.cover != nil) || (segment.cover != nil)), tab: index)
                             documentViewOperator.setShowNavigationBar(segment.type == .pdf || segment.type == .video, tab: index)
                         }

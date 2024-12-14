@@ -22,6 +22,11 @@
 
 import Foundation
 
+enum SegmentChipsStyle: String, Codable {
+    case menu
+    case carousel
+}
+
 struct ResourceDocument: Codable, Identifiable {
     let id: String
     let resourceId: String
@@ -34,7 +39,7 @@ struct ResourceDocument: Codable, Identifiable {
     let startDate: ServerDate?
     let endDate: ServerDate?
     let segments: [Segment]?
-    let showSegmentChips: Bool?
+    let segmentChipsStyle: SegmentChipsStyle?
     let style: Style?
     let titleBelowCover: Bool?
     let cover: URL?

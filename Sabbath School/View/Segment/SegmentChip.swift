@@ -29,22 +29,33 @@ struct SegmentChip: View {
     @State private var animatedActiveTab: Int = 0
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(Array(segments.enumerated()), id:\.offset) { index, segment in
-                    Button(action: {
-                        documentViewOperator.activeTab = index
-                    }) {
-                        Text(segment.title)
-                            .padding([.vertical], 4)
-                            .padding([.horizontal], 8)
-                            .background(index == documentViewOperator.activeTab ? .black | .white : .white | Color(uiColor: .darkGray))
-                            .foregroundColor(index == documentViewOperator.activeTab ? .white | .black : .black | .white)
-                            .font(.custom("Lato-Regular", size: 15))
-                            .cornerRadius(3)
-                    }.shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(Array(segments.enumerated()), id:\.offset) { index, segment in
+                        Button(action: {
+                            documentViewOperator.activeTab = index
+                            documentViewOperator.showSegmentChips.toggle()
+                        }) {
+                            Text(segment.title)
+                                .padding([.vertical], 4)
+                                .padding([.horizontal], 8)
+                                .background(index == documentViewOperator.activeTab ? .black | .white : .white | Color(uiColor: .darkGray))
+                                .foregroundColor(index == documentViewOperator.activeTab ? .white | .black : .black | .white)
+                                .font(.custom("Lato-Regular", size: 15))
+                                .cornerRadius(3)
+                                .id("segment-chip-\(index)")
+                        }.shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                    }
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+                .onAppear {
+                    DispatchQueue.main.async {
+                        proxy.scrollTo("segment-chip-\(documentViewOperator.activeTab)", anchor: .center)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(10)
+            }
         }
     }
 }

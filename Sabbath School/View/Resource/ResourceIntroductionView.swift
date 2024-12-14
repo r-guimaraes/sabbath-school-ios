@@ -86,6 +86,7 @@ struct ResourceIntroductionView: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .font(.custom("Lato-Regular", size: 20))
+                        .textSelection(.enabled)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -191,6 +191,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         return Text(attributedString)
                 .fixedSize(horizontal: false, vertical: true)
                 .lineSpacing(5)
+                .textSelection(.enabled)
                 .overlay(selectable ? overlaySelectableText(attributedString: attributedStringWithoutHighlights, alignment: alignment) : nil, alignment: .top)
                 .multilineTextAlignment(alignment)
                 .lineLimit(lineLimit)

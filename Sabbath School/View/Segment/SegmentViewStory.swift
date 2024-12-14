@@ -291,7 +291,6 @@ struct SegmentViewStory: View {
         .onTapGesture {
             documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
             documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
-            documentViewOperator.setShowSegmentChips(!documentViewOperator.shouldShowSegmentChips())
         }
         .edgesIgnoringSafeArea(.bottom)
         .edgesIgnoringSafeArea(.top)

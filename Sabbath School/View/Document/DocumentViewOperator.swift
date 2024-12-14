@@ -56,8 +56,11 @@ class DocumentViewOperator: ObservableObject {
     @Published var showNavigationBarVals: [Int: Bool] = [:]
     @Published var navigationBarTitles: [Int: String] = [:]
     @Published var showTabBarVals: [Int: Bool] = [:]
-    @Published var showSegmentChipsVals: [Int: Bool] = [:]
+
     @Published var showSegmentChips: Bool = false
+    @Published var segmentChipsEnabled: Bool = false
+    @Published var segmentChipsStyle: SegmentChipsStyle = .menu
+    
     @Published var showCovers: [Int: Bool] = [:]
     
     public func setShowCovers(_ value: Bool, tab: Int? = nil) {
@@ -85,15 +88,6 @@ class DocumentViewOperator: ObservableObject {
     
     public func shouldShowTabBar() -> Bool {
         return showTabBarVals[activeTab] ?? true
-    }
-    
-    public func setShowSegmentChips(_ value: Bool, tab: Int? = nil) {
-        showSegmentChipsVals[tab ?? activeTab] = value
-    }
-    
-    public func shouldShowSegmentChips() -> Bool {
-        if !showSegmentChips { return false }
-        return showSegmentChipsVals[activeTab] ?? true
     }
     
     public var navigationBarTitle: String {

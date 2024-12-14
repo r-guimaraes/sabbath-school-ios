@@ -192,6 +192,7 @@ struct SegmentHeader: View {
                         .multilineTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate()))
                         .lineLimit(AppStyle.Segment.Subtitle.lineLimit)
                         .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
                 }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate())))
             }
             
@@ -206,6 +207,7 @@ struct SegmentHeader: View {
                     .multilineTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate()))
                     .lineLimit(AppStyle.Segment.Date.lineLimit)
                     .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
                 }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate())))
             }
             
@@ -214,6 +216,7 @@ struct SegmentHeader: View {
                     .multilineTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate()))
                     .lineLimit(AppStyle.Segment.Title.lineLimit)
                     .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
             }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate())))
         }
         .frame(maxWidth: .infinity, alignment: .leading)

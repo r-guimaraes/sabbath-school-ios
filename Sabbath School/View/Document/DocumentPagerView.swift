@@ -50,7 +50,7 @@ extension DocumentView {
                         document: document
                     ) { cover, blocks, video, title in
                         VStack(spacing: 0) {
-                            video.padding(.top, documentViewOperator.shouldShowSegmentChips() ? documentViewOperator.chipsBarHeight + 100 : 100)
+                            video.padding(.top, 100)
                             title
                             blocks
                         }

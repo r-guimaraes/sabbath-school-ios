@@ -76,7 +76,7 @@ func ResourceLink<Destination: View, Content: View>(
             destination
         } label: {
             content()
-        }
+        }.buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -101,7 +101,7 @@ struct FeedGroupView: View {
                             FeedSeeAllView(resourceType: resourceType, feedGroupId: feedGroup.id)
                         } label: {
                             Text(AppStyle.Feed.SeeAllTitle.text("\(seeAll) ›"))
-                        }
+                        }.buttonStyle(PlainButtonStyle())
                     }
                     
                 }

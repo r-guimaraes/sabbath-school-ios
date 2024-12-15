@@ -105,11 +105,20 @@ struct ResourceSectionView: View {
                     }
                     
                     if let cover = document.cover, resourceKind == .blog {
-                        LazyImage(url: cover) { image in
-                            image.image?
-                                .resizable()
-                                .aspectRatio(16/9, contentMode: .fill)
-                                .frame(width: 80)
+                        LazyImage(url: cover) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(16/9, contentMode: .fill)
+                                    .frame(width: 80)
+                            } else {
+                                ZStack {
+                                    Color.gray.opacity(0.5)
+                                    Image(systemName: "photo")
+                                        .imageScale(.small)
+                                        .foregroundColor(.white)
+                                }
+                            }
                         }
                         .frame(width: 80)
                         .aspectRatio(16/9, contentMode: .fill)

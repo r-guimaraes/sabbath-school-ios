@@ -175,7 +175,7 @@ struct ResourceView: View {
                                         .clipShape(Capsule())
                                         .frame(width: AppStyle.Resource.ReadButton.width, alignment: headerFrameAlignment)
                                         .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
-                                    }
+                                    }.buttonStyle(PlainButtonStyle())
 
                                     if let description = resource.description {
                                         ZStack(alignment: .bottomTrailing) {
@@ -208,7 +208,7 @@ struct ResourceView: View {
                                                 }, label: {
                                                     Text(AppStyle.Resource.Description.textMoreButton("More".localized().lowercased(), Color(hex: resource.primaryColorDark)))
                                                         .frame(alignment: .trailing)
-                                                })
+                                                }).buttonStyle(PlainButtonStyle())
                                             }
                                             
                                         }.frame(width: headerFrameWidth)

@@ -24,6 +24,7 @@ import SwiftUI
 import PSPDFKit
 import PSPDFKitUI
 import SwiftAudio
+import NukeUI
 
 struct DocumentView: View {
     var documentIndex: String
@@ -54,11 +55,15 @@ struct DocumentView: View {
         Button(action: {
             self.presentationMode.wrappedValue.dismiss()
         }) {
-        Image(systemName: "arrow.backward")
-            .renderingMode(.original)
+            Image(systemName:
+                    documentViewOperator.shouldShowCovers() && !documentViewOperator.shouldShowNavigationBar
+                    ? "arrow.backward.circle.fill"
+                    : "arrow.backward")
+            .symbolRenderingMode(documentViewOperator.shouldShowCovers() && !documentViewOperator.shouldShowNavigationBar ? .multicolor : .monochrome)
             .foregroundColor(documentViewOperator.shouldShowNavigationBar
                              ? colorScheme == .dark ? .white : .black
-                             : colorScheme == .dark ? .white : (documentViewOperator.shouldShowCovers() ? .white : .black))
+                             : (documentViewOperator.shouldShowCovers() ? .black.opacity(0.5) : colorScheme == .dark ? .white : .black)
+            )
             .aspectRatio(contentMode: .fit)
             .id(documentViewOperator.shouldShowNavigationBar)
             .transition(.opacity.animation(.easeInOut))
@@ -89,7 +94,6 @@ struct DocumentView: View {
                         }
                         
                         if let segment = segments[safe: documentViewOperator.activeTab] {
-                            
                             if audioPlayback.shouldShowMiniPlayer() && (
                                 segment.type != .story || (segment.type == .story && documentViewOperator.shouldShowNavigationBar)
                             ) {

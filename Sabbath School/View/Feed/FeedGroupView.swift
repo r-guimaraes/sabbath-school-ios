@@ -76,7 +76,9 @@ func ResourceLink<Destination: View, Content: View>(
             destination
         } label: {
             content()
-        }.buttonStyle(PlainButtonStyle())
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -101,7 +103,7 @@ struct FeedGroupView: View {
                             FeedSeeAllView(resourceType: resourceType, feedGroupId: feedGroup.id)
                         } label: {
                             Text(AppStyle.Feed.SeeAllTitle.text("\(seeAll) ›"))
-                        }.buttonStyle(PlainButtonStyle())
+                        }.buttonStyle(.plain)
                     }
                     
                 }
@@ -168,10 +170,5 @@ struct FeedGroupView: View {
             }
         }
         .padding(0)
-    }
-    
-    @ViewBuilder
-    func mainItemView(resource: Resource) -> some View {
-        
     }
 }

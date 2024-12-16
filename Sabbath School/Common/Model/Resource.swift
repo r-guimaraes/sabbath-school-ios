@@ -65,7 +65,7 @@ enum ResourceType: String, Codable {
     case ss
 }
 
-enum ResourceCoverType {
+enum ResourceCoverType: Codable {
     case landscape
     case portrait
     case splash
@@ -79,6 +79,12 @@ enum ResourceCoverType {
         case .splash: return 1
         }
     }
+}
+
+enum ResourcePreferredCover: String, Codable {
+    case landscape
+    case portrait
+    case square
 }
 
 enum ResourceKind: String, Codable {
@@ -115,6 +121,11 @@ struct ResourceCovers: Codable {
     let portrait: URL
 }
 
+struct ResourceCTA: Codable {
+    let hidden: Bool?
+    let text: String?
+}
+
 struct Resource: Codable, Identifiable {
     let id: String
     let index: String
@@ -137,4 +148,6 @@ struct Resource: Codable, Identifiable {
     let fonts: [ResourceFont]?
     let style: Style?
     let externalURL: URL?
+    let cta: ResourceCTA?
+    let preferredCover: ResourcePreferredCover?
 }

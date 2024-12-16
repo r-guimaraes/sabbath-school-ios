@@ -74,6 +74,8 @@ struct BlockParagraphView: StyledBlock, View {
             return true
         case .excerptItem:
             return true
+        case .table:
+            return true
         default:
             return false
         }

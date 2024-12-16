@@ -138,6 +138,7 @@ import SwiftUI
         }
         API.session.request(url).responseDecodable(of: Resource.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let resource = response.value else {
+                print("SSDEBUG", response)
                 return
             }
             self.resource = resource

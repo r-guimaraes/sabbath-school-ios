@@ -57,7 +57,7 @@ struct BlockReferenceView: StyledBlock, View {
                         .foregroundColor(themeManager.getTextColor())
                     
                     if let subtitle = block.subtitle {
-                        Text(block.title)
+                        Text(subtitle)
                             .lineLimit(1)
                             .font(.custom("Lato-Medium", size: 14))
                             .foregroundColor(themeManager.getTextColor().opacity(0.7))
@@ -67,9 +67,11 @@ struct BlockReferenceView: StyledBlock, View {
                 Image(systemName: "chevron.right").foregroundColor(.black | .white)
             }
             .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
         }
         .frame(maxWidth: .infinity)
         .padding(10)
         .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
+        .buttonStyle(.plain)
     }
 }

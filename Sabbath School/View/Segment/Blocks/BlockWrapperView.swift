@@ -115,6 +115,10 @@ struct BlockWrapperView: StyledBlock, View {
                     if let reference = block.asType(Reference.self) {
                         BlockReferenceView(block: reference)
                     }
+                case .table:
+                    if let table = block.asType(TableBlock.self) {
+                        BlockTableView(block: table)
+                    }
                 case .video:
                     if let video = block.asType(VideoBlock.self) {
                         BlockVideoView(block: video)

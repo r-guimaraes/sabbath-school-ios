@@ -59,6 +59,7 @@ enum BlockType: String, Codable {
          reference,
          story,
          storySlide,
+         table,
          question,
          video,
          unknown
@@ -105,7 +106,7 @@ struct AnyBlock: BlockProtocol, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
-//        let nested = try container.decodeIfPresent(Bool.self, forKey: .nested)
+        let nested = try container.decodeIfPresent(Bool.self, forKey: .nested)
 //        let style = try container.decodeIfPresent(BlockStyle.self, forKey: .style)
         
         switch type {
@@ -151,6 +152,8 @@ struct AnyBlock: BlockProtocol, Decodable {
             _base = try Story(from: decoder)
         case .storySlide:
             _base = try StorySlide(from: decoder)
+        case .table:
+            _base = try TableBlock(from: decoder)
         case .question:
             _base = try Question(from: decoder)
         case .video:

@@ -157,8 +157,10 @@ struct SegmentViewVideo: View {
                                     Button {
                                         viewModel.play()
                                     } label: {
-                                        Image(systemName: "play.fill").tint(.white).font(.system(size: 53))
-                                    }
+                                        Image(systemName: "play.fill")
+                                            .font(.system(size: 53))
+                                            .foregroundColor(.white)
+                                    }.buttonStyle(.plain)
                                 }.cornerRadius(6)
                             }
                         }

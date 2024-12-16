@@ -20,6 +20,8 @@
 		2F3F16822D09E3FB005E0232 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3F16812D09E3FB005E0232 /* Nuke */; };
 		2F3F16842D09E3FB005E0232 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3F16832D09E3FB005E0232 /* NukeUI */; };
 		2F3F168A2D0A1117005E0232 /* FullScreenImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */; };
+		2F3F16A02D0FC742005E0232 /* BlockTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F169F2D0FC73F005E0232 /* BlockTableView.swift */; };
+		2F3F16A22D0FC79C005E0232 /* TableBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16A12D0FC79B005E0232 /* TableBlock.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -341,6 +343,8 @@
 		2F1C33BE2D021034008D30C0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2F1E105E2D068357004CF872 /* SegmentViewVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentViewVideo.swift; sourceTree = "<group>"; };
 		2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewer.swift; sourceTree = "<group>"; };
+		2F3F169F2D0FC73F005E0232 /* BlockTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTableView.swift; sourceTree = "<group>"; };
+		2F3F16A12D0FC79B005E0232 /* TableBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableBlock.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -917,6 +921,7 @@
 		2F7621D92C1F3D7000CB7C33 /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				2F3F16A12D0FC79B005E0232 /* TableBlock.swift */,
 				2F7621DE2C1F3EDC00CB7C33 /* Appeal.swift */,
 				2F99F5F22C2F858A00FCB05F /* AudioBlock.swift */,
 				2F7621F22C1F3F9F00CB7C33 /* BlockImage.swift */,
@@ -972,6 +977,7 @@
 				2F99F5FC2C304BEA00FCB05F /* BlockPollView.swift */,
 				2F7622312C1F445300CB7C33 /* BlockQuestionView.swift */,
 				2F7622392C1F44A100CB7C33 /* BlockReferenceView.swift */,
+				2F3F169F2D0FC73F005E0232 /* BlockTableView.swift */,
 				2F99F5F82C2F904300FCB05F /* BlockVideoView.swift */,
 				2F76224D2C1F458900CB7C33 /* BlockWrapperView.swift */,
 				2F7622492C1F455D00CB7C33 /* InlineAttributedText.swift */,
@@ -1851,6 +1857,7 @@
 				2F99F5F52C2F85D200FCB05F /* BlockAudioView.swift in Sources */,
 				2F7621FE2C1F402D00CB7C33 /* UserInputChecklist.swift in Sources */,
 				2F75267F2CD022EE0027FD1E /* BlockStyleTemplate.swift in Sources */,
+				2F3F16A22D0FC79C005E0232 /* TableBlock.swift in Sources */,
 				2F7621F12C1F3F9300CB7C33 /* Reference.swift in Sources */,
 				2FC5CAC22D09DA6C00FB1D87 /* AccountManager.swift in Sources */,
 				2F698B452CD4794A0070FEF9 /* DocumentLoadingView.swift in Sources */,
@@ -1918,6 +1925,7 @@
 				2F96FF5D26C847AB0045DC6D /* ESTMusicIndicatorView.swift in Sources */,
 				2F698B672CDF627C0070FEF9 /* PDFAuxiliaryViewController.swift in Sources */,
 				2F698B6B2CDF6FE20070FEF9 /* UserInputAnnotation.swift in Sources */,
+				2F3F16A02D0FC742005E0232 /* BlockTableView.swift in Sources */,
 				7A280FC51EDA04A6003C7458 /* Color.swift in Sources */,
 				2F76222E2C1F440400CB7C33 /* InteractiveBlock.swift in Sources */,
 				2F99F5FD2C304BEA00FCB05F /* BlockPollView.swift in Sources */,
@@ -2347,7 +2355,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Sabbath School/Resources/Sabbath School.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
@@ -2464,7 +2472,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Sabbath School/Resources/Sabbath School.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Sabbath School/Application/Info.plist";

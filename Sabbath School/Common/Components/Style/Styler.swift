@@ -47,7 +47,7 @@ struct Styler {
             if let block = block {
                 textColor = themeManager.getTextColor()
                 
-                if block.nested != nil {
+                if let nested = block.nested, nested {
                     if allowColorChange {
                         textColor = Styler.getTextColor(style, template, \.blocks?.nested?.all?.text, nil, textColor)
                     }
@@ -66,7 +66,7 @@ struct Styler {
                 }, textTypeface)
                 
                 
-                if block.nested != nil {
+                if let nested = block.nested, nested {
                     if allowColorChange {
                         textColor = Styler.getTextColor(style, template, nil, { style in
                             return style?.blocks?.nested?.blocks?.first { $0.type == block.type }?.style.text
@@ -227,7 +227,7 @@ extension Styler {
                 return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style.text
             })
             
-            if block.nested != nil {
+            if let nested = block.nested, nested {
                 textAlignment = resolveTextAlignment(style, textAlignment, { _ in
                     return style?.blocks?.nested?.all?.text
                 })
@@ -282,7 +282,7 @@ extension Styler {
                 return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style
             })
             
-            if block.nested != nil {
+            if let nested = block.nested, nested {
                 cornerRadius = resolveCornerRadius(style, cornerRadius, { _ in
                     return style?.blocks?.nested?.all
                 })
@@ -345,7 +345,7 @@ extension Styler {
                 return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style
             })
             
-            if block.nested != nil {
+            if let nested = block.nested, nested {
                 padding = resolvePadding(style, padding, { _ in
                     return style?.blocks?.nested?.all
                 })
@@ -406,7 +406,7 @@ extension Styler {
                 return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style
             })
             
-            if block.nested != nil {
+            if let nested = block.nested, nested {
                 backgroundColor = resolveBackgroundColor(style, backgroundColor, { _ in
                     return style?.blocks?.nested?.all
                 })
@@ -471,7 +471,7 @@ extension Styler {
                 return style?.blocks?.inline?.blocks?.first { $0.type == block.type }?.style
             })
             
-            if block.nested != nil {
+            if let nested = block.nested, nested {
                 backgroundImage = resolveBackgroundImage(style, backgroundImage, { _ in
                     return style?.blocks?.nested?.all
                 })

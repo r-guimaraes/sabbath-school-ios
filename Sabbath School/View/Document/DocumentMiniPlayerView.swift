@@ -69,7 +69,7 @@ extension DocumentView {
             .frame(maxWidth: screenSizeMonitor.screenSize.width - AppStyle.Audio.miniPlayerWrapperPadding * 2)
             .cornerRadius(AppStyle.Audio.miniPlayerCornerRadius)
             .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
-        }.buttonStyle(PlainButtonStyle())
+        }.buttonStyle(.plain)
     }
     
     func miniPlayerPausePlay () {

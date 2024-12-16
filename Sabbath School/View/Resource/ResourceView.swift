@@ -78,6 +78,27 @@ struct ResourceView: View {
         AppStyle.Resource.Header.textAlignment(viewModel.resource?.covers.splash == nil)
     }
     
+    private var preferredCover: (url: URL?, size: ResourceCoverType?) {
+        if let resource = viewModel.resource, let preferredCover = resource.preferredCover {
+            var nonSplashCover: URL = resource.covers.portrait
+            var nonSplashSize: ResourceCoverType = ResourceCoverType.portrait
+            
+            switch preferredCover {
+            case .landscape:
+                nonSplashCover = resource.covers.landscape
+                nonSplashSize = .landscape
+            case .square:
+                nonSplashCover = resource.covers.square
+                nonSplashSize = .square
+            default:
+                break
+            }
+            
+            return (url: nonSplashCover, size: nonSplashSize)
+        }
+        return (url: nil, size: nil)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             if let resource = self.viewModel.resource {
@@ -86,7 +107,7 @@ struct ResourceView: View {
                         ZStack (alignment: .bottom) {
                             ParallaxHeader(
                                 coordinateSpace: CoordinateSpaces.scrollView,
-                                defaultHeight: Helper.isPad && resource.covers.splash == nil ? 0 : AppStyle.Resource.Splash.height
+                                defaultHeight: Helper.isPad || resource.covers.splash == nil ? 0 : AppStyle.Resource.Splash.height
                             ) {
                                 if let splash = resource.covers.splash {
                                     LazyImage(url: splash) { state in
@@ -122,7 +143,7 @@ struct ResourceView: View {
                                 spacing: AppStyle.Resource.Spacing.betweenTitleSubtitleReadButonDescription,
                                 isPad: Helper.isPad && resource.covers.splash == nil) {
                                 if resource.covers.splash == nil {
-                                    LazyImage(url: resource.covers.portrait) { state in
+                                    LazyImage(url: preferredCover.url ?? resource.covers.portrait) { state in
                                         if let image = state.image {
                                             image.resizable()
                                                 .scaledToFill()
@@ -134,8 +155,8 @@ struct ResourceView: View {
                                         }
                                     }
                                     .frame(
-                                       width: AppStyle.Resource.Cover.size(.portrait).width,
-                                       height: AppStyle.Resource.Cover.size(.portrait).height
+                                        width: AppStyle.Resource.Cover.size(preferredCover.size ?? .portrait).width,
+                                        height: AppStyle.Resource.Cover.size(preferredCover.size ?? .portrait).height
                                     )
                                     .cornerRadius(6)
                                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
@@ -162,20 +183,9 @@ struct ResourceView: View {
                                             .fixedSize(horizontal: false, vertical: true)
                                     }
                                     
-                                    NavigationLink {
-                                        if let readButtonIndex = self.viewModel.readButtonDocumentIndex {
-                                            DocumentView(documentIndex: readButtonIndex)
-                                        }
-                                    } label: {
-                                        Text(AppStyle.Resource.ReadButton.text("Read".localized().uppercased()))
-                                            .lineLimit(AppStyle.Resource.ReadButton.lineLimit)
-                                        .padding([.horizontal], AppStyle.Resource.ReadButton.horizontalPadding)
-                                        .padding([.vertical], AppStyle.Resource.ReadButton.verticalPadding)
-                                        .background(Color(UIColor(hex: resource.primaryColorDark)))
-                                        .clipShape(Capsule())
-                                        .frame(width: AppStyle.Resource.ReadButton.width, alignment: headerFrameAlignment)
-                                        .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
-                                    }.buttonStyle(PlainButtonStyle())
+                                    if resource.cta?.hidden != true {
+                                        ctaButton(resource: resource)
+                                    }
 
                                     if let description = resource.description {
                                         ZStack(alignment: .bottomTrailing) {
@@ -208,7 +218,7 @@ struct ResourceView: View {
                                                 }, label: {
                                                     Text(AppStyle.Resource.Description.textMoreButton("More".localized().lowercased(), Color(hex: resource.primaryColorDark)))
                                                         .frame(alignment: .trailing)
-                                                }).buttonStyle(PlainButtonStyle())
+                                                }).buttonStyle(.plain)
                                             }
                                             
                                         }.frame(width: headerFrameWidth)
@@ -323,6 +333,24 @@ struct ResourceView: View {
         }.onAppear {
             UIApplication.shared.currentTabBarController()?.tabBar.isHidden = false
         }
+    }
+    
+    @ViewBuilder
+    func ctaButton(resource: Resource) -> some View {
+        NavigationLink {
+            if let readButtonIndex = self.viewModel.readButtonDocumentIndex {
+                DocumentView(documentIndex: readButtonIndex)
+            }
+        } label: {
+            Text(AppStyle.Resource.ReadButton.text(resource.cta?.text ?? "Read".localized().uppercased()))
+                .lineLimit(AppStyle.Resource.ReadButton.lineLimit)
+                .padding([.horizontal], AppStyle.Resource.ReadButton.horizontalPadding)
+                .padding([.vertical], AppStyle.Resource.ReadButton.verticalPadding)
+                .background(Color(UIColor(hex: resource.primaryColorDark)))
+                .clipShape(Capsule())
+                .frame(width: AppStyle.Resource.ReadButton.width, alignment: headerFrameAlignment)
+                .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
+        }.buttonStyle(.plain)
     }
     
     func indexResourceForSpotlight() {

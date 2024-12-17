@@ -375,6 +375,13 @@ struct AppStyle {
                 
                 return CGSize(width: width, height: height)
             }
+            
+            static func nonSplashCover(_ coverType: ResourceCoverType) -> CGSize {
+                let width: CGFloat = Helper.isPad ? 200 : UIScreen.main.bounds.width / (coverType == .portrait ? 2.5 : 1.5)
+                let height = width / coverType.aspectRatio
+                
+                return CGSize(width: width, height: height)
+            }
         }
         
         struct Header {

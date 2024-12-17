@@ -155,8 +155,8 @@ struct ResourceView: View {
                                         }
                                     }
                                     .frame(
-                                        width: AppStyle.Resource.Cover.size(preferredCover.size ?? .portrait).width,
-                                        height: AppStyle.Resource.Cover.size(preferredCover.size ?? .portrait).height
+                                        width: AppStyle.Resource.Cover.nonSplashCover(preferredCover.size ?? .portrait).width,
+                                        height: AppStyle.Resource.Cover.nonSplashCover(preferredCover.size ?? .portrait).height
                                     )
                                     .cornerRadius(6)
                                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)

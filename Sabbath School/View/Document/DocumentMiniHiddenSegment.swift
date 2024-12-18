@@ -62,13 +62,8 @@ extension DocumentView {
                 .frame(width: screenSizeMonitor.screenSize.width - AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width) * 2)
                 .cornerRadius(AppStyle.Audio.miniPlayerCornerRadius)
                 .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
-            }.buttonStyle(.plain)
-        }        
-    }
-    
-    func minimizeHiddenSegment() {
-        withAnimation {
-            documentViewOperator.shouldShowHiddenSegment = false
+            }
+            .buttonStyle(.plain)
         }
     }
     
@@ -76,6 +71,7 @@ extension DocumentView {
         withAnimation {
             documentViewOperator.shouldShowHiddenSegment = false
             documentViewOperator.hiddenSegment = nil
+            documentViewOperator.hiddenSegmentID = nil
         }
     }
 }

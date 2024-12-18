@@ -48,7 +48,7 @@ struct SegmentViewBlocks: View {
                 }
             }
             .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent +
-                     (audioPlayback.shouldShowMiniPlayer() || documentViewOperator.hiddenSegment != nil ? 80 * 2 : 80)
+                     (audioPlayback.shouldShowMiniPlayer() || documentViewOperator.hiddenSegment != nil && !isHiddenSegment ? 80 * 2 : isHiddenSegment ? 0 : 80)
             )
             .padding(.top, AppStyle.Segment.Spacing.verticalPaddingContent)
             .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width, isHiddenSegment))

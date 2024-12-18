@@ -29,20 +29,8 @@ extension DocumentView {
            let document = viewModel.document,
            let segment = documentViewOperator.hiddenSegment {
             
-            ZStack(alignment: .topLeading) {
-                NavigationStack {
-                    segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true)
-                }
-                
-                Button (action: {
-                    minimizeHiddenSegment()
-                }) {
-                    Image(systemName: "chevron.down.circle.fill")
-                        .foregroundColor(.black | .white)
-                        .imageScale(.large)
-                        .padding(.top, 10)
-                        .padding(.leading, 10)
-                }
+            NavigationStack {
+                segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true)
             }
             .accentColor(.black | .white)
         }

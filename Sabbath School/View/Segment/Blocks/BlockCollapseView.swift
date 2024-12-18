@@ -33,12 +33,16 @@ struct BlockCollapseView: StyledBlock, View {
         VStack (spacing: 0) {
             VStack (spacing: 0) {
                 Button {
-                    expanded = !expanded
+                    withAnimation {
+                        expanded = !expanded
+                    }
                 } label: {
                     HStack {
                         InlineAttributedText(block: AnyBlock(self.block), markdown: block.caption, selectable: false, lineLimit: 2)
                         Spacer()
-                        Image(systemName: expanded ? "chevron.up" : "chevron.down").foregroundColor(.black | .white)
+                        Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.black | .white)
+                            .animation(.easeInOut, value: expanded)
                     }
                     .frame(maxWidth: .infinity)
                 }

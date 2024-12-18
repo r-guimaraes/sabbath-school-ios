@@ -29,11 +29,13 @@ private enum CoordinateSpaces {
 
 struct SegmentViewBlocks: View {
     var segment: Segment
+    var isHiddenSegment: Bool = false
     
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     @EnvironmentObject var audioPlayback: AudioPlayback
+    @EnvironmentObject var documentViewOperator: DocumentViewOperator
     
     var body: some View {
         if let blocks = segment.blocks {
@@ -46,10 +48,10 @@ struct SegmentViewBlocks: View {
                 }
             }
             .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent +
-                     (audioPlayback.shouldShowMiniPlayer() ? 80 * 2 : 80)
+                     (audioPlayback.shouldShowMiniPlayer() || documentViewOperator.hiddenSegment != nil ? 80 * 2 : 80)
             )
             .padding(.top, AppStyle.Segment.Spacing.verticalPaddingContent)
-            .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width))
+            .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width, isHiddenSegment))
         }
     }
 }
@@ -66,6 +68,7 @@ struct SegmentViewCover: View {
     var segment: Segment
     var document: ResourceDocument
     var resource: Resource
+    var isHiddenSegment: Bool = false
     
     private var hasCover: Bool {
         return segment.type == .block && (segment.cover != nil || document.cover != nil)
@@ -106,12 +109,12 @@ struct SegmentViewCover: View {
                                   segment.date,
                                   segment.markdownSubtitle ?? segment.subtitle,
                                   hasCover && !titleBelowCover,
-                                  segment.style ?? resource.style)
+                                  segment.style ?? resource.style,
+                                  AppStyle.Segment.Spacing.verticalPaddingHeader(),
+                                  isHiddenSegment)
                 }
             }
-            .frame(height: AppStyle.Segment.Cover.height())
-            
-            
+            .frame(height: AppStyle.Segment.Cover.height())   
         }
         
         VStack {
@@ -120,7 +123,9 @@ struct SegmentViewCover: View {
                               segment.date,
                               segment.markdownSubtitle ?? segment.subtitle,
                               hasCover && !titleBelowCover,
-                              segment.style ?? resource.style)
+                              segment.style ?? resource.style,
+                              AppStyle.Segment.Spacing.verticalPaddingHeader(),
+                              isHiddenSegment)
                 .padding(.top, hasCover || (hasCover && titleBelowCover) ? 20 : AppStyle.Segment.Cover.height(false))
             }
         }
@@ -171,17 +176,19 @@ struct SegmentHeader: View {
     var hasCover: Bool
     var style: Style?
     var verticalPadding: CGFloat
+    var isHiddenSegment: Bool
 
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     
-    init (_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?, _ verticalPadding: CGFloat = AppStyle.Segment.Spacing.verticalPaddingHeader()) {
+    init (_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?, _ verticalPadding: CGFloat = AppStyle.Segment.Spacing.verticalPaddingHeader(), _ isHiddenSegment: Bool = false) {
         self.title = title
         self.date = date
         self.subtitle = subtitle
         self.hasCover = hasCover
         self.style = style
         self.verticalPadding = verticalPadding
+        self.isHiddenSegment = isHiddenSegment
     }
     
     var body: some View {
@@ -220,7 +227,7 @@ struct SegmentHeader: View {
             }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate())))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
+        .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width, isHiddenSegment))
         .padding(.vertical, verticalPadding)
     }
 }
@@ -230,6 +237,7 @@ struct SegmentViewBase<Content: View>: View {
     var segment: Segment
     var index: Int
     var document: ResourceDocument
+    var isHiddenSegment: Bool = false
     
     let content: (SegmentViewCover, SegmentViewBlocks, SegmentViewVideo, SegmentHeader) -> Content
     
@@ -253,14 +261,15 @@ struct SegmentViewBase<Content: View>: View {
             VStack(spacing: 0) {
                 content(
                     SegmentViewCover(segment: segment, document: document, resource: resource),
-                    SegmentViewBlocks(segment: segment),
+                    SegmentViewBlocks(segment: segment, isHiddenSegment: isHiddenSegment),
                     SegmentViewVideo(video: segment.video),
                     SegmentHeader(segment.markdownTitle ?? segment.title,
                                   segment.date,
                                   segment.markdownSubtitle ?? segment.subtitle,
                                   false,
                                   segment.style ?? resource.style,
-                                  0)
+                                  0,
+                                  isHiddenSegment)
                 )
             }
             .onChange(of: sizeCategory) { newValue in }

@@ -40,5 +40,5 @@ struct Reference: BlockProtocol {
     let resource: Resource?
     let document: ResourceDocument?
     let nested: Bool?
-//    let segment: Segment?
+    let segment: Segment?
 }

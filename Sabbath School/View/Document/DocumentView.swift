@@ -51,6 +51,8 @@ struct DocumentView: View {
     
     var menuItems: [MenuItemIdentifier] = [.originalPDF, .readingOptions]
     
+    @State var hiddenSegmentM: AnyView? = nil
+    
     var btnBack: some View {
         Button(action: {
             self.presentationMode.wrappedValue.dismiss()
@@ -93,14 +95,17 @@ struct DocumentView: View {
                             pagerView(resource, document, segments)
                         }
                         
-                        if let segment = segments[safe: documentViewOperator.activeTab] {
-                            if audioPlayback.shouldShowMiniPlayer() && (
-                                segment.type != .story || (segment.type == .story && documentViewOperator.shouldShowNavigationBar)
-                            ) {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
                                 miniPlayerView()
-                                    .padding(.bottom, documentViewOperator.tabBarHeight + 20)
+                                
+                                miniHiddenSegment()
                             }
+                            .padding(.vertical, 20)
+                            .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, documentViewOperator.tabBarHeight)
                     }
                 }
             } else {
@@ -117,6 +122,16 @@ struct DocumentView: View {
         }
         .onChange(of: documentViewOperator.activeTab) { newValue in
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: newValue, force: true)
+        }
+        .onChange(of: documentViewOperator.hiddenSegmentIterator) { _ in
+            if let hiddenSegmentID = documentViewOperator.hiddenSegmentID, !hiddenSegmentID.isEmpty {
+                Task {
+                    await viewModel.retrieveSegment(segmentIndex: hiddenSegmentID, completion: { segment in
+                        documentViewOperator.hiddenSegment = segment
+                        documentViewOperator.shouldShowHiddenSegment = true
+                    })
+                }
+            }
         }
         .sheet(isPresented: $showAudioAux) {
             AudioAuxiliaryView(
@@ -197,27 +212,9 @@ struct DocumentView: View {
         .onAppear {
             themeManager.setTheme(to: themeManager.currentTheme)
         }
-//        .sheet(isPresented: .constant(true)) {
-//            if let resource = resourceViewModel.resource,
-//               let document = viewModel.document,
-//               let segments = document.segments,
-//               let segment = segments[safe: 2] {
-//                SegmentViewBase(
-//                    resource: resource,
-//                    segment: segment,
-//                    index: -1,
-//                    document: document
-//                ) { cover, blocks, _ in
-//                    VStack(spacing: 0) {
-//                        cover
-//                        blocks
-//                    }
-//                }
-//                .environmentObject(viewModel)
-//                .environmentObject(documentViewOperator)
-//                .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
-//            }
-//        }
+        .sheet(isPresented: $documentViewOperator.shouldShowHiddenSegment) {
+            hiddenSegment
+        }
     }
     
     var documentTitle: some View {

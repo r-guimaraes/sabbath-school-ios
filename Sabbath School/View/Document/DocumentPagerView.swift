@@ -26,50 +26,7 @@ extension DocumentView {
     func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {
         TabView (selection: $documentViewOperator.activeTab) {
             ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
-                switch segment.type {
-                case .story:
-                    SegmentViewStory(
-                        segment: segment
-                    )
-                    .tag(index)
-
-                case .pdf:
-                    SegmentViewPDF(
-                        segment: segment,
-                        allowHorizontalSwipe: false,
-                        showNavigationBarButtons: isActiveTabPDF
-                    )
-                    .tag(index)
-                    .environmentObject(viewModel)
-                    
-                case .video:
-                    SegmentViewBase(
-                        resource: resource,
-                        segment: segment,
-                        index: index,
-                        document: document
-                    ) { cover, blocks, video, title in
-                        VStack(spacing: 0) {
-                            video.padding(.top, 100)
-                            title
-                            blocks
-                        }
-                    }
-
-                case .block:
-                    SegmentViewBase(
-                        resource: resource,
-                        segment: segment,
-                        index: index,
-                        document: document
-                    ) { cover, blocks, _, _ in
-                        VStack(spacing: 0) {
-                            cover
-                            blocks
-                        }
-                    }
-                    .tag(index)
-                }
+                segmentPageView(resource: resource, document: document, segment: segment, index: index)
             }
         }.onAppear {
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: documentViewOperator.activeTab, force: true)
@@ -80,5 +37,84 @@ extension DocumentView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .tabViewStyle(.page(indexDisplayMode: .never))
         .id(document.id)
+    }
+    
+    @ViewBuilder
+    func segmentPageView(resource: Resource, document: ResourceDocument, segment: Segment, index: Int, isHiddenSegment: Bool = false) -> some View {
+        Group {
+            switch segment.type {
+            case .story:
+                SegmentViewStory(
+                    segment: segment,
+                    enableTagGesture: !isHiddenSegment
+                )
+                .tag(index)
+                
+            case .pdf:
+                SegmentViewPDF(
+                    segment: segment,
+                    allowHorizontalSwipe: isHiddenSegment,
+                    showNavigationBarButtons: isHiddenSegment ? .constant(true) : isActiveTabPDF
+                )
+                .tag(index)
+                .environmentObject(viewModel)
+                
+            case .video:
+                SegmentViewBase(
+                    resource: resource,
+                    segment: segment,
+                    index: index,
+                    document: document,
+                    isHiddenSegment: isHiddenSegment
+                ) { cover, blocks, video, title in
+                    VStack(spacing: isHiddenSegment ? 40 : 0) {
+                        if isHiddenSegment {
+                            Rectangle()
+                                .fill(Color(uiColor: .baseGray1 | .baseGray2))
+                                .cornerRadius(3)
+                                .frame(width: 50, height: 5)
+                            VStack (spacing: 0) {
+                                video
+                                title
+                                blocks
+                            }
+                        } else {
+                            video.padding(.top, isHiddenSegment ? 0 : 100)
+                            title
+                            blocks
+                        }
+                    }.padding(.top, isHiddenSegment ? 10 : 0)
+                }
+                
+            case .block:
+                SegmentViewBase(
+                    resource: resource,
+                    segment: segment,
+                    index: index,
+                    document: document,
+                    isHiddenSegment: isHiddenSegment
+                ) { cover, blocks, _, header in
+                    VStack(spacing: isHiddenSegment ? 40 : 0) {
+                        if isHiddenSegment {
+                            Rectangle()
+                                .fill(Color(uiColor: .baseGray1 | .baseGray2))
+                                .cornerRadius(3)
+                                .frame(width: 50, height: 5)
+                            VStack (spacing: 0) {
+                                header
+                                blocks
+                            }
+                        } else {
+                            cover
+                            blocks
+                        }
+                    }.padding(.top, isHiddenSegment ? 10 : 0)
+                }
+                .tag(index)
+            }
+        }
+        .environmentObject(viewModel)
+        .environmentObject(documentViewOperator)
+        .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
     }
 }

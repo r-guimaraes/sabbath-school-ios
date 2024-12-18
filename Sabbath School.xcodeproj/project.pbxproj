@@ -26,6 +26,8 @@
 		2F3F16A82D12125F005E0232 /* UserInputComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16A72D12125C005E0232 /* UserInputComment.swift */; };
 		2F3F16B42D129C40005E0232 /* ResourceCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */; };
 		2F3F16B62D129C5F005E0232 /* ResourceEGWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */; };
+		2F3F16B82D1314B8005E0232 /* DocumentMiniHiddenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B72D1314AC005E0232 /* DocumentMiniHiddenSegment.swift */; };
+		2F3F16BA2D13163A005E0232 /* DocumentHiddenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -353,6 +355,8 @@
 		2F3F16A72D12125C005E0232 /* UserInputComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInputComment.swift; sourceTree = "<group>"; };
 		2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCommentView.swift; sourceTree = "<group>"; };
 		2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceEGWView.swift; sourceTree = "<group>"; };
+		2F3F16B72D1314AC005E0232 /* DocumentMiniHiddenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentMiniHiddenSegment.swift; sourceTree = "<group>"; };
+		2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHiddenSegment.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -896,7 +900,9 @@
 			isa = PBXGroup;
 			children = (
 				2FBF2B002D027B00007F5615 /* DocumentChipsView.swift */,
+				2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */,
 				2F698B442CD4794A0070FEF9 /* DocumentLoadingView.swift */,
+				2F3F16B72D1314AC005E0232 /* DocumentMiniHiddenSegment.swift */,
 				2FBF2B042D02814E007F5615 /* DocumentMiniPlayerView.swift */,
 				2FBF2AFE2D0279F5007F5615 /* DocumentPagerView.swift */,
 				2FBF2B022D027BED007F5615 /* DocumentToolbarView.swift */,
@@ -1881,6 +1887,7 @@
 				7AC26AF61EE5EBDE003F946C /* BibleVerses.swift in Sources */,
 				4E7B098C2814CA8A00687C33 /* Comparable.swift in Sources */,
 				7A2810001EDD051D003C7458 /* Image.swift in Sources */,
+				2F3F16BA2D13163A005E0232 /* DocumentHiddenSegment.swift in Sources */,
 				2F7622232C1F429600CB7C33 /* ResourceFeaturesView.swift in Sources */,
 				7AC26AF71EE5EBDE003F946C /* Comment.swift in Sources */,
 				FEF4B79426AF9A9B00548E36 /* Credits.swift in Sources */,
@@ -1958,6 +1965,7 @@
 				2F7526792CCFFF460027FD1E /* Styler.swift in Sources */,
 				2F7622182C1F41E700CB7C33 /* ParallaxHeader.swift in Sources */,
 				2F7621F72C1F3FBA00CB7C33 /* Unknown.swift in Sources */,
+				2F3F16B82D1314B8005E0232 /* DocumentMiniHiddenSegment.swift in Sources */,
 				2F7621D22C1F3C7300CB7C33 /* FeedGroup.swift in Sources */,
 				2FBF2B072D02931A007F5615 /* AudioAuxiliaryView.swift in Sources */,
 			);

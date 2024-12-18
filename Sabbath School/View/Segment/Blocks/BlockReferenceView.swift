@@ -27,52 +27,78 @@ struct BlockReferenceView: StyledBlock, View {
     var block: Reference
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var documentViewOperator: DocumentViewOperator
     
     var body: some View {
-        NavigationLink {
-            if let resource = block.resource,
-               block.scope == .resource {
-                ResourceView(resourceIndex: resource.index)
-            }
-            
-            if let document = block.document,
-               block.scope == .document {
-                DocumentView(documentIndex: document.index)
-            }
-        } label: {
-            HStack {
-                if let resource = block.resource {
-                    LazyImage(url: resource.covers.square) { image in
-                        image.image?.resizable()
-                    }
-                    .frame(width: AppStyle.Block.Reference.thumbnailSize.width, height: AppStyle.Block.Reference.thumbnailSize.height)
-                    .cornerRadius(6)
-                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+        if let segment = block.segment, block.scope == .segment {
+            Button(action: {
+                if documentViewOperator.hiddenSegmentID == segment.index {
+                    documentViewOperator.shouldShowHiddenSegment.toggle()
+                } else {
+                    documentViewOperator.hiddenSegmentIterator += 1
+                    documentViewOperator.hiddenSegmentID = segment.index
                 }
-                
-                VStack (alignment: .leading, spacing: 5) {
-                    Text(block.title)
-                        .lineLimit(1)
-                        .font(.custom("Lato-Regular", size: 16))
-                        .foregroundColor(themeManager.getTextColor())
-                    
-                    if let subtitle = block.subtitle {
-                        Text(subtitle)
-                            .lineLimit(1)
-                            .font(.custom("Lato-Medium", size: 14))
-                            .foregroundColor(themeManager.getTextColor().opacity(0.7))
-                    }
+            }) {
+                label
+            }.frame(maxWidth: .infinity)
+            .padding(10)
+            .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
+            .buttonStyle(.plain)
+            .cornerRadius(6)
+        } else {
+            NavigationLink {
+                if let resource = block.resource,
+                   block.scope == .resource {
+                    ResourceView(resourceIndex: resource.index)
+                } else if let document = block.document,
+                          block.scope == .document {
+                    DocumentView(documentIndex: document.index)
+                } else {
+                    EmptyView()
                 }
-                Spacer()
-                Image(systemName: "chevron.right").foregroundColor(.black | .white)
+            } label: {
+                label
             }
             .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
+            .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
+            .buttonStyle(.plain)
+            .cornerRadius(6)
         }
-        .frame(maxWidth: .infinity)
+    }
+    
+    var isHiddenSegment: Bool {
+        return block.scope == .segment && block.segment != nil
+    }
+    
+    var label: some View {
+        HStack {
+            if let resource = block.resource, !isHiddenSegment {
+                LazyImage(url: resource.covers.square) { image in
+                    image.image?.resizable()
+                }
+                .frame(width: AppStyle.Block.Reference.thumbnailSize.width, height: AppStyle.Block.Reference.thumbnailSize.height)
+                .cornerRadius(6)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+            }
+            
+            VStack (alignment: .leading, spacing: 5) {
+                Text(block.title)
+                    .lineLimit(1)
+                    .font(.custom("Lato-Bold", size: 16))
+                    .foregroundColor(themeManager.getTextColor())
+
+                if let subtitle = block.subtitle {
+                    Text(subtitle)
+                        .lineLimit(1)
+                        .font(.custom("Lato-Medium", size: 14))
+                        .foregroundColor(themeManager.getTextColor().opacity(0.7))
+                }
+            }
+            Spacer()
+            Image(systemName: "chevron.right").foregroundColor(.black | .white)
+        }
         .padding(10)
-        .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
-        .buttonStyle(.plain)
-        .cornerRadius(6)
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
     }
 }

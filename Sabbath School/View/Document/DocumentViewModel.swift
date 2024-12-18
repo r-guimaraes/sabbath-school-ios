@@ -34,6 +34,7 @@ import Cache
     @Published var selectedSegmentIndex: Int? = nil
 
     private static var documentStorage: Storage<String, ResourceDocument>?
+    private static var segmentStorage: Storage<String, Segment>?
     
     init() {
          self.configure()
@@ -41,6 +42,7 @@ import Cache
     
     func configure() {
         DocumentViewModel.documentStorage = APICache.storage?.transformCodable(ofType: ResourceDocument.self)
+        DocumentViewModel.segmentStorage = APICache.storage?.transformCodable(ofType: Segment.self)
     }
     
     func retrievePDFAux(resourceIndex: String, documentIndex: String) async {
@@ -91,13 +93,29 @@ import Cache
         }
         API.session.request(url).responseDecodable(of: ResourceDocument.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let document = response.value else {
-                print("SSDEBUG", response)
                 return
             }
             self.document = document
             try? DocumentViewModel.documentStorage?.setObject(document, forKey: url)
             self.setSelectedSegmentIndex()
             if !completed { completion?() }
+        }
+    }
+    
+    func retrieveSegment(segmentIndex: String, completion: ((_ segment: Segment) -> Void)? = nil) async {
+        let url = "\(Constants.API.URLv3)/\(segmentIndex)/index.json"
+        
+        if (try? DocumentViewModel.segmentStorage?.existsObject(forKey: url)) != nil {
+            if let segment = try? DocumentViewModel.segmentStorage?.entry(forKey: url) {
+                completion?(segment.object)
+            }
+        }
+        API.session.request(url).responseDecodable(of: Segment.self, decoder: Helper.SSJSONDecoder()) { response in
+            guard let segment = response.value else {
+                return
+            }
+            try? DocumentViewModel.segmentStorage?.setObject(segment, forKey: url)
+            completion?(segment)
         }
     }
     
@@ -130,6 +148,12 @@ import Cache
         }
         
         do {
+            if let index = documentUserInput.firstIndex(where: { $0.blockId == userInput.blockId && $0.inputType == userInput.inputType }) {
+                documentUserInput[index] = userInput
+            } else {
+                documentUserInput.append(userInput)
+            }
+            
             let userInput = try JSONSerialization.jsonObject(with: JSONEncoder().encode(userInput), options: .allowFragments) as! [String: Any]
             
             API.auth.request(

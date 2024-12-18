@@ -24,52 +24,59 @@ import SwiftUI
 import SwiftAudio
 
 extension DocumentView {
+    @ViewBuilder
     func miniPlayerView () -> some View {
-        Button(action: {
-            showAudioAux = true
-        }) {
-            HStack {
-                Button (action: {
-                    miniPlayerStop()
+        if let segment = viewModel.document?.segments?[documentViewOperator.activeTab] {
+            if audioPlayback.shouldShowMiniPlayer() && (
+                segment.type != .story || (segment.type == .story && documentViewOperator.shouldShowNavigationBar)
+            ) {
+                Button(action: {
+                    showAudioAux = true
                 }) {
-                    Image(systemName: "xmark.circle.fill")
-                }
-                
-                VStack(alignment: .leading) {
-                    Text(AppStyle.Audio.miniPlayerTitle(audioPlayback.player.currentItem?.getTitle() ?? ""))
-                        .lineLimit(1)
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .leading)
+                    HStack {
+                        Button (action: {
+                            miniPlayerStop()
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                        }
                         
-                    Text(AppStyle.Audio.miniPlayerArtist(audioPlayback.player.currentItem?.getArtist() ?? ""))
-                        .lineLimit(1)
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .leading)
-                }.frame(alignment: .leading)
-                
-                Spacer()
-                
-                Button (action: {
-                    miniPlayerRewind()
-                }) {
-                    Image(systemName: "gobackward.15")
-                        .imageScale(.medium)
-                }
-                
-                Button (action: {
-                    miniPlayerPausePlay()
-                }) {
-                    Image(systemName: audioPlayback.state == .playing ? "pause.fill" : "play.fill")
-                        .imageScale(.large)
-                }
+                        VStack(alignment: .leading) {
+                            Text(AppStyle.Audio.miniPlayerTitle(audioPlayback.player.currentItem?.getTitle() ?? ""))
+                                .lineLimit(1)
+                                .multilineTextAlignment(.leading)
+                                .frame(alignment: .leading)
+                            
+                            Text(AppStyle.Audio.miniPlayerArtist(audioPlayback.player.currentItem?.getArtist() ?? ""))
+                                .lineLimit(1)
+                                .multilineTextAlignment(.leading)
+                                .frame(alignment: .leading)
+                        }.frame(alignment: .leading)
+                        
+                        Spacer()
+                        
+                        Button (action: {
+                            miniPlayerRewind()
+                        }) {
+                            Image(systemName: "gobackward.15")
+                                .imageScale(.medium)
+                        }
+                        
+                        Button (action: {
+                            miniPlayerPausePlay()
+                        }) {
+                            Image(systemName: audioPlayback.state == .playing ? "pause.fill" : "play.fill")
+                                .imageScale(.large)
+                        }
+                    }
+                    .frame(height: AppStyle.Audio.miniPlayerHeight)
+                    .padding(.horizontal, AppStyle.Audio.miniPlayerContentPadding)
+                    .background(.ultraThinMaterial)
+                    .frame(width: screenSizeMonitor.screenSize.width - AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width) * 2)
+                    .cornerRadius(AppStyle.Audio.miniPlayerCornerRadius)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
+                }.buttonStyle(.plain)
             }
-            .frame(height: AppStyle.Audio.miniPlayerHeight)
-            .padding(.horizontal, AppStyle.Audio.miniPlayerContentPadding)
-            .background(Color(uiColor: .baseGray1) | .black.opacity(0.9))
-            .frame(maxWidth: screenSizeMonitor.screenSize.width - AppStyle.Audio.miniPlayerWrapperPadding * 2)
-            .cornerRadius(AppStyle.Audio.miniPlayerCornerRadius)
-            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
-        }.buttonStyle(.plain)
+        }
     }
     
     func miniPlayerPausePlay () {

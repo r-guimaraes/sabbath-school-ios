@@ -181,10 +181,6 @@ struct AppStyle {
         static var miniPlayerCornerRadius: CGFloat {
             return 15
         }
-        
-        static var miniPlayerWrapperPadding: CGFloat {
-            return 20
-        }
     }
     
     struct Language {
@@ -673,8 +669,8 @@ struct AppStyle {
                 return 10.0
             }
             
-            static func horizontalPaddingHeader(_ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
-                return Helper.isPad ? (width * 0.10) + 20.0 : 20.0
+            static func horizontalPaddingHeader(_ width: CGFloat = UIScreen.main.bounds.width, _ isHiddenSegment: Bool = false) -> CGFloat {
+                return Helper.isPad && !isHiddenSegment ? (width * 0.10) + 20.0 : 20.0
             }
             
             static func verticalPaddingHeader() -> CGFloat {
@@ -685,8 +681,8 @@ struct AppStyle {
                 return 20.0
             }
             
-            static func horizontalPaddingContent(_ width: CGFloat = UIScreen.main.bounds.width) -> CGFloat {
-                return Helper.isPad ? width * 0.10 : 0.0
+            static func horizontalPaddingContent(_ width: CGFloat = UIScreen.main.bounds.width, _ isHiddenSegment: Bool = false) -> CGFloat {
+                return Helper.isPad && !isHiddenSegment ? width * 0.10 : 0.0
             }
             
             static var betweenBlocks: CGFloat {

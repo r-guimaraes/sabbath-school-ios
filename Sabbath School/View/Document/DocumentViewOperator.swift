@@ -63,6 +63,11 @@ class DocumentViewOperator: ObservableObject {
     
     @Published var showCovers: [Int: Bool] = [:]
     
+    @Published var hiddenSegmentIterator: Int = 0
+    @Published var hiddenSegmentID: String? = nil
+    @Published var hiddenSegment: Segment? = nil
+    @Published var shouldShowHiddenSegment: Bool = false
+    
     public func setShowCovers(_ value: Bool, tab: Int? = nil) {
         showCovers[tab ?? activeTab] = value
     }

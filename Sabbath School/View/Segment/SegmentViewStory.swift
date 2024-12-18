@@ -272,12 +272,15 @@ struct SegmentViewImageStory: StyledBlock, View {
 
 struct SegmentViewStory: View {
     var segment: Segment
+    var enableTagGesture: Bool = true
 
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var documentViewOperator: DocumentViewOperator
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     
     @State var selection: Int = 0
+    
+    
 
     var body: some View {
         TabView(selection: $selection) {
@@ -289,8 +292,10 @@ struct SegmentViewStory: View {
             }
         }
         .onTapGesture {
-            documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
-            documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
+            if enableTagGesture {
+                documentViewOperator.setShowTabBar(!documentViewOperator.shouldShowTabBar(), force: true)
+                documentViewOperator.setShowNavigationBar(!documentViewOperator.shouldShowNavigationBar)
+            }
         }
         .edgesIgnoringSafeArea(.bottom)
         .edgesIgnoringSafeArea(.top)

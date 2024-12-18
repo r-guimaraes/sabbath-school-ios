@@ -26,8 +26,6 @@ struct SegmentChip: View {
     var segments: [Segment]
     @EnvironmentObject var documentViewOperator: DocumentViewOperator
     
-    @State private var animatedActiveTab: Int = 0
-    
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {

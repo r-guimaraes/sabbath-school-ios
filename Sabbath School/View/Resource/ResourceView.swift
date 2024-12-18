@@ -107,7 +107,7 @@ struct ResourceView: View {
                         ZStack (alignment: .bottom) {
                             ParallaxHeader(
                                 coordinateSpace: CoordinateSpaces.scrollView,
-                                defaultHeight: Helper.isPad || resource.covers.splash == nil ? 0 : AppStyle.Resource.Splash.height
+                                defaultHeight: resource.covers.splash == nil ? 0 : AppStyle.Resource.Splash.height
                             ) {
                                 if let splash = resource.covers.splash {
                                     LazyImage(url: splash) { state in

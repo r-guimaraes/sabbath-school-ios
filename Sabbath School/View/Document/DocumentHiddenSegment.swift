@@ -20,27 +20,31 @@
  * THE SOFTWARE.
  */
 
-import Foundation
 import SwiftUI
 
-protocol InteractiveBlock: View where Body: View {
-    var viewModel: DocumentViewModel { get }
-    func loadInputData()
-}
-
-extension InteractiveBlock {
-    @MainActor
-    public func getUserInputForBlock(blockId: String, userInput: [AnyUserInput]?) -> AnyUserInput? {
-        return (userInput ?? self.viewModel.documentUserInput).first(where: { $0.blockId == blockId })
-    }
-    
-    @MainActor public func saveUserInput(_ userInput: AnyUserInput) {
-        if viewModel.document != nil {
-            viewModel.saveBlockUserInput(
-                documentId: viewModel.document?.id,
-                blockId: userInput.blockId,
-                userInputType: userInput.inputType,
-                userInput: userInput)
+extension DocumentView {
+    @ViewBuilder
+    var hiddenSegment: some View {
+        if let resource = resourceViewModel.resource,
+           let document = viewModel.document,
+           let segment = documentViewOperator.hiddenSegment {
+            
+            ZStack(alignment: .topLeading) {
+                NavigationStack {
+                    segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true)
+                }
+                
+                Button (action: {
+                    minimizeHiddenSegment()
+                }) {
+                    Image(systemName: "chevron.down.circle.fill")
+                        .foregroundColor(.black | .white)
+                        .imageScale(.large)
+                        .padding(.top, 10)
+                        .padding(.leading, 10)
+                }
+            }
+            .accentColor(.black | .white)
         }
     }
 }

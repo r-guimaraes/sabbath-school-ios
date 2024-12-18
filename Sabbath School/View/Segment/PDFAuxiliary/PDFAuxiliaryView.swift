@@ -65,7 +65,6 @@ struct PDFAuxiliaryViewRepresentable: UIViewControllerRepresentable, PDFAuxiliar
             }
             
             document.title = pdf.title
-            document.annotationSaveMode = .embedded
             documents.append(document)
         }
         

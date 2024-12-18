@@ -23,24 +23,35 @@
 import SwiftUI
 
 class ParagraphViewModel: ObservableObject {
-     @Published var highlights: [UserInputHighlight] = []
-     @Published var savingMode: Bool = false
-     
-     public func loadUserInput(userInput: UserInputHighlights) {
-         self.highlights = userInput.highlights
-     }
+    @Published var highlights: [UserInputHighlight] = []
+    @Published var comment: String = ""
+    @Published var savingMode: Bool = false
+
+
+    public func loadUserInput(userInput: UserInputHighlights) {
+        self.highlights = userInput.highlights
+    }
     
-     public func setHighlight(startIndex: Int, endIndex: Int, length: Int, color: HighlightColor) {
-         savingMode = true
-         self.highlights.append(UserInputHighlight(startIndex: startIndex, endIndex: endIndex, length: length, color: color))
-     }
-    
-     public func removeHighlight(startIndex: Int, endIndex: Int, length: Int) {
-         savingMode = true
-         let endIndex = startIndex + length
-         self.highlights = self.highlights.filter { highlight in
-             return (highlight.startIndex + highlight.length <= startIndex) || (highlight.startIndex >= endIndex)
-         }
+    public func loadUserInputComment(userInput: UserInputComment) {
+        self.comment = userInput.comment
+    }
+
+    public func setHighlight(startIndex: Int, endIndex: Int, length: Int, color: HighlightColor) {
+        savingMode = true
+        self.highlights.append(UserInputHighlight(startIndex: startIndex, endIndex: endIndex, length: length, color: color))
+    }
+
+    public func removeHighlight(startIndex: Int, endIndex: Int, length: Int) {
+        savingMode = true
+        let endIndex = startIndex + length
+        self.highlights = self.highlights.filter { highlight in
+            return (highlight.startIndex + highlight.length <= startIndex) || (highlight.startIndex >= endIndex)
+        }
+    }
+
+    public func setComment(comment: String) {
+        savingMode = true
+        self.comment = comment
     }
 }
 

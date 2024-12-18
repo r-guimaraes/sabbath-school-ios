@@ -112,8 +112,9 @@ struct BlockExcerptView: StyledBlock, View {
                 if biblePopup {
                     ScrollView {
                         BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block)).padding(20)
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                        .frame(maxHeight: .infinity)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxHeight: .infinity)
                         
                 } else {
                     BlockWrapperView(block: AnyBlock(selectedOptionItem), parentBlock: AnyBlock(block))
@@ -133,7 +134,7 @@ struct BlockExcerptItemView: StyledBlock, View {
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
     var body: some View {
-        VStack (spacing: 10) {
+        VStack (spacing: AppStyle.Segment.Spacing.betweenBlocks) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
             }

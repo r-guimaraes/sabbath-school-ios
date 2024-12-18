@@ -40,13 +40,13 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                     InlineAttributedText(
                         block: AnyBlock(block),
                         markdown: block.markdown
-                    ).frame(maxWidth: .infinity, alignment: .leading)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
                 }
                 Divider().background(.gray.opacity(0.4))
             }
             .padding(0)
-//            .background(Color(UIColor(hex: "#f9f9f9")))
             .background(AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: themeManager.currentTheme))
             
             VStack (spacing: 0) {
@@ -66,15 +66,16 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, 40)
-                    }.background {
+                    }
+                    .background {
                         VStack {
                             Image("question-line")
                                 .resizable(resizingMode: .tile)
                                 .colorMultiply(.gray.opacity(0.2))
                         }.padding(0)
                     }
-            }.padding(0)
-//            .background(Color(UIColor(hex: "#faf8fa")))
+            }
+            .padding(0)
             .background(AppStyle.Block.Question.answerBackgroundColor(theme: themeManager.currentTheme))
             .frame(alignment: .leading)
         }
@@ -87,6 +88,7 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
         .onChange(of: viewModel.documentUserInput) { newValue in
             loadInputData()
         }
+        .shadow(color: .gray.opacity(0.5), radius: 5)
     }
     
     func resetTypingTimer() {

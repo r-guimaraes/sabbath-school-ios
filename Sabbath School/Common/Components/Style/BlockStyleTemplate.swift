@@ -199,6 +199,13 @@ class BlockStyleTemplate: StyleTemplate {
     }
 }
 
+class EmbeddedBlockStyleTemplate: BlockStyleTemplate {
+    override init () {
+        super.init()
+        self.textLinksEnabled = false
+    }
+}
+
 class HeadingStyleTemplate: BlockStyleTemplate {
     init (depth: HeadingDepth) {
         super.init()

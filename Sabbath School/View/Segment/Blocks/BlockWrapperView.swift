@@ -30,9 +30,6 @@ struct BlockWrapperView: StyledBlock, View {
     
     @EnvironmentObject var themeManager: ThemeManager
     
-    @State private var dropShadow = false
-    @State private var refreshView = 0
-    
     var parentBlock: AnyBlock?
     
     var body: some View {
@@ -126,16 +123,31 @@ struct BlockWrapperView: StyledBlock, View {
                 default:
                     EmptyView()
                 }
-            }.onAppear {
-                // TODO: Refactor to move the shadow to QuestionBlock
-                if let _ = block.asType(Question.self),
-                   themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Helper.isDarkMode()) {
-                    dropShadow = true
-                }
             }
             .padding(Styler.getBlockPadding(defaultStyles, block))
             .background {
-                if let background = Styler.getBlockBackgroundImage(defaultStyles, block),
+                ZStack {
+                    RoundedRectangle(cornerRadius: Styler.getBlockCornerRadius(defaultStyles, block)).fill(Styler.getBlockBackgroundColor(defaultStyles, block))
+                    
+                    if let background = Styler.getBlockBackgroundImage(defaultStyles, block),
+                       themeManager.currentTheme == .light || (
+                        colorScheme == .light && themeManager.currentTheme == .auto)
+                    {
+                        AsyncImage(url: background) { image in
+                            image.image?
+                                .resizable()
+                                .scaledToFill()
+                        }.background(.blue)
+                        
+                    }
+                }
+            }
+        }
+        .padding(Styler.getWrapperPadding(defaultStyles, block))
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: Styler.getWrapperCornerRadius(defaultStyles, block)).fill(Styler.getWrapperBackgroundColor(defaultStyles, block))
+                if let background = Styler.getWrapperBackgroundImage(defaultStyles, block),
                    themeManager.currentTheme == .light || (
                     colorScheme == .light && themeManager.currentTheme == .auto)
                 {
@@ -143,36 +155,9 @@ struct BlockWrapperView: StyledBlock, View {
                         image.image?
                             .resizable()
                             .scaledToFill()
-                    }.background(.blue)
-                        
+                    }
                 }
             }
-            .background(Styler.getBlockBackgroundColor(defaultStyles, block))
-            .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, block))
-            .if(dropShadow) { view in
-                view.shadow(color: .gray.opacity(0.5), radius: 5)
-            }
         }
-        .padding(Styler.getWrapperPadding(defaultStyles, block))
-        .cornerRadius(Styler.getWrapperCornerRadius(defaultStyles, block))
-        .background {
-            if let background = Styler.getWrapperBackgroundImage(defaultStyles, block),
-               themeManager.currentTheme == .light || (
-                colorScheme == .light && themeManager.currentTheme == .auto)
-            {
-                AsyncImage(url: background) { image in
-                    image.image?
-                        .resizable()
-                        .scaledToFill()
-                }
-                    
-            }
-        }
-        .background(Styler.getWrapperBackgroundColor(defaultStyles, block))
-        .id(refreshView)
-        .onChange(of: themeManager.currentTheme) { newValue in
-            refreshView += 1
-        }
-        
     }
 }

@@ -73,5 +73,6 @@ struct BlockReferenceView: StyledBlock, View {
         .padding(10)
         .background(AppStyle.Block.Reference.backgroundColor(theme: themeManager.currentTheme))
         .buttonStyle(.plain)
+        .cornerRadius(6)
     }
 }

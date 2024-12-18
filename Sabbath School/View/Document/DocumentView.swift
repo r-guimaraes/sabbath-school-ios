@@ -160,6 +160,8 @@ struct DocumentView: View {
                                             Text(date.date.stringReadDate()
                                                 .replacingLastOccurrence(of: Constants.StringsToBeReplaced.saturday,
                                                                          with: Constants.StringsToBeReplaced.sabbath))
+                                        } else if let subtitle = segment.subtitle {
+                                            Text(subtitle)
                                         }
                                     }
                                     

@@ -23,6 +23,7 @@
 import SwiftUI
 import SwiftEntryKit
 import SafariServices
+import SwiftEntryKit
 
 struct InlineTextViewWrapper: UIViewRepresentable {
     var attributedString: AttributedString
@@ -30,6 +31,7 @@ struct InlineTextViewWrapper: UIViewRepresentable {
     var onLinkClick: ((URL) -> Void)?
     var onHighlight: ((NSRange, HighlightColor) -> Void)?
     var onRemoveHighlight: ((NSRange) -> Void)?
+    var onComment: (() -> Void)?
     var alignment: TextAlignment
 
     func makeUIView(context: Context) -> UITextView {
@@ -131,9 +133,13 @@ struct InlineTextViewWrapper: UIViewRepresentable {
                 self.parent.onRemoveHighlight?(range)
             }
             
+            let comment = UIAction(title: "", image: UIImage(systemName: "text.bubble")) { action in
+                self.parent.onComment?()
+            }
+            
             let highlightMenu = UIMenu(title: "", image: UIImage(systemName: "highlighter"), children: [highlightBlue, highlightGreen, highlightOrange, highlightYellow, removeHighlight])
 
-            return UIMenu(title: "", children: [highlightMenu] + suggestedActions)
+            return UIMenu(title: "", children: [highlightMenu, comment] + suggestedActions)
         }
     
 
@@ -157,8 +163,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     var selectable: Bool = false
     var lineLimit: Int? = nil
     var headingDepth: HeadingDepth? = nil
-    
-    @State var visible: Bool = false
+    var styleTemplate: StyleTemplate? = nil
     
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -177,60 +182,85 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     
     @State private var initialized = false
     
-    init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil) {
+    init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil, styleTemplate: StyleTemplate? = nil) {
         self.block = block
         self.markdown = markdown
         self.selectable = selectable
         self.lineLimit = lineLimit
         self.headingDepth = headingDepth
+        self.styleTemplate = styleTemplate
     }
     
     var body: some View {
         let alignment = Styler.getTextAlignment(defaultStyles, BlockStyleTemplate(), block)
         
-        return Text(attributedString)
-                .fixedSize(horizontal: false, vertical: true)
-                .lineSpacing(5)
-                .textSelection(.enabled)
-                .overlay(selectable ? overlaySelectableText(attributedString: attributedStringWithoutHighlights, alignment: alignment) : nil, alignment: .top)
-                .multilineTextAlignment(alignment)
-                .lineLimit(lineLimit)
-                .foregroundColor(.white)
-                .environment(\.openURL, OpenURLAction { url in
-                    handleURL(url: url)
-                    return .handled
-                }).task {
-                    if !initialized {
-                        initializeText()
+        return VStack {
+            ZStack(alignment: .topLeading) {
+                Text(attributedString)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .lineSpacing(5)
+                        .textSelection(.enabled)
+                        .overlay(selectable ? overlaySelectableText(attributedString: attributedStringWithoutHighlights, alignment: alignment) : nil, alignment: .top)
+                        .multilineTextAlignment(alignment)
+                        .lineLimit(lineLimit)
+                        .foregroundColor(.white)
+                        .environment(\.openURL, OpenURLAction { url in
+                            handleURL(url: url)
+                            return .handled
+                        }).task {
+                            if !initialized {
+                                initializeText()
+                            }
+                            
+                            loadInputData()
+                        }
+                        .onChange(of: themeManager.currentTheme) { newValue in
+                            initializeText()
+                        }
+                        .onChange(of: themeManager.currentSize) { newValue in
+                            initializeText()
+                        }
+                        .onChange(of: themeManager.currentTypeface) { newValue in
+                            initializeText()
+                        }
+                        .onChange(of: colorScheme) { newValue in
+                            initializeText()
+                        }
+                        .onChange(of: sizeCategory) { newValue in
+                            initializeText()
+                        }
+                        .onChange(of: viewModel.documentUserInput) { newValue in
+                            loadInputData()
+                        }
+                        .onChange(of: paragraphViewModel.highlights) { newValue in
+                            setHighlights(highlights: newValue)
+                            
+                            if !paragraphViewModel.savingMode { return }
+                            
+                            saveUserInput(AnyUserInput(UserInputHighlights(blockId: block.id, inputType: .highlights, highlights: newValue)))
+                        }
+                        .onChange(of: paragraphViewModel.comment) { newValue in
+                            if !paragraphViewModel.savingMode { return }
+                            
+                            saveUserInput(AnyUserInput(UserInputComment(blockId: block.id, inputType: .comment, comment: newValue)))
+                        }
+                
+                if !paragraphViewModel.comment.isEmpty && selectable {
+                    VStack(alignment: .trailing) {
+                        Button (action: {
+                            onComment()
+                        }) {
+                            Image(systemName: "text.bubble")
+                                .foregroundColor(Color(uiColor: .baseGray2))
+                                .imageScale(.medium)
+                        }
+                        .offset(y: -15)
                     }
-                    
-                    loadInputData()
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .onChange(of: themeManager.currentTheme) { newValue in
-                    initializeText()
-                }
-                .onChange(of: themeManager.currentSize) { newValue in
-                    initializeText()
-                }
-                .onChange(of: themeManager.currentTypeface) { newValue in
-                    initializeText()
-                }
-                .onChange(of: colorScheme) { newValue in
-                    initializeText()
-                }
-                .onChange(of: sizeCategory) { newValue in
-                    initializeText()
-                }
-                .onChange(of: viewModel.documentUserInput) { newValue in
-                    loadInputData()
-                }
-                .onChange(of: paragraphViewModel.highlights) { newValue in
-                    setHighlights(highlights: newValue)
-                    
-                    if !paragraphViewModel.savingMode { return }
-                    
-                    saveUserInput(AnyUserInput(UserInputHighlights(blockId: block.id, inputType: .highlights, highlights: newValue)))
-                }
+            }
+            .padding(0)
+        }.padding(0)
     }
     
     internal func initializeText () {
@@ -240,7 +270,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             template = HeadingStyleTemplate(depth: headingDepth)
         }
         
-        attributedString = AppStyle.Block.text(markdown, defaultStyles, block, template)
+        attributedString = AppStyle.Block.text(markdown, defaultStyles, block, styleTemplate ?? template)
         attributedStringWithoutHighlights = attributedString
         initialized = true
         setHighlights(highlights: paragraphViewModel.highlights)
@@ -250,6 +280,14 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         if let userInput = getUserInputForBlock(blockId: block.id, userInput: viewModel.documentUserInput)?.asType(UserInputHighlights.self) {
             paragraphViewModel.loadUserInput(userInput: userInput)
         }
+        
+        if let userInputComment = viewModel.documentUserInput.first(where: { $0.blockId == block.id && $0.inputType == .comment })?.asType(UserInputComment.self) {
+            paragraphViewModel.loadUserInputComment(userInput: userInputComment)
+        }
+        
+//        if let userInputComment = getUserInputForBlock(blockId: block.id, userInput: viewModel.documentUserInput)?.asType(UserInputComment.self) {
+//            paragraphViewModel.loadUserInputComment(userInput: userInputComment)
+//        }
     }
     
     private func setHighlights(highlights: [UserInputHighlight]) {
@@ -283,6 +321,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             onLinkClick: handleURL,
             onHighlight: onHighlight,
             onRemoveHighlight: onRemoveHighlight,
+            onComment: onComment,
             alignment: alignment
         )
           .frame(height: height, alignment: .leading)
@@ -294,32 +333,15 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
            let host = url.host,
            let bible = data.bible?[host],
            url.absoluteString.contains("sspmBible") {
-            
-            let hostingController = UIHostingController(
-                rootView: ResourceBibleView(block: bible)
-                    .environmentObject(viewModel)
-                    .environmentObject(themeManager)
-            )
-            hostingController.view.layer.cornerRadius = 6
-            
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor())))
+            self.showBibleModal(bible: bible)
         } else if let data = block.data,
                   let host = url.host,
                   let paragraphs = data.egw?[host],
                   url.absoluteString.contains("sspmEGW") {
             
-            let hostingController = UIHostingController(rootView:ResourceEGWView(paragraphs: paragraphs).environmentObject(viewModel).environmentObject(themeManager)
-            )
-            hostingController.view.layer.cornerRadius = 6
-            
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            
-            SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
+            self.showEGWModal(paragraphs: paragraphs)
         } else {
             openURL(url)
-            
         }
     }
     
@@ -330,4 +352,91 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     private func onRemoveHighlight(range: NSRange) {
         paragraphViewModel.removeHighlight(startIndex: range.location, endIndex: range.location + range.length, length: range.length)
     }
+    
+    private func showBibleModal(bible: Excerpt) {
+        ModalManager.shared.currentBibleBlock = bible
+        ModalManager.shared.currentEGWBlock = nil
+        
+        let bibleViewController = UIHostingController(
+            rootView: ResourceBibleView(block: bible)
+                .environmentObject(viewModel)
+                .environmentObject(themeManager)
+                .environmentObject(paragraphViewModel)
+        )
+        bibleViewController.view.layer.cornerRadius = 6
+        
+        var attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor()))
+        
+        attrs.lifecycleEvents.didDisappear = {
+//            ModalManager.shared.currentBibleBlock = nil
+        }
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+        SwiftEntryKit.display(entry: bibleViewController, using: attrs)
+    }
+    
+    private func showEGWModal(paragraphs: [AnyBlock]) {
+        ModalManager.shared.currentBibleBlock = nil
+        ModalManager.shared.currentEGWBlock = paragraphs
+        
+        let hostingController = UIHostingController(
+            rootView: ResourceEGWView(paragraphs: paragraphs)
+                .environmentObject(viewModel)
+                .environmentObject(themeManager)
+                .environmentObject(paragraphViewModel)
+        )
+        hostingController.view.layer.cornerRadius = 6
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        
+        SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
+    }
+    
+    private func onComment() {
+        let hostingController = UIHostingController(
+            rootView: ResourceCommentView(
+                comment: paragraphViewModel.comment,
+                block: block,
+                markdown: markdown,
+                blockId: SwiftEntryKit.isCurrentlyDisplaying ? block.id : nil)
+                .environmentObject(viewModel)
+                .environmentObject(paragraphViewModel)
+                .environmentObject(themeManager)
+                .environment(\.defaultBlockStyles, defaultStyles)
+        )
+        hostingController.view.layer.cornerRadius = 6
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        
+        var attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.4, backgroundColor: UIColor(themeManager.getBackgroundColor()), hasKeyboard: true)
+    
+        
+        if let currentBibleBlock = ModalManager.shared.currentBibleBlock, SwiftEntryKit.isCurrentlyDisplaying {
+            attrs.lifecycleEvents.didDisappear = {
+                self.showBibleModal(bible: currentBibleBlock)
+            }
+        } else if let currentEGWBlock = ModalManager.shared.currentEGWBlock, SwiftEntryKit.isCurrentlyDisplaying {
+            attrs.lifecycleEvents.didDisappear = {
+                self.showEGWModal(paragraphs: currentEGWBlock)
+            }
+        }
+        
+        SwiftEntryKit.display(entry: hostingController, using: attrs)
+    }
+}
+
+
+//import SwiftEntryKit
+
+class ModalManager {
+    static let shared = ModalManager()
+
+    var currentBibleBlock: Excerpt? = nil
+    var currentEGWBlock: [AnyBlock]? = nil
+//    var paragraphViewModel: ParagraphViewModel? = nil
+//    var viewModel: DocumentViewModel? = nil
+//    var viewController: UIViewController? = nil
+
+    private init() { }
 }

@@ -22,6 +22,10 @@
 		2F3F168A2D0A1117005E0232 /* FullScreenImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */; };
 		2F3F16A02D0FC742005E0232 /* BlockTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F169F2D0FC73F005E0232 /* BlockTableView.swift */; };
 		2F3F16A22D0FC79C005E0232 /* TableBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16A12D0FC79B005E0232 /* TableBlock.swift */; };
+		2F3F16A62D11D59F005E0232 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16A52D11D59A005E0232 /* UINavigationController.swift */; };
+		2F3F16A82D12125F005E0232 /* UserInputComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16A72D12125C005E0232 /* UserInputComment.swift */; };
+		2F3F16B42D129C40005E0232 /* ResourceCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */; };
+		2F3F16B62D129C5F005E0232 /* ResourceEGWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -124,7 +128,7 @@
 		2F7622422C1F44F400CB7C33 /* BlockListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622412C1F44F400CB7C33 /* BlockListView.swift */; };
 		2F7622442C1F450B00CB7C33 /* BlockChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622432C1F450B00CB7C33 /* BlockChecklistView.swift */; };
 		2F7622462C1F451F00CB7C33 /* BlockAppealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622452C1F451F00CB7C33 /* BlockAppealView.swift */; };
-		2F7622482C1F454400CB7C33 /* BiblePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622472C1F454400CB7C33 /* BiblePopupView.swift */; };
+		2F7622482C1F454400CB7C33 /* ResourceBibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622472C1F454400CB7C33 /* ResourceBibleView.swift */; };
 		2F76224A2C1F455D00CB7C33 /* InlineAttributedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622492C1F455D00CB7C33 /* InlineAttributedText.swift */; };
 		2F76224C2C1F457700CB7C33 /* BlockParagraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F76224B2C1F457700CB7C33 /* BlockParagraphView.swift */; };
 		2F76224E2C1F458900CB7C33 /* BlockWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F76224D2C1F458900CB7C33 /* BlockWrapperView.swift */; };
@@ -345,6 +349,10 @@
 		2F3F16892D0A1113005E0232 /* FullScreenImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewer.swift; sourceTree = "<group>"; };
 		2F3F169F2D0FC73F005E0232 /* BlockTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTableView.swift; sourceTree = "<group>"; };
 		2F3F16A12D0FC79B005E0232 /* TableBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableBlock.swift; sourceTree = "<group>"; };
+		2F3F16A52D11D59A005E0232 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
+		2F3F16A72D12125C005E0232 /* UserInputComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInputComment.swift; sourceTree = "<group>"; };
+		2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCommentView.swift; sourceTree = "<group>"; };
+		2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceEGWView.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -447,7 +455,7 @@
 		2F7622412C1F44F400CB7C33 /* BlockListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListView.swift; sourceTree = "<group>"; };
 		2F7622432C1F450B00CB7C33 /* BlockChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockChecklistView.swift; sourceTree = "<group>"; };
 		2F7622452C1F451F00CB7C33 /* BlockAppealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockAppealView.swift; sourceTree = "<group>"; };
-		2F7622472C1F454400CB7C33 /* BiblePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiblePopupView.swift; sourceTree = "<group>"; };
+		2F7622472C1F454400CB7C33 /* ResourceBibleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceBibleView.swift; sourceTree = "<group>"; };
 		2F7622492C1F455D00CB7C33 /* InlineAttributedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineAttributedText.swift; sourceTree = "<group>"; };
 		2F76224B2C1F457700CB7C33 /* BlockParagraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockParagraphView.swift; sourceTree = "<group>"; };
 		2F76224D2C1F458900CB7C33 /* BlockWrapperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWrapperView.swift; sourceTree = "<group>"; };
@@ -906,7 +914,9 @@
 				2F76222A2C1F439D00CB7C33 /* Blocks */,
 				2F4420A82CEFDE0E004A793E /* VideoAuxiliary */,
 				2F698B632CDF61E10070FEF9 /* PDFAuxiliary */,
-				2F7622472C1F454400CB7C33 /* BiblePopupView.swift */,
+				2F7622472C1F454400CB7C33 /* ResourceBibleView.swift */,
+				2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */,
+				2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */,
 				2F99F6022C32427700FCB05F /* ExternalLinkView.swift */,
 				2F7622242C1F42FB00CB7C33 /* SegmentViewBlocks.swift */,
 				2FAC63A52C2336E5002C5093 /* SegmentViewPDF.swift */,
@@ -947,14 +957,15 @@
 		2F7621FC2C1F402000CB7C33 /* UserInput */ = {
 			isa = PBXGroup;
 			children = (
-				2F7622012C1F404500CB7C33 /* UserInputAppeal.swift */,
 				2F698B6A2CDF6FE20070FEF9 /* UserInputAnnotation.swift */,
+				2F7622012C1F404500CB7C33 /* UserInputAppeal.swift */,
 				2F7621FD2C1F402D00CB7C33 /* UserInputChecklist.swift */,
+				2F3F16A72D12125C005E0232 /* UserInputComment.swift */,
 				2FAC63A32C1FD4B3002C5093 /* UserInputHighlights.swift */,
 				2F7622572C1F5A1900CB7C33 /* UserInputMultipleChoice.swift */,
+				2F99F5FE2C304CE300FCB05F /* UserInputPoll.swift */,
 				2F7621FF2C1F403A00CB7C33 /* UserInputQuestion.swift */,
 				2F7622032C1F404E00CB7C33 /* UserInputUnknown.swift */,
-				2F99F5FE2C304CE300FCB05F /* UserInputPoll.swift */,
 			);
 			path = UserInput;
 			sourceTree = "<group>";
@@ -1236,14 +1247,15 @@
 		7A280FC11EDA03C0003C7458 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				2FC5CABF2D09D96400FB1D87 /* UIApplication.swift */,
 				4EE2DF0727DA7AFC00812552 /* Array.swift */,
 				7A280FC41EDA04A6003C7458 /* Color.swift */,
 				7A280FE81EDCE4B1003C7458 /* Date.swift */,
 				2F96FF4F26C724050045DC6D /* Double.swift */,
+				4E7B09882814CA3D00687C33 /* Encodable.swift */,
 				7A280FFF1EDD051D003C7458 /* Image.swift */,
 				7A3BCE201EE0EC60003EC12B /* String.swift */,
-				4E7B09882814CA3D00687C33 /* Encodable.swift */,
+				2FC5CABF2D09D96400FB1D87 /* UIApplication.swift */,
+				2F3F16A52D11D59A005E0232 /* UINavigationController.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1794,6 +1806,7 @@
 				2FC5CAC02D09D96800FB1D87 /* UIApplication.swift in Sources */,
 				FE863F2A2662BD9F00ADCA36 /* Animation.swift in Sources */,
 				FE0249EA2669C2E3006BFADC /* Helper.swift in Sources */,
+				2F3F16A82D12125F005E0232 /* UserInputComment.swift in Sources */,
 				4E7B09892814CA3D00687C33 /* Encodable.swift in Sources */,
 				2F7621DB2C1F3D7B00CB7C33 /* AnyBlock.swift in Sources */,
 				2F8C3A412D0903F5001F7A62 /* VideoPlaybackV2.swift in Sources */,
@@ -1812,6 +1825,7 @@
 				2F7621D82C1F3D4C00CB7C33 /* Segment.swift in Sources */,
 				2F7621DD2C1F3DB600CB7C33 /* BlockStyle.swift in Sources */,
 				2F7622042C1F404E00CB7C33 /* UserInputUnknown.swift in Sources */,
+				2F3F16B42D129C40005E0232 /* ResourceCommentView.swift in Sources */,
 				2F99F6012C31F3B600FCB05F /* PollResults.swift in Sources */,
 				2F76223E2C1F44C900CB7C33 /* BlockBlockquoteView.swift in Sources */,
 				2F7622022C1F404500CB7C33 /* UserInputAppeal.swift in Sources */,
@@ -1827,7 +1841,8 @@
 				7A280F9B1EDA015D003C7458 /* SabbathSchoolApp.swift in Sources */,
 				2F76221A2C1F420E00CB7C33 /* ResourceSectionView.swift in Sources */,
 				2FA1FFE826F6BA6700E80868 /* Downloader.swift in Sources */,
-				2F7622482C1F454400CB7C33 /* BiblePopupView.swift in Sources */,
+				2F7622482C1F454400CB7C33 /* ResourceBibleView.swift in Sources */,
+				2F3F16B62D129C5F005E0232 /* ResourceEGWView.swift in Sources */,
 				2F96B6912D022EC700FD5CEF /* ScreenSizeMonitor.swift in Sources */,
 				7AC26AF81EE5EBDE003F946C /* Day.swift in Sources */,
 				7AC26AF91EE5EBDE003F946C /* Lesson.swift in Sources */,
@@ -1900,6 +1915,7 @@
 				2F75266B2CCDEF1A0027FD1E /* LoginViewModel.swift in Sources */,
 				2FBB9BF02C0CE61200882F8C /* FeedView.swift in Sources */,
 				2F95D39E26C0B2E8008E6666 /* Audio.swift in Sources */,
+				2F3F16A62D11D59F005E0232 /* UINavigationController.swift in Sources */,
 				2F7526702CCE9FF50027FD1E /* Style.swift in Sources */,
 				FE0249F8266A9068006BFADC /* Configuration.swift in Sources */,
 				2F7526772CCFFC410027FD1E /* AboutView.swift in Sources */,

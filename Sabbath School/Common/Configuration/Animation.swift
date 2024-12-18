@@ -24,17 +24,26 @@ import Foundation
 import SwiftEntryKit
 
 struct Animation {
-    static func modalAnimationAttributes(widthRatio: CGFloat = 1, heightRatio: CGFloat = 1, backgroundColor: UIColor = .black | .white, statusBar: EKAttributes.StatusBar = .inferred) -> EKAttributes {
-        var attributes = EKAttributes.centerFloat
+    static func modalAnimationAttributes(widthRatio: CGFloat = 1, heightRatio: CGFloat = 1, backgroundColor: UIColor = .black | .white, statusBar: EKAttributes.StatusBar = .inferred, hasKeyboard: Bool = false) -> EKAttributes {
+        var attributes = hasKeyboard ? EKAttributes.bottomFloat : EKAttributes.centerFloat
+        
         attributes.positionConstraints.size = .init(
             width: EKAttributes.PositionConstraints.Edge.ratio(value: widthRatio),
             height: EKAttributes.PositionConstraints.Edge.ratio(value: heightRatio)
         )
-        attributes.precedence = .override(priority: .max, dropEnqueuedEntries: false)
+        
+        if hasKeyboard {
+            let offset = EKAttributes.PositionConstraints.KeyboardRelation.Offset(bottom: 10, screenEdgeResistance: 20)
+            let keyboardRelation = EKAttributes.PositionConstraints.KeyboardRelation.bind(offset: offset)
+            attributes.positionConstraints.keyboardRelation = keyboardRelation
+        }
+        
+        attributes.precedence.priority = .normal
+        attributes.precedence = .override(priority: .normal, dropEnqueuedEntries: false)
         attributes.displayDuration = .infinity
         attributes.roundCorners = .all(radius: 6)
         attributes.entryBackground = .color(color: EKColor(backgroundColor))
-        attributes.screenBackground = .color(color: EKColor(UIColor(white: 0, alpha: 0.5)))
+        attributes.screenBackground = .color(color: EKColor(UIColor(white: 0, alpha: 0.5) | UIColor(white: 1, alpha: 0.1)))
         
         attributes.shadow = .active(
             with: .init(

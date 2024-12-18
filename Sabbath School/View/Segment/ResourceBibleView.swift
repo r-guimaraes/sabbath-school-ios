@@ -21,43 +21,11 @@
  */
 
 import SwiftUI
-import SwiftEntryKit
 
 struct ResourceBibleView: View {
     var block: Excerpt
     
     var body: some View {
         BlockExcerptView(block: block, biblePopup: true).frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct ResourceEGWView: View {
-    var paragraphs: [AnyBlock]
-    @EnvironmentObject var themeManager: ThemeManager
-    
-    var body: some View {
-        VStack (spacing: 0) {
-            HStack {
-                Button(action: {
-                    SwiftEntryKit.dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(themeManager.getTextColor())
-                }
-                Spacer()
-            }.padding(.vertical, 20)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            ScrollView(showsIndicators: false) {
-                VStack (spacing: 20) {
-                    ForEach (paragraphs) { block in
-                        BlockWrapperView(block: block).frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                }.padding(.bottom, 20)
-            }
-        }
-        .padding(.horizontal, 20)
-        .background(themeManager.backgroundColor)
-        .cornerRadius(6)
     }
 }

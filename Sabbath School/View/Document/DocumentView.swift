@@ -131,9 +131,10 @@ struct DocumentView: View {
                 Task {
                     await viewModel.retrieveSegment(segmentIndex: hiddenSegmentID, completion: { segment in
                         documentViewOperator.hiddenSegment = segment
-                        documentViewOperator.shouldShowHiddenSegment = true
                     })
                 }
+                
+                documentViewOperator.shouldShowHiddenSegment = true
             }
         }
         .sheet(isPresented: $showAudioAux) {

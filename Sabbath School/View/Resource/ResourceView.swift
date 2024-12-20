@@ -227,7 +227,7 @@ struct ResourceView: View {
                                     ResourceFeaturesHeaderView(features: resource.features, style: resource.style)
                                         .frame(alignment: .leading)
                                 }
-                                .frame(alignment: headerFrameAlignment)
+                                .frame(maxWidth: .infinity, alignment: headerFrameAlignment)
                             }
                             .padding([.bottom], AppStyle.Resource.Spacing.paddingForSplashHeader)
                             .padding([.horizontal], AppStyle.Resource.Spacing.paddingForSplashHeader)
@@ -372,12 +372,12 @@ struct ResourceView: View {
             .background(Color(UIColor(hex: resource.primaryColorDark)))
             .clipShape(Capsule())
             .cornerRadius(viewModel.readButtonDocumentTitle == nil ? 0 : 10)
-            .frame(minWidth: AppStyle.Resource.ReadButton.width)
             .frame(maxWidth: AppStyle.Resource.ReadButton.width*1.5, alignment: headerFrameAlignment)
             .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
             .layoutPriority(3)
             
-        }.buttonStyle(.plain)
+        }
+        .buttonStyle(.plain)
     }
     
     func indexResourceForSpotlight() {

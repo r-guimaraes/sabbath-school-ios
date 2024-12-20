@@ -38,6 +38,8 @@ struct BlockReferenceView: StyledBlock, View {
                     documentViewOperator.hiddenSegmentIterator += 1
                     documentViewOperator.hiddenSegmentID = segment.index
                 }
+                
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }) {
                 label
             }.frame(maxWidth: .infinity)

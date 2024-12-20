@@ -24,10 +24,12 @@ struct ProgressSaveButton: View {
             if let documentId = documentViewModel.document?.id, progressNextSegmentIteratorIndex == nil {
                 Task {
                     await resourceViewModel.saveProgress(documentId: documentId, force: true)
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     dismissAction?()
                 }
             } else if let progressNextSegmentIteratorIndex = progressNextSegmentIteratorIndex {
                 documentViewOperator.activeTab = progressNextSegmentIteratorIndex
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
         }) {
            HStack(spacing: 10) {

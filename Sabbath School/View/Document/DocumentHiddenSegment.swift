@@ -33,6 +33,8 @@ extension DocumentView {
                 segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true, maxIndex: -1)
             }
             .accentColor(.black | .white)
+        } else {
+            DocumentLoadingView()
         }
     }
 }

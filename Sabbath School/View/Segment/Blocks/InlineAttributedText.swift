@@ -77,7 +77,6 @@ struct InlineTextViewWrapper: UIViewRepresentable {
             paragraphStyle.alignment = .center
         }
         
-
         attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attributedString.characters.count))
         attributedText.addAttributes(attributes, range: NSRange(location: 0, length: attributedString.characters.count))
         attributedText.enumerateAttributes(in: NSRange(location: 0, length: attributedText.length), options: []) { attributes, range, stop in
@@ -164,6 +163,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     var lineLimit: Int? = nil
     var headingDepth: HeadingDepth? = nil
     var styleTemplate: StyleTemplate? = nil
+    var urlsEnabled: Bool = true
     
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -182,13 +182,14 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     
     @State private var initialized = false
     
-    init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil, styleTemplate: StyleTemplate? = nil) {
+    init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil, styleTemplate: StyleTemplate? = nil, urlsEnabled: Bool = true) {
         self.block = block
         self.markdown = markdown
         self.selectable = selectable
         self.lineLimit = lineLimit
         self.headingDepth = headingDepth
         self.styleTemplate = styleTemplate
+        self.urlsEnabled = urlsEnabled
     }
     
     var body: some View {
@@ -281,6 +282,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             paragraphViewModel.loadUserInput(userInput: userInput)
         }
         
+        // TODO: refactor so that getUserInputForBlock can support multiple userinputs for the same block but different type
         if let userInputComment = viewModel.documentUserInput.first(where: { $0.blockId == block.id && $0.inputType == .comment })?.asType(UserInputComment.self) {
             paragraphViewModel.loadUserInputComment(userInput: userInputComment)
         }
@@ -329,6 +331,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     }
     
     private func handleURL(url: URL) {
+        if !urlsEnabled { return }
         if let data = block.data,
            let host = url.host,
            let bible = data.bible?[host],
@@ -366,10 +369,6 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         bibleViewController.view.layer.cornerRadius = 6
         
         var attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor()))
-        
-        attrs.lifecycleEvents.didDisappear = {
-//            ModalManager.shared.currentBibleBlock = nil
-        }
         
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
@@ -426,17 +425,11 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     }
 }
 
-
-//import SwiftEntryKit
-
 class ModalManager {
     static let shared = ModalManager()
 
     var currentBibleBlock: Excerpt? = nil
     var currentEGWBlock: [AnyBlock]? = nil
-//    var paragraphViewModel: ParagraphViewModel? = nil
-//    var viewModel: DocumentViewModel? = nil
-//    var viewController: UIViewController? = nil
 
     private init() { }
 }

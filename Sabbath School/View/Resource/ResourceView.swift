@@ -238,6 +238,7 @@ struct ResourceView: View {
                         
                         VStack (alignment: .leading, spacing: 0) {
                             ResourceSectionsView(resource: resource)
+                                .environmentObject(viewModel)
                             
                             if let feeds = resource.feeds {
                                 ForEach(feeds) { feed in
@@ -302,11 +303,21 @@ struct ResourceView: View {
         .onChange(of: uiImage) { image in
             indexResourceForSpotlight()
         }
+        .onAppear {
+            Task {
+                await viewModel.retrieveProgress() {
+                    viewModel.setReadDocumentIndex()
+                }
+            }
+        }
         .task {
             if viewModel.resource != nil { return }
             
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             await viewModel.downloadFonts(resourceIndex: resourceIndex)
+            await viewModel.retrieveProgress() {
+                viewModel.setReadDocumentIndex()
+            }
             
             // shortcuts
             // TODO: remove to module
@@ -338,18 +349,34 @@ struct ResourceView: View {
     @ViewBuilder
     func ctaButton(resource: Resource) -> some View {
         NavigationLink {
-            if let readButtonIndex = self.viewModel.readButtonDocumentIndex {
+            if let readButtonIndex = self.viewModel.readButtonDocumentIndex ?? self.viewModel.resource?.sections?.first?.documents.first?.index {
                 DocumentView(documentIndex: readButtonIndex)
             }
         } label: {
-            Text(AppStyle.Resource.ReadButton.text(resource.cta?.text ?? "Read".localized().uppercased()))
-                .lineLimit(AppStyle.Resource.ReadButton.lineLimit)
-                .padding([.horizontal], AppStyle.Resource.ReadButton.horizontalPadding)
-                .padding([.vertical], AppStyle.Resource.ReadButton.verticalPadding)
-                .background(Color(UIColor(hex: resource.primaryColorDark)))
-                .clipShape(Capsule())
-                .frame(width: AppStyle.Resource.ReadButton.width, alignment: headerFrameAlignment)
-                .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
+            HStack (spacing: 5) {
+                Text(AppStyle.Resource.ReadButton.text(resource.cta?.text ?? "Read".localized().uppercased()))
+                    .lineLimit(AppStyle.Resource.ReadButton.lineLimit)
+                    .layoutPriority(2)
+                
+                if let selectedDocumentTitle = viewModel.readButtonDocumentTitle,
+                    let progressTracking = viewModel.resource?.progressTracking,
+                   progressTracking != .none
+                {
+                    Text(AppStyle.Resource.ReadButton.textSelectedDocument(selectedDocumentTitle))
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                }
+            }
+            .padding(.vertical, AppStyle.Resource.ReadButton.verticalPadding)
+            .padding(.horizontal, AppStyle.Resource.ReadButton.horizontalPadding)
+            .background(Color(UIColor(hex: resource.primaryColorDark)))
+            .clipShape(Capsule())
+            .cornerRadius(viewModel.readButtonDocumentTitle == nil ? 0 : 10)
+            .frame(minWidth: AppStyle.Resource.ReadButton.width)
+            .frame(maxWidth: AppStyle.Resource.ReadButton.width*1.5, alignment: headerFrameAlignment)
+            .shadow(radius: AppStyle.Resource.ReadButton.shadowRadius)
+            .layoutPriority(3)
+            
         }.buttonStyle(.plain)
     }
     

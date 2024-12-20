@@ -458,6 +458,13 @@ struct AppStyle {
                 return result
             }
             
+            static func textSelectedDocument(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = .white.opacity(0.7)
+                result.font = Font.custom("Lato-Regular", size: 13)
+                return result
+            }
+            
             static var lineLimit: Int {
                 return 1
             }
@@ -733,6 +740,22 @@ struct AppStyle {
             
             static var lineLimit: Int {
                 return 2
+            }
+        }
+        
+        struct Progress {
+            static func saveButtonTitle(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white)
+                result.font = Font.custom("Lato-Bold", size: 18)
+                return result
+            }
+            
+            static func saveButtonSubtitle(_ string: String) -> AttributedString {
+                var result = AttributedString(string)
+                result.foregroundColor = (.black | .white)
+                result.font = Font.custom("Lato-Regular", size: 16)
+                return result
             }
         }
     }

@@ -25,6 +25,7 @@ import SwiftUI
 struct ResourceSectionsView: View {
     var resource: Resource
     @State private var selectedSection: ResourceSection? = nil
+    @EnvironmentObject var resourceViewModel: ResourceViewModel
     
     init(resource: Resource) {
         self.resource = resource
@@ -110,6 +111,8 @@ struct ResourceSectionsView: View {
                     }
                 }
             }
+        }.onChange(of: resourceViewModel.readButtonDocumentIndex) { newValue in
+            self.selectedSection = resourceViewModel.readButtonSection ?? self.selectedSection
         }
     }
 }

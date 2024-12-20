@@ -28,6 +28,8 @@
 		2F3F16B62D129C5F005E0232 /* ResourceEGWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */; };
 		2F3F16B82D1314B8005E0232 /* DocumentMiniHiddenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B72D1314AC005E0232 /* DocumentMiniHiddenSegment.swift */; };
 		2F3F16BA2D13163A005E0232 /* DocumentHiddenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */; };
+		2F3F16BC2D14B17C005E0232 /* ResourceProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16BB2D14B179005E0232 /* ResourceProgress.swift */; };
+		2F3F16BE2D14C9F3005E0232 /* ProgressSaveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -357,6 +359,8 @@
 		2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceEGWView.swift; sourceTree = "<group>"; };
 		2F3F16B72D1314AC005E0232 /* DocumentMiniHiddenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentMiniHiddenSegment.swift; sourceTree = "<group>"; };
 		2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHiddenSegment.swift; sourceTree = "<group>"; };
+		2F3F16BB2D14B179005E0232 /* ResourceProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceProgress.swift; sourceTree = "<group>"; };
+		2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSaveButton.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -916,6 +920,7 @@
 		2F7621CA2C1F3BC400CB7C33 /* Segment */ = {
 			isa = PBXGroup;
 			children = (
+				2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */,
 				2FBF2B082D029320007F5615 /* AudioAuxiliary */,
 				2F76222A2C1F439D00CB7C33 /* Blocks */,
 				2F4420A82CEFDE0E004A793E /* VideoAuxiliary */,
@@ -1300,6 +1305,7 @@
 				2F7621D12C1F3C7300CB7C33 /* FeedGroup.swift */,
 				2F7621CD2C1F3C0100CB7C33 /* Resource.swift */,
 				2F7621D52C1F3D3C00CB7C33 /* ResourceDocument.swift */,
+				2F3F16BB2D14B179005E0232 /* ResourceProgress.swift */,
 				2F7621D32C1F3D2500CB7C33 /* ResourceSection.swift */,
 				2F7621D72C1F3D4C00CB7C33 /* Segment.swift */,
 				2F75266F2CCE9FF50027FD1E /* Style.swift */,
@@ -1807,6 +1813,7 @@
 				2FC5CAC62D09DAEE00FB1D87 /* EnvironmentValues.swift in Sources */,
 				FE5CC763268972CA00B9F061 /* QuarterlyGroup.swift in Sources */,
 				2F75267B2CCFFFBA0027FD1E /* SegmentStyleTemplate.swift in Sources */,
+				2F3F16BC2D14B17C005E0232 /* ResourceProgress.swift in Sources */,
 				2F3F168A2D0A1117005E0232 /* FullScreenImageViewer.swift in Sources */,
 				2FBF2AF72D0277CA007F5615 /* DocumentViewOperator.swift in Sources */,
 				2FC5CAC02D09D96800FB1D87 /* UIApplication.swift in Sources */,
@@ -1833,6 +1840,7 @@
 				2F7622042C1F404E00CB7C33 /* UserInputUnknown.swift in Sources */,
 				2F3F16B42D129C40005E0232 /* ResourceCommentView.swift in Sources */,
 				2F99F6012C31F3B600FCB05F /* PollResults.swift in Sources */,
+				2F3F16BE2D14C9F3005E0232 /* ProgressSaveButton.swift in Sources */,
 				2F76223E2C1F44C900CB7C33 /* BlockBlockquoteView.swift in Sources */,
 				2F7622022C1F404500CB7C33 /* UserInputAppeal.swift in Sources */,
 				2F7622252C1F42FB00CB7C33 /* SegmentViewBlocks.swift in Sources */,

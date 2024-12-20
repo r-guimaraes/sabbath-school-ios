@@ -30,7 +30,7 @@ extension DocumentView {
            let segment = documentViewOperator.hiddenSegment {
             
             NavigationStack {
-                segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true)
+                segmentPageView(resource: resource, document: document, segment: segment, index: -1, isHiddenSegment: true, maxIndex: -1)
             }
             .accentColor(.black | .white)
         }

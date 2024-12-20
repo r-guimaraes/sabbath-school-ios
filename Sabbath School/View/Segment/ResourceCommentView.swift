@@ -59,7 +59,8 @@ struct ResourceCommentView: View {
                     markdown: markdown,
                     selectable: false,
                     lineLimit: 3,
-                    styleTemplate: EmbeddedBlockStyleTemplate()
+                    styleTemplate: EmbeddedBlockStyleTemplate(),
+                    urlsEnabled: false
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
             }.padding(20)

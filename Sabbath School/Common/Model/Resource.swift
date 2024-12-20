@@ -126,6 +126,12 @@ struct ResourceCTA: Codable {
     let text: String?
 }
 
+enum ProgressTracking: String, Codable {
+    case none
+    case automatic
+    case manual
+}
+
 struct Resource: Codable, Identifiable {
     let id: String
     let index: String
@@ -150,4 +156,6 @@ struct Resource: Codable, Identifiable {
     let externalURL: URL?
     let cta: ResourceCTA?
     let preferredCover: ResourcePreferredCover?
+    let progressTracking: ProgressTracking?
+    let displayProgress: Bool?
 }

@@ -93,6 +93,9 @@ struct DocumentView: View {
                     ZStack(alignment: .bottom) {
                         ScrollView(.init()) {
                             pagerView(resource, document, segments)
+                                .environment(\.dismissAction, {
+                                    presentationMode.wrappedValue.dismiss()
+                                })
                         }
                         
                         ScrollView(.horizontal, showsIndicators: false) {
@@ -151,6 +154,7 @@ struct DocumentView: View {
             toolbarView()
         }
         .environmentObject(viewModel)
+        .environmentObject(resourceViewModel)
         .toolbarBackground(documentViewOperator.shouldShowNavigationBar ? .visible : .hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(false)
@@ -252,6 +256,8 @@ struct DocumentView: View {
                     }
                     await resourceViewModel.downloadFonts(resourceIndex: document.resourceIndex)
                     Configuration.configureFontblaster()
+                    
+                    await resourceViewModel.saveProgress(documentId: document.id)
                     await viewModel.retrieveDocumentUserInput(documentId: document.id)
                     await viewModel.retrievePDFAux(resourceIndex: document.resourceIndex, documentIndex: document.index)
                     await viewModel.retrieveVideoAux(resourceIndex: document.resourceIndex, documentIndex: document.index)

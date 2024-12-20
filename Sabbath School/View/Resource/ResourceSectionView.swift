@@ -28,6 +28,7 @@ struct ResourceSectionView: View {
     var resourceKind: ResourceKind
     
     var displaySectionName: Bool = true
+    @EnvironmentObject var resourceViewModel: ResourceViewModel
     
     var body: some View {
         VStack (spacing: 0) {
@@ -98,32 +99,40 @@ struct ResourceSectionView: View {
                 Spacer()
                 
                 Group {
-                    if document.externalURL != nil {
-                        Image(systemName: "arrow.up.forward.square")
-                            .font(.system(size: 16, weight: .light))
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    if let cover = document.cover, resourceKind == .blog {
-                        LazyImage(url: cover) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .aspectRatio(16/9, contentMode: .fill)
-                                    .frame(width: 80)
-                            } else {
-                                ZStack {
-                                    Color.gray.opacity(0.5)
-                                    Image(systemName: "photo")
-                                        .imageScale(.small)
-                                        .foregroundColor(.white)
+                    HStack {
+                        if resourceViewModel.resource?.displayProgress ?? false && resourceViewModel.resourceProgress.contains(where: { $0.documentId == document.id && $0.completed }) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(.secondary.opacity(0.5))
+                        }
+                        
+                        if document.externalURL != nil {
+                            Image(systemName: "arrow.up.forward.square")
+                                .font(.system(size: 16, weight: .light))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        if let cover = document.cover, resourceKind == .blog {
+                            LazyImage(url: cover) { state in
+                                if let image = state.image {
+                                    image
+                                        .resizable()
+                                        .aspectRatio(16/9, contentMode: .fill)
+                                        .frame(width: 80)
+                                } else {
+                                    ZStack {
+                                        Color.gray.opacity(0.5)
+                                        Image(systemName: "photo")
+                                            .imageScale(.small)
+                                            .foregroundColor(.white)
+                                    }
                                 }
                             }
+                            .frame(width: 80)
+                            .aspectRatio(16/9, contentMode: .fill)
+                            .cornerRadius(6)
+                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
                         }
-                        .frame(width: 80)
-                        .aspectRatio(16/9, contentMode: .fill)
-                        .cornerRadius(6)
-                        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
                     }
                 }
             }.padding(.vertical, AppStyle.Resource.Document.Spacing.padding)

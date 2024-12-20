@@ -30,6 +30,9 @@ private enum CoordinateSpaces {
 struct SegmentViewBlocks: View {
     var segment: Segment
     var isHiddenSegment: Bool = false
+    var progressTrackingTitle: String?
+    var progressTrackingSubtitle: String?
+    var progressNextSegmentIteratorIndex: Int?
     
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var themeManager: ThemeManager
@@ -45,6 +48,15 @@ struct SegmentViewBlocks: View {
                         .environment(\.themeManager, themeManager)
                         .environment(\.defaultBlockStyles, defaultStyles)
                         .id(block.id)
+                }
+                
+                if let progressTrackingTitle = progressTrackingTitle,
+                   !isHiddenSegment {
+                    ProgressSaveButton(
+                        progressTrackingTitle: progressTrackingTitle,
+                        progressTrackingSubtitle: progressTrackingSubtitle,
+                        progressNextSegmentIteratorIndex: progressNextSegmentIteratorIndex
+                    )
                 }
             }
             .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent +
@@ -238,6 +250,9 @@ struct SegmentViewBase<Content: View>: View {
     var index: Int
     var document: ResourceDocument
     var isHiddenSegment: Bool = false
+    var progressTrackingTitle: String?
+    var progressTrackingSubtitle: String?
+    var progressNextSegmentIteratorIndex: Int?
     
     let content: (SegmentViewCover, SegmentViewBlocks, SegmentViewVideo, SegmentHeader) -> Content
     
@@ -261,7 +276,13 @@ struct SegmentViewBase<Content: View>: View {
             VStack(spacing: 0) {
                 content(
                     SegmentViewCover(segment: segment, document: document, resource: resource),
-                    SegmentViewBlocks(segment: segment, isHiddenSegment: isHiddenSegment),
+                    SegmentViewBlocks(
+                        segment: segment,
+                        isHiddenSegment: isHiddenSegment,
+                        progressTrackingTitle: progressTrackingTitle,
+                        progressTrackingSubtitle: progressTrackingSubtitle,
+                        progressNextSegmentIteratorIndex: progressNextSegmentIteratorIndex
+                    ),
                     SegmentViewVideo(video: segment.video),
                     SegmentHeader(segment.markdownTitle ?? segment.title,
                                   segment.date,

@@ -21,42 +21,12 @@
  */
 
 import Foundation
-import SwiftUI
 
-struct DefaultBlockStylesKey: EnvironmentKey {
-    static let defaultValue = Style(resource: nil, segment: nil, blocks: nil)
+struct DocumentProgress: Codable {
+    let documentId: String
+    let completed: Bool
 }
 
-struct BlockNestedKey: EnvironmentKey {
-    static let defaultValue = false
-}
-
-struct ThemeManagerKey: EnvironmentKey {
-    static let defaultValue = ThemeManager()
-}
-
-struct DismissKey: EnvironmentKey {
-    static let defaultValue: (() -> Void)? = nil
-}
-
-extension EnvironmentValues {
-    var defaultBlockStyles: Style {
-        get { self[DefaultBlockStylesKey.self] }
-        set { self[DefaultBlockStylesKey.self] = newValue }
-    }
-    
-    var nested: Bool {
-        get { self[BlockNestedKey.self] }
-        set { self[BlockNestedKey.self] = newValue }
-    }
-    
-    var themeManager: ThemeManager {
-        get { self[ThemeManagerKey.self] }
-        set { self[ThemeManagerKey.self] = newValue }
-    }
-    
-    var dismissAction: (() -> Void)? {
-        get { self[DismissKey.self] }
-        set { self[DismissKey.self] = newValue }
-    }
+struct ResourceProgress: Codable {
+    let progress: [DocumentProgress]
 }

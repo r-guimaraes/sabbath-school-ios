@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+import Alamofire
 import Foundation
 import Cache
 import SwiftUI
@@ -28,6 +29,10 @@ import SwiftUI
     @Published var resource: Resource? = nil
     @Published var fontsDownloaded: Bool = false
     @Published var readButtonDocumentIndex: String? = nil
+    @Published var readButtonDocumentTitle: String? = nil
+    @Published var readButtonSection: ResourceSection? = nil
+    
+    @Published var resourceProgress: [DocumentProgress] = []
     
     private static var resourceStorage: Storage<String, Resource>?
     
@@ -132,7 +137,6 @@ import SwiftUI
             if let resource = try? ResourceViewModel.resourceStorage?.entry(forKey: url) {
                 self.resource = resource.object
                 completed = true
-                self.setReadDocumentIndex()
                 completion?()
             }
         }
@@ -142,8 +146,59 @@ import SwiftUI
             }
             self.resource = resource
             try? ResourceViewModel.resourceStorage?.setObject(resource, forKey: url)
-            self.setReadDocumentIndex()
             if !completed { completion?() }
+        }
+    }
+    
+    func retrieveProgress(completion: (() -> Void)? = nil) async {
+        guard let resource = self.resource else {
+            return
+        }
+        
+        let url = "\(Constants.API.URLv3)/resources/user/progress/resource/\(resource.id)"
+        
+        API.auth.request(url)
+            .customValidate()
+            .responseDecodable(of: [DocumentProgress].self, decoder: Helper.SSJSONDecoder()) { response in
+                guard let resourceProgress = response.value else {
+                    return
+                }
+                self.resourceProgress = resourceProgress
+                completion?()
+        }
+    }
+    
+    func saveProgress(documentId: String, force: Bool = false, completion: (() -> Void)? = nil) async {
+        guard let resource = self.resource else {
+            return
+        }
+        
+        if resource.progressTracking == .manual && !force {
+            return
+        }
+        
+        let url = "\(Constants.API.URLv3)/resources/user/progress/\(resource.id)/\(documentId)"
+        
+        do {
+            let savedProgress = DocumentProgress(documentId: documentId, completed: true)
+            
+            if !resourceProgress.contains(where: { $0.documentId == documentId && $0.completed }) {
+                resourceProgress.append(savedProgress)
+            }
+            
+            let userProgress = try JSONSerialization.jsonObject(with: JSONEncoder().encode(
+                savedProgress
+            ), options: .allowFragments) as! [String: Any]
+            
+            API.auth.request(
+                url,
+                method: .post,
+                parameters: userProgress,
+                encoding: JSONEncoding.default
+            )
+            .responseDecodable(of: String.self, decoder: Helper.SSJSONDecoder()) { response in }
+        } catch let error {
+            print("SSDEBUG", error)
         }
     }
     
@@ -152,12 +207,13 @@ import SwiftUI
             var today = Date()
             let weekday = Calendar.current.component(.weekday, from: today)
             let hour = Calendar.current.component(.hour, from: today)
+            var dateBasedSelected: Bool = false
+            var progressBasedDocument: ResourceDocument? = nil
+            var progressBasedSection: ResourceSection? = nil
             
             if weekday == 7 && hour == 12 {
                 today = Calendar.current.date(byAdding: .day, value: -1, to: today) ?? today
             }
-            
-            self.readButtonDocumentIndex = sections.first?.documents.first?.index
             
             sections.forEach { section in
                 section.documents.forEach { document in
@@ -170,11 +226,32 @@ import SwiftUI
                         let fallsBetween = ((start == .orderedAscending) || (start == .orderedSame)) && ((end == .orderedDescending) || (end == .orderedSame))
 
                         if fallsBetween {
-                            self.readButtonDocumentIndex = document.index
+                            setReadButtonDocumentIndex(document: document, section: section)
+                            dateBasedSelected = true
                         }
+                    }
+                    
+                    if !resourceProgress.contains(where: { $0.documentId == document.id && $0.completed }) {
+                        if progressBasedDocument == nil {
+                            progressBasedDocument = document
+                            progressBasedSection = section
+                        } else {
+                        }
+                    } else {
+                        progressBasedDocument = nil
                     }
                 }
             }
+            
+            if let progressBasedDocument, !dateBasedSelected {
+                setReadButtonDocumentIndex(document: progressBasedDocument, section: progressBasedSection)
+            }
         }
+    }
+    
+    private func setReadButtonDocumentIndex(document: ResourceDocument?, section: ResourceSection?) {
+        self.readButtonDocumentIndex = document?.index
+        self.readButtonDocumentTitle = document?.title
+        self.readButtonSection = section
     }
 }

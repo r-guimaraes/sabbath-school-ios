@@ -26,7 +26,7 @@ extension DocumentView {
     func pagerView(_ resource: Resource, _ document: ResourceDocument, _ segments: [Segment]) -> some View {
         TabView (selection: $documentViewOperator.activeTab) {
             ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
-                segmentPageView(resource: resource, document: document, segment: segment, index: index)
+                segmentPageView(resource: resource, document: document, segment: segment, index: index, maxIndex: segments.count-1)
             }
         }.onAppear {
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: documentViewOperator.activeTab, force: true)
@@ -40,7 +40,7 @@ extension DocumentView {
     }
     
     @ViewBuilder
-    func segmentPageView(resource: Resource, document: ResourceDocument, segment: Segment, index: Int, isHiddenSegment: Bool = false) -> some View {
+    func segmentPageView(resource: Resource, document: ResourceDocument, segment: Segment, index: Int, isHiddenSegment: Bool = false, maxIndex: Int) -> some View {
         Group {
             switch segment.type {
             case .story:
@@ -92,7 +92,16 @@ extension DocumentView {
                     segment: segment,
                     index: index,
                     document: document,
-                    isHiddenSegment: isHiddenSegment
+                    isHiddenSegment: isHiddenSegment,
+                    progressTrackingTitle:
+                        resource.progressTracking == .manual
+                            ? (maxIndex == index ? document.title : (document.segments?[safe: index+1]?.title))
+                            : nil,
+                    progressTrackingSubtitle:
+                        resource.progressTracking == .manual
+                            ? (maxIndex == index ? document.subtitle : (document.segments?[safe: index+1]?.subtitle))
+                            : nil,
+                    progressNextSegmentIteratorIndex: resource.progressTracking == .manual ? (maxIndex == index ? nil : index+1) : nil
                 ) { cover, blocks, _, header in
                     VStack(spacing: isHiddenSegment ? 40 : 0) {
                         if isHiddenSegment {
@@ -114,6 +123,7 @@ extension DocumentView {
             }
         }
         .environmentObject(viewModel)
+        .environmentObject(resourceViewModel)
         .environmentObject(documentViewOperator)
         .environment(\.defaultBlockStyles, document.style ?? Style(resource: nil, segment: nil, blocks: nil))
     }

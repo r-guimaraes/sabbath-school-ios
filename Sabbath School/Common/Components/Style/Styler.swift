@@ -441,7 +441,6 @@ extension Styler {
     
     static func getBlockBackgroundImage(_ style: Style?, _ block: AnyBlock?, _ template: StyleTemplate, _ backgroundColorKeyPath: KeyPath<BlockStyle, URL?>) -> URL? {
         let defaultBackgroundImage = template.backgroundImageDefault
-        let themeManager = ThemeManager()
         
         func resolveBackgroundImage(_ style: Style?, _ defaultBackgroundImage: URL?, _ filter: ((_ style: Style?) -> BlockStyle?)? = nil) -> URL? {
             
@@ -462,8 +461,6 @@ extension Styler {
         }
         
         var backgroundImage = resolveBackgroundImage(style, defaultBackgroundImage)
-        
-        let allowColorChange = themeManager.currentTheme == .light || (themeManager.currentTheme == .auto && !Preferences.darkModeEnable())
         
         if let block = block {
             // Global default style for that type of block
@@ -507,7 +504,12 @@ extension AttributedString {
             if (template.textLinksEnabled && run.link != nil) {
                 attrString[run.range].font = UIFontMetrics.default.scaledFont(for: UIFont(name: defaultTypeface.fontName, size: defaultTextSize+0.001)!.withSize(defaultTextSize+0.001))
                 
-                attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid)
+                if let url = run.link?.absoluteString, url.contains("sspmCompletion") {
+                    attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid, color: Color(hex: "#669edd"))
+                    attrString[run.range].backgroundColor = Color(hex: "#f2f7fc")
+                } else {
+                    attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid)
+                }
                 
                 if let defaultColor = defaultColor {
                     attrString[run.range].foregroundColor = defaultColor

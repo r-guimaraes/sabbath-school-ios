@@ -28,6 +28,7 @@ struct AudioBlockCredit: Codable {
 }
 
 struct AudioBlockCredits: Codable {
+    let title: String?
     let credits: [AudioBlockCredit]
     let copyright: String?
 }

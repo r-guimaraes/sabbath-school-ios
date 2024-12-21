@@ -35,6 +35,7 @@ import SwiftUI
     @Published var resourceProgress: [DocumentProgress] = []
     
     private static var resourceStorage: Storage<String, Resource>?
+    private static var progressStorage: Storage<String, [DocumentProgress]>?
     
     init() {
          self.configure()
@@ -42,6 +43,7 @@ import SwiftUI
     
     func configure() {
         ResourceViewModel.resourceStorage = APICache.storage?.transformCodable(ofType: Resource.self)
+        ResourceViewModel.progressStorage = APICache.storage?.transformCodable(ofType: [DocumentProgress].self)
     }
     
     func downloadFont(from url: URL, completion: @escaping (URL?) -> Void) {
@@ -157,6 +159,14 @@ import SwiftUI
         
         let url = "\(Constants.API.URLv3)/resources/user/progress/resource/\(resource.id)"
         
+        
+        if (try? ResourceViewModel.progressStorage?.existsObject(forKey: url)) != nil {
+            if let resourceProgress = try? ResourceViewModel.progressStorage?.entry(forKey: url) {
+                self.resourceProgress = resourceProgress.object
+                completion?()
+            }
+        }
+        
         API.auth.request(url)
             .customValidate()
             .responseDecodable(of: [DocumentProgress].self, decoder: Helper.SSJSONDecoder()) { response in
@@ -164,6 +174,7 @@ import SwiftUI
                     return
                 }
                 self.resourceProgress = resourceProgress
+                try? ResourceViewModel.progressStorage?.setObject(resourceProgress, forKey: url)
                 completion?()
         }
     }
@@ -243,7 +254,7 @@ import SwiftUI
                 }
             }
             
-            if let progressBasedDocument, !dateBasedSelected {
+            if let progressBasedDocument, !dateBasedSelected, resource?.progressTracking == .manual {
                 setReadButtonDocumentIndex(document: progressBasedDocument, section: progressBasedSection)
             }
         }

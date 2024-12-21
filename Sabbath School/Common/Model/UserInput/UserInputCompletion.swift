@@ -22,14 +22,8 @@
 
 import Foundation
 
-struct CompletionData: Codable {
-    let length: Int
-    let placeholder: String
-    let correctCompletion: String?
-}
-
-struct BlockData: Codable {
-    let bible: [String: Excerpt]?
-    let egw: [String: [AnyBlock]]?
-    let completion: [String: CompletionData]?
+struct UserInputCompletion: UserInputProtocol {
+    let blockId: String
+    let inputType: UserInputType
+    let completion: [String: String]
 }

@@ -30,6 +30,8 @@
 		2F3F16BA2D13163A005E0232 /* DocumentHiddenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */; };
 		2F3F16BC2D14B17C005E0232 /* ResourceProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16BB2D14B179005E0232 /* ResourceProgress.swift */; };
 		2F3F16BE2D14C9F3005E0232 /* ProgressSaveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */; };
+		2F3F16C02D16013A005E0232 /* UserInputCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16BF2D160135005E0232 /* UserInputCompletion.swift */; };
+		2F3F16C22D167A2C005E0232 /* ResourceCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16C12D167A27005E0232 /* ResourceCompletionView.swift */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -361,6 +363,8 @@
 		2F3F16B92D131635005E0232 /* DocumentHiddenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHiddenSegment.swift; sourceTree = "<group>"; };
 		2F3F16BB2D14B179005E0232 /* ResourceProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceProgress.swift; sourceTree = "<group>"; };
 		2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSaveButton.swift; sourceTree = "<group>"; };
+		2F3F16BF2D160135005E0232 /* UserInputCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInputCompletion.swift; sourceTree = "<group>"; };
+		2F3F16C12D167A27005E0232 /* ResourceCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCompletionView.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
 		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
@@ -920,6 +924,7 @@
 		2F7621CA2C1F3BC400CB7C33 /* Segment */ = {
 			isa = PBXGroup;
 			children = (
+				2F3F16C12D167A27005E0232 /* ResourceCompletionView.swift */,
 				2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */,
 				2FBF2B082D029320007F5615 /* AudioAuxiliary */,
 				2F76222A2C1F439D00CB7C33 /* Blocks */,
@@ -972,6 +977,7 @@
 				2F7622012C1F404500CB7C33 /* UserInputAppeal.swift */,
 				2F7621FD2C1F402D00CB7C33 /* UserInputChecklist.swift */,
 				2F3F16A72D12125C005E0232 /* UserInputComment.swift */,
+				2F3F16BF2D160135005E0232 /* UserInputCompletion.swift */,
 				2FAC63A32C1FD4B3002C5093 /* UserInputHighlights.swift */,
 				2F7622572C1F5A1900CB7C33 /* UserInputMultipleChoice.swift */,
 				2F99F5FE2C304CE300FCB05F /* UserInputPoll.swift */,
@@ -1920,6 +1926,7 @@
 				2F99F5F12C2D030500FCB05F /* Story.swift in Sources */,
 				2F698B652CDF62110070FEF9 /* PDFAuxiliaryTabbedViewController.swift in Sources */,
 				2F7622502C1F486E00CB7C33 /* BlockMultipleChoiceView.swift in Sources */,
+				2F3F16C02D16013A005E0232 /* UserInputCompletion.swift in Sources */,
 				2F96FF6B26CC9C6F0045DC6D /* VideoInfo.swift in Sources */,
 				4E2882CC280CCBB600AB8C31 /* PublishingInfo.swift in Sources */,
 				2F76220D2C1F412900CB7C33 /* FeedResourceViewBanner.swift in Sources */,
@@ -1927,6 +1934,7 @@
 				2F7621FB2C1F3FF400CB7C33 /* AnyUserInput.swift in Sources */,
 				FE1E34F326731A5F00DAC2D6 /* Spotlight.swift in Sources */,
 				2F96FF6826CC9BBA0045DC6D /* Video.swift in Sources */,
+				2F3F16C22D167A2C005E0232 /* ResourceCompletionView.swift in Sources */,
 				2F75266B2CCDEF1A0027FD1E /* LoginViewModel.swift in Sources */,
 				2FBB9BF02C0CE61200882F8C /* FeedView.swift in Sources */,
 				2F95D39E26C0B2E8008E6666 /* Audio.swift in Sources */,

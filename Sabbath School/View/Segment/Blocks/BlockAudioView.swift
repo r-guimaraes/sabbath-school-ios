@@ -97,7 +97,7 @@ struct BlockAudioViewCredits: View {
                     .frame(width: 50, height: 5)
     
                 VStack (spacing: 40) {
-                    Text(AppStyle.Base.navigationTitle("Credits".localized()))
+                    Text(AppStyle.Base.navigationTitle(credits.title ?? "Credits".localized()))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -110,6 +110,7 @@ struct BlockAudioViewCredits: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(alignment: .leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
                             
                             Text(credit.value)
                                 .font(.custom("Lato-Regular", size: 18))
@@ -117,6 +118,8 @@ struct BlockAudioViewCredits: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(alignment: .leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+                            
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                     
@@ -192,7 +195,7 @@ struct BlockAudioView: View {
                             Button (action: {
                                 showCredits.toggle()
                             }) {
-                                Text("Credits".localized())
+                                Text(credits.title ?? "Credits".localized())
                                     .font(.custom("Lato-Regular", size: 14))
                                     .underline()
                                     .foregroundColor(

@@ -32,7 +32,6 @@ struct ResourceSectionsView: View {
         self._selectedSection = State(initialValue: selectSectionWithinDates() ?? (resource.sections?.first(where: {
             $0.isRoot == false
         }) ?? nil))
-        
     }
     
     private func selectSectionWithinDates() -> ResourceSection? {
@@ -112,6 +111,8 @@ struct ResourceSectionsView: View {
                 }
             }
         }.onChange(of: resourceViewModel.readButtonDocumentIndex) { newValue in
+            self.selectedSection = resourceViewModel.readButtonSection ?? self.selectedSection
+        }.onAppear {
             self.selectedSection = resourceViewModel.readButtonSection ?? self.selectedSection
         }
     }

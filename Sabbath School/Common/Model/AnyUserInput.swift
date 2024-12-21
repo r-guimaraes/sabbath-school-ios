@@ -32,6 +32,7 @@ enum UserInputType: String, Codable {
          appeal,
          checklist,
          comment,
+         completion,
          highlights,
          multipleChoice = "multiple-choice",
          poll,
@@ -88,6 +89,8 @@ struct AnyUserInput: UserInputProtocol, Decodable, Hashable {
             _base = try UserInputChecklist(from: decoder)
         case .comment:
             _base = try UserInputComment(from: decoder)
+        case .completion:
+            _base = try UserInputCompletion(from: decoder)
         case .highlights:
             _base = try UserInputHighlights(from: decoder)
         case .multipleChoice:

@@ -26,6 +26,7 @@ class ParagraphViewModel: ObservableObject {
     @Published var highlights: [UserInputHighlight] = []
     @Published var comment: String = ""
     @Published var savingMode: Bool = false
+    @Published var completion: [String: String] = [:]
 
 
     public func loadUserInput(userInput: UserInputHighlights) {
@@ -52,6 +53,15 @@ class ParagraphViewModel: ObservableObject {
     public func setComment(comment: String) {
         savingMode = true
         self.comment = comment
+    }
+    
+    public func loadUserInputCompletion(userInput: UserInputCompletion) {
+        self.completion = userInput.completion
+    }
+    
+    public func setCompletion(completionId: String, completionComment: String) {
+        savingMode = true
+        self.completion[completionId] = completionComment
     }
 }
 

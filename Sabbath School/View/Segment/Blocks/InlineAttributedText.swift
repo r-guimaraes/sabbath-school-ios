@@ -158,7 +158,8 @@ struct InlineTextViewWrapper: UIViewRepresentable {
 
 struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     var block: AnyBlock
-    var markdown: String
+    @State var markdown: String
+    var originalMarkdown: String
     var selectable: Bool = false
     var lineLimit: Int? = nil
     var headingDepth: HeadingDepth? = nil
@@ -185,6 +186,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
     init (block: AnyBlock, markdown: String, selectable: Bool = false, lineLimit: Int? = nil, headingDepth: HeadingDepth? = nil, styleTemplate: StyleTemplate? = nil, urlsEnabled: Bool = true) {
         self.block = block
         self.markdown = markdown
+        self.originalMarkdown = markdown
         self.selectable = selectable
         self.lineLimit = lineLimit
         self.headingDepth = headingDepth
@@ -245,6 +247,13 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
                             
                             saveUserInput(AnyUserInput(UserInputComment(blockId: block.id, inputType: .comment, comment: newValue)))
                         }
+                        .onChange(of: paragraphViewModel.completion) { newValue in
+                            initializeText(newValue)
+                            
+                            if !paragraphViewModel.savingMode { return }
+                            
+                            saveUserInput(AnyUserInput(UserInputCompletion(blockId: block.id, inputType: .completion, completion: newValue)))
+                        }
                 
                 if !paragraphViewModel.comment.isEmpty && selectable {
                     VStack(alignment: .trailing) {
@@ -264,17 +273,45 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         }.padding(0)
     }
     
-    internal func initializeText () {
+    internal func initializeText(_ completion: [String: String]? = nil) {
         var template = BlockStyleTemplate()
         
         if let headingDepth = headingDepth {
             template = HeadingStyleTemplate(depth: headingDepth)
         }
         
+        updateMarkdownWithCompletions(completion ?? paragraphViewModel.completion)
+        
         attributedString = AppStyle.Block.text(markdown, defaultStyles, block, styleTemplate ?? template)
         attributedStringWithoutHighlights = attributedString
         initialized = true
         setHighlights(highlights: paragraphViewModel.highlights)
+    }
+    
+    internal func updateMarkdownWithCompletions(_ completion: [String: String]) {
+        if !completion.isEmpty {
+            self.markdown = originalMarkdown
+            for (completionId, completionComment) in completion {
+                self.markdown = fillCompletionText(in: markdown, completionId: completionId, completionComment: completionComment, correctAnswer: block.data?.completion?[completionId]?.correctCompletion ?? nil)
+            }
+        }
+    }
+    
+    func fillCompletionText(in originalString: String, completionId: String, completionComment: String, correctAnswer: String? = nil) -> String {
+        let regex = "\\[⠀+\\](\\(sspmCompletion://\(completionId)\\))"
+        
+        if completionComment.isEmpty  {
+            return originalString
+        }
+        
+        var replacement = completionComment.isEmpty ? String(repeating: "⠀", count: 10) : completionComment
+        
+        if let correctAnswer = correctAnswer, !completionComment.isEmpty {
+            replacement = "\(replacement) \(completionComment.caseInsensitiveCompare(correctAnswer) == .orderedSame ? "✓" : "𐄂")"
+        }
+        
+        let repl = "[\(replacement)]$1"
+        return originalString.replacingOccurrences(of: regex, with: repl, options: [.regularExpression])
     }
     
     internal func loadInputData() {
@@ -287,9 +324,10 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
             paragraphViewModel.loadUserInputComment(userInput: userInputComment)
         }
         
-//        if let userInputComment = getUserInputForBlock(blockId: block.id, userInput: viewModel.documentUserInput)?.asType(UserInputComment.self) {
-//            paragraphViewModel.loadUserInputComment(userInput: userInputComment)
-//        }
+        // TODO: refactor so that getUserInputForBlock can support multiple userinputs for the same block but different type
+        if let userInputCompletion = viewModel.documentUserInput.first(where: { $0.blockId == block.id && $0.inputType == .completion })?.asType(UserInputCompletion.self) {
+            paragraphViewModel.loadUserInputCompletion(userInput: userInputCompletion)
+        }
     }
     
     private func setHighlights(highlights: [UserInputHighlight]) {
@@ -343,6 +381,13 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
                   url.absoluteString.contains("sspmEGW") {
             
             self.showEGWModal(paragraphs: paragraphs)
+        } else if
+            let data = block.data,
+            let host = url.host,
+            let completion = data.completion?[host],
+            url.absoluteString.contains("sspmCompletion") {
+            
+            showCompletionModal(completionId: host, completion: completion)
         } else {
             openURL(url)
         }
@@ -368,7 +413,7 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         )
         bibleViewController.view.layer.cornerRadius = 6
         
-        var attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor()))
+        let attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.getBackgroundColor()))
         
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
@@ -390,6 +435,38 @@ struct InlineAttributedText: StyledBlock, InteractiveBlock, View {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         
         SwiftEntryKit.display(entry: hostingController, using: Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.8, backgroundColor: UIColor(themeManager.backgroundColor)))
+    }
+    
+    private func showCompletionModal(completionId: String, completion: CompletionData) {
+        let hostingController = UIHostingController(
+            rootView: ResourceCompletionView(
+                completionId: completionId,
+                completion: completion,
+                block: block,
+                blockId: SwiftEntryKit.isCurrentlyDisplaying ? block.id : nil,
+                comment: paragraphViewModel.completion[completionId] ?? "")
+                .environmentObject(viewModel)
+                .environmentObject(paragraphViewModel)
+                .environmentObject(themeManager)
+        )
+        hostingController.view.layer.cornerRadius = 6
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        
+        var attrs = Animation.modalAnimationAttributes(widthRatio: 0.9, heightRatio: 0.4, backgroundColor: UIColor(themeManager.getBackgroundColor()), hasKeyboard: true)
+    
+        
+        if let currentBibleBlock = ModalManager.shared.currentBibleBlock, SwiftEntryKit.isCurrentlyDisplaying {
+            attrs.lifecycleEvents.didDisappear = {
+                self.showBibleModal(bible: currentBibleBlock)
+            }
+        } else if let currentEGWBlock = ModalManager.shared.currentEGWBlock, SwiftEntryKit.isCurrentlyDisplaying {
+            attrs.lifecycleEvents.didDisappear = {
+                self.showEGWModal(paragraphs: currentEGWBlock)
+            }
+        }
+        
+        SwiftEntryKit.display(entry: hostingController, using: attrs)
     }
     
     private func onComment() {

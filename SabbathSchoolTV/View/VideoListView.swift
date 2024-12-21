@@ -53,7 +53,6 @@ struct VideoListView: View {
                             }
                         }))
                         .animation(.default)
-                        
                     }
                 }
             }

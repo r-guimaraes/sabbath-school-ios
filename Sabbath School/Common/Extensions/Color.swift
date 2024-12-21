@@ -168,5 +168,37 @@ public extension Color {
         self.init(.sRGB, red: red, green: green, blue: blue, opacity: alpha)
     }
     
-    static let baseBlue: Color = Color(hex: "#2E5797")
+    static let baseBlue: Color = Color(hex: "#003877")
+//    static let baseBlue: Color = Color(hex: "#2E5797")
+    
+    static let primary: Color = Color(hex: "#005EC7")
+    static let primary50: Color = Color(hex: "#F2F7FC")
+    static let primary100: Color = Color(hex: "#E5EFF9")
+    static let primary200: Color = Color(hex: "#CCDFF4")
+    static let primary300: Color = Color(hex: "#99BFE9")
+    static let primary400: Color = Color(hex: "#669EDD")
+    static let primary500: Color = Color(hex: "#337DD2")
+    static let primary600: Color = Color(hex: "#005EC7")
+    static let primary700: Color = Color(hex: "#004A9F")
+    static let primary800: Color = Color(hex: "#003877")
+    static let primary900: Color = Color(hex: "#002550")
+    static let primary950: Color = Color(hex: "#001328")
+    
+    static let gray20: Color = Color(hex: "#F9FAFB")
+    static let gray50: Color = Color(hex: "#ECEFF2")
+    static let gray100: Color = Color(hex: "#D9DFE6")
+    static let gray200: Color = Color(hex: "#B3BFCC")
+    static let gray300: Color = Color(hex: "#94A6B8")
+    static let gray400: Color = Color(hex: "#758CA3")
+    static let gray500: Color = Color(hex: "#668099")
+    static let gray600: Color = Color(hex: "#5C738A")
+    static let gray700: Color = Color(hex: "#47596B")
+    static let gray800: Color = Color(hex: "#33404C")
+    static let gray900: Color = Color(hex: "#1F262E")
+    static let gray950: Color = Color(hex: "#141A1F")
+    
+    static let sepia100: Color = Color(hex: "#FDF4E6")
+    static let sepia200: Color = Color(hex: "#E8DAC4")
+    static let sepia300: Color = Color(hex: "#E8DAC4")
+    static let sepia400: Color = Color(hex: "#3E3634")
 }

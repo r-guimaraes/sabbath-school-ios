@@ -505,8 +505,8 @@ extension AttributedString {
                 attrString[run.range].font = UIFontMetrics.default.scaledFont(for: UIFont(name: defaultTypeface.fontName, size: defaultTextSize+0.001)!.withSize(defaultTextSize+0.001))
                 
                 if let url = run.link?.absoluteString, url.contains("sspmCompletion") {
-                    attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid, color: Color(hex: "#669edd"))
-                    attrString[run.range].backgroundColor = Color(hex: "#f2f7fc")
+                    attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid, color: AppStyle.Block.Completion.underlineColor())
+                    attrString[run.range].backgroundColor = AppStyle.Block.Completion.backgroundColor()
                 } else {
                     attrString[run.range].underlineStyle = Text.LineStyle(pattern: .solid)
                 }

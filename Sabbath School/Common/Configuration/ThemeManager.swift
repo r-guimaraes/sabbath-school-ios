@@ -122,18 +122,18 @@ class ThemeManager: ObservableObject {
     func getBackgroundColor() -> Color {
         switch currentTheme {
         case .light: return .white
-        case .sepia: return Color(hex: "#FBF0D9")
+        case .sepia: return Color.sepia100
         case .dark: return .black
-        case .auto: return Preferences.darkModeEnable() ? .black : .white
+        case .auto: return .white | .black
         }
     }
     
     func getTextColor() -> Color {
         switch currentTheme {
-        case .light: return .black
-        case .sepia: return Color(hex: "#5b4636")
-        case .dark: return .white
-        case .auto: return Preferences.darkModeEnable() ? .white : .black
+        case .light: return Color.primary950
+        case .sepia: return Color.sepia400
+        case .dark: return Color.gray200
+        case .auto: return Color.primary950 | Color.gray200
         }
     }
     

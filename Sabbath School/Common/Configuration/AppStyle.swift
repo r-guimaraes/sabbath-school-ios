@@ -859,6 +859,46 @@ struct AppStyle {
                 }
             }
         }
+        
+        struct Completion {
+            static func underlineColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary700
+                let sepia = Color.sepia400
+                let dark = Color.primary400
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return Helper.isDarkMode() ? dark : light
+                }
+            }
+            
+            static func backgroundColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary50
+                let sepia = Color.sepia200
+                let dark = Color.gray800
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return Helper.isDarkMode() ? dark : light
+                }
+            }
+        }
     }
     
     struct ThemeAux {

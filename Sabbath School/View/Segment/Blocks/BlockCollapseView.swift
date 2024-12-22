@@ -41,7 +41,7 @@ struct BlockCollapseView: StyledBlock, View {
                         InlineAttributedText(block: AnyBlock(self.block), markdown: block.caption, selectable: false, lineLimit: 2)
                         Spacer()
                         Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.black | .white)
+                            .foregroundColor(themeManager.getTextColor())
                             .animation(.easeInOut, value: expanded)
                     }
                     .frame(maxWidth: .infinity)

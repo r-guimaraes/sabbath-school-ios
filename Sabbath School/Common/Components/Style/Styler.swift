@@ -45,7 +45,8 @@ struct Styler {
             }
 
             if let block = block {
-                textColor = themeManager.getTextColor()
+//                textColor = themeManager.getTextColor()
+                textColor = Styler.getTextColor(style, template)
                 
                 if let nested = block.nested, nested {
                     if allowColorChange {

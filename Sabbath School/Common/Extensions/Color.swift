@@ -199,6 +199,6 @@ public extension Color {
     
     static let sepia100: Color = Color(hex: "#FDF4E6")
     static let sepia200: Color = Color(hex: "#E8DAC4")
-    static let sepia300: Color = Color(hex: "#E8DAC4")
+    static let sepia300: Color = Color(hex: "#E0D0B8")
     static let sepia400: Color = Color(hex: "#3E3634")
 }

@@ -76,26 +76,85 @@ struct BlockMultipleChoiceItemView: StyledBlock, View {
     var block: MultipleChoiceItem
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     
+    @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var viewModel: MultipleChoiceViewModel
     
-    @State var selected: Bool = false
+    var selected: Bool {
+        return viewModel.choice == block.index
+    }
+    
+    var correct: Bool {
+        return viewModel.answer == block.index
+    }
     
     var body: some View {
         VStack {
             Button(action: {
-                viewModel.receiveChoiceSelection(index: block.index)
-            }) {
-                HStack {
-                    Image(systemName: viewModel.choice == block.index ? "smallcircle.filled.circle.fill" : "circle")
-                        .foregroundColor(viewModel.choice == block.index ? (viewModel.answer == block.index ? .green : .red) : .gray)
-                    InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
+                withAnimation {
+                    viewModel.receiveChoiceSelection(index: block.index)
                 }
-            }.padding(10)
-            
+            }) {
+                HStack(spacing: 0) {
+                    VStack {
+                        Image(
+                            systemName: selected ? (!correct ? "xmark.circle.fill" : "checkmark.circle.fill") : "circle"
+                        )
+                        .renderingMode(.template)
+                        .foregroundColor(AppStyle.Block.MultipleChoice.checkmarkColor(selected))
+                        .frame(width: 25)
+                    }
+                    .frame(maxHeight: .infinity)
+                    .padding(10)
+                    .background(AppStyle.Block.MultipleChoice.checkmarkBackgroundColor(selected))
+                    
+                    Divider().background(AppStyle.Block.MultipleChoice.borderColor()).padding(0)
+                    
+                    InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                    
+                    Spacer()
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
         }.overlay(
             RoundedRectangle(cornerRadius: 6)
-                .stroke(Color.gray, lineWidth: 2)
+                .stroke(AppStyle.Block.MultipleChoice.borderColor(), lineWidth: 2)
         )
         .cornerRadius(6)
     }
 }
+
+#Preview {
+    BlockMultipleChoiceView(block:
+        MultipleChoice(
+            id: "multiple_choice_id",
+            type: .multipleChoice,
+            style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+            data: nil,
+            ordered: false,
+            start: 0,
+            items: [
+                AnyBlock(MultipleChoiceItem(
+                    id: "multiple_choice_item_id_1",
+                    type: .multipleChoiceItem,
+                    style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+                    data: nil,
+                    index: 0,
+                    markdown: "Item 1",
+                    nested: true)),
+                AnyBlock(MultipleChoiceItem(
+                    id: "multiple_choice_item_id_2",
+                    type: .multipleChoiceItem,
+                    style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+                    data: nil,
+                    index: 1,
+                    markdown: "Item 2 fjdskalf jdsaj fkldjsakl fjdklsa jfkldsajkl fdjklsa fjkldsalkj fdksjlaf jkldsa fdsa fdsa fdsa fdsa fdsa fdsa fds fdsa",
+                    nested: true))
+            ],
+            answer: 0,
+            nested: false)
+    )
+    .environmentObject(ThemeManager())
+    .environmentObject(DocumentViewModel())
+}
+

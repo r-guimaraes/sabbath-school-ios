@@ -32,26 +32,38 @@ struct BlockAppealView: StyledBlock, InteractiveBlock, View {
     @State var checked = false
     
     var body: some View {
-        Button(action: {
-            checked = !checked
-            self.saveUserInput(AnyUserInput(UserInputAppeal(blockId: block.id, inputType: .appeal, appeal: checked)))
-        }) {
-            HStack(spacing: 10) {
-                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
-                    .imageScale(.large)
-                    .foregroundColor(AppStyle.Block.Checklist.foregroundColor(theme: themeManager.currentTheme))
+        VStack(spacing: 10) {
+            Text(AppStyle.Block.text(block.markdown, defaultStyles, AnyBlock(block), AppealStyleTemplate()))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
+            
+            Button(action: {
+                checked.toggle()
+                self.saveUserInput(AnyUserInput(UserInputAppeal(blockId: block.id, inputType: .appeal, appeal: checked)))
+            }) {
+                Image(systemName: checked ? "checkmark.square.fill" : "square")
+                    .font(.largeTitle)
+                    .foregroundColor(themeManager.getSecondaryTextColor())
                     .animation(.easeInOut(duration: 0.3), value: checked)
-
-                InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
+            }.onAppear {
+                loadInputData()
+            }.onChange(of: viewModel.documentUserInput) { newValue in
+                loadInputData()
             }
-        }.onAppear {
-            loadInputData()
-        }.onChange(of: viewModel.documentUserInput) { newValue in
-            loadInputData()
         }
+        .padding(20)
+        .background(themeManager.getSecondaryBackgroundColor())
+        .cornerRadius(6)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
     
     internal func loadInputData() {
         self.checked = getUserInputForBlock(blockId: block.id, userInput: nil)?.asType(UserInputAppeal.self)?.appeal ?? false
     }
+}
+
+#Preview {
+    BlockAppealView(block: Appeal(id: "appeal_id", type: .appeal, style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil), data: nil, markdown: "Would you consider this?", nested: false))
+        .environmentObject(ThemeManager())
+        .environmentObject(DocumentViewModel())
 }

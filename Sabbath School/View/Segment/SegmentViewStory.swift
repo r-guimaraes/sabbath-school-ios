@@ -178,6 +178,7 @@ struct SegmentViewImageStory: StyledBlock, View {
     @State private var imageOffset: CGFloat = 0
     @State private var totalOffsets: [Int: CGFloat] = [:]
     @State private var imageSizeWidth: CGFloat = 0
+    @State private var defaultOffset: CGFloat = 0
     
     @State private var selection: Int = 0
     @State private var alignment: TextAlignment = .leading
@@ -225,7 +226,7 @@ struct SegmentViewImageStory: StyledBlock, View {
                     let offsetVal: CGFloat = totalOffsets.values.filter { $0 < 0 }.reduce(0, +)
                     totalOffset = offsetVal < (-1 * (CGFloat(chunks.count - 1)) * screenSizeMonitor.screenSize.width) ? totalOffset : offsetVal
     
-                    imageOffset = totalOffset / (CGFloat(chunks.count-1)*screenSizeMonitor.screenSize.width / (imageSizeWidth-screenSizeMonitor.screenSize.width))
+                    imageOffset = totalOffset / (CGFloat(chunks.count-1)*screenSizeMonitor.screenSize.width / (imageSizeWidth-screenSizeMonitor.screenSize.width)) + defaultOffset
                 }
                 .frame(alignment: block.alignment == .top ? .top : .bottom)
                 .frame(width: screenSizeMonitor.screenSize.width)
@@ -238,7 +239,7 @@ struct SegmentViewImageStory: StyledBlock, View {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: .leading)
+                            .frame(width: screenSizeMonitor.screenSize.width, height: screenSizeMonitor.screenSize.height, alignment: chunks.count == 1 ? .center : .leading)
                             .offset(x: imageOffset <= 0 ? imageOffset : 0, y: 0)
                             .edgesIgnoringSafeArea(.top)
                             .onAppear {

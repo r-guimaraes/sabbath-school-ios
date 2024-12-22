@@ -142,43 +142,6 @@ struct SegmentViewCover: View {
             }
         }
     }
-    
-//    func SegmentHeader(_ title: String, _ date: ServerDate?, _ subtitle: String?, _ hasCover: Bool, _ style: Style?) -> some View {
-//        VStack (spacing: AppStyle.Segment.Spacing.betweenTitleDateAndSubtitle) {
-//            if let subtitle = subtitle {
-//                VStack (spacing: 0) {
-//                    Text(AppStyle.Segment.Subtitle.text(subtitle, hasCover, style))
-//                        .multilineTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate()))
-//                        .lineLimit(AppStyle.Segment.Subtitle.lineLimit)
-//                        .fixedSize(horizontal: false, vertical: true)
-//                }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentSubtitleStyleTemplate())))
-//            }
-//            
-//            if let date = date {
-//                VStack (spacing: 0) {
-//                    Text(AppStyle.Segment.Date.text(
-//                        date.date.stringReadDate()
-//                            .replacingLastOccurrence(of: Constants.StringsToBeReplaced.saturday,
-//                                                     with: Constants.StringsToBeReplaced.sabbath),
-//                        hasCover, style)
-//                    )
-//                    .multilineTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate()))
-//                    .lineLimit(AppStyle.Segment.Date.lineLimit)
-//                    .fixedSize(horizontal: false, vertical: true)
-//                }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentDateStyleTemplate())))
-//            }
-//            
-//            VStack {
-//                Text(AppStyle.Segment.Title.text(title, hasCover, style))
-//                    .multilineTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate()))
-//                    .lineLimit(AppStyle.Segment.Title.lineLimit)
-//                    .fixedSize(horizontal: false, vertical: true)
-//            }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate())))
-//        }
-//        .frame(maxWidth: .infinity, alignment: .leading)
-//        .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingHeader(screenSizeMonitor.screenSize.width))
-//        .padding(.vertical, AppStyle.Segment.Spacing.verticalPaddingHeader())
-//    }
 }
 
 struct SegmentHeader: View {
@@ -233,7 +196,7 @@ struct SegmentHeader: View {
             VStack {
                 Text(AppStyle.Segment.Title.text(title, hasCover, style))
                     .multilineTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate()))
-                    .lineLimit(AppStyle.Segment.Title.lineLimit)
+                    .lineLimit(hasCover ? AppStyle.Segment.Title.lineLimit : nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
             }.frame(maxWidth: .infinity, alignment: Styler.convertTextAlignment(Styler.getTextAlignment(style, SegmentTitleStyleTemplate())))

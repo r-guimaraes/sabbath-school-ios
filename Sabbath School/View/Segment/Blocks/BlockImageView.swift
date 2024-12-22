@@ -43,7 +43,12 @@ struct BlockImageView: StyledBlock, View {
                             self.image = image
                         }
                 } else {
-                    ProgressView()
+                    ZStack {
+                        Color.gray.opacity(0.5)
+                        Image(systemName: "photo")
+                            .imageScale(.small)
+                            .foregroundColor(.white)
+                    }
                 }
             }
             .cornerRadius(Styler.getBlockCornerRadius(defaultStyles, AnyBlock(block)))

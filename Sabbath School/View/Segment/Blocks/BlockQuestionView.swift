@@ -26,7 +26,6 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
     var block: Question
     @Environment(\.defaultBlockStyles) var defaultStyles: Style
     @EnvironmentObject var themeManager: ThemeManager
-    
     @EnvironmentObject var viewModel: DocumentViewModel
     
     @State var answer: String = ""
@@ -57,6 +56,7 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                     .frame(height: 100, alignment: .leading)
                     .lineLimit(5)
                     .font(Font.custom("Lato-Regular", size: BlockStyleTemplate().textSizePoints(.base)))
+                    .foregroundColor(themeManager.getTextColor())
                     .scrollContentBackground(.hidden)
                     .padding(.leading, 50)
                     .padding(.vertical, 0)

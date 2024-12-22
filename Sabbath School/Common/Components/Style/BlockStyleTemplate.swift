@@ -73,7 +73,7 @@ class BlockStyleTemplate: StyleTemplate {
         
         
         self.textColorEnabled = true
-        self.textColorDefault = .black
+        self.textColorDefault = theme.getTextColor()
         
         self.textTypefaceEnabled = true
         
@@ -88,10 +88,10 @@ class BlockStyleTemplate: StyleTemplate {
             self.textTypefaceDefault = "Lato-Regular"
         }
         
-        if (theme.currentTheme == .dark || theme.currentTheme == .sepia || (theme.currentTheme == .auto && Preferences.darkModeEnable()))
-            {
-            self.textColorDefault = .white
-        }
+//        if (theme.currentTheme == .dark || theme.currentTheme == .sepia || (theme.currentTheme == .auto && Preferences.darkModeEnable()))
+//            {
+//            self.textColorDefault = .white
+//        }
         
         self.textAlignmentEnabled = true
         self.textAlignmentDefault = .leading
@@ -163,10 +163,12 @@ class BlockStyleTemplate: StyleTemplate {
         
         self.textSizeDefault = self.textSizePoints(.base)
         
-        if (theme.currentTheme == .dark || theme.currentTheme == .sepia || (theme.currentTheme == .auto && Preferences.darkModeEnable()))
-            {
-            self.textColorDefault = .white
-        }
+//        if (theme.currentTheme == .dark || theme.currentTheme == .sepia || (theme.currentTheme == .auto && Preferences.darkModeEnable()))
+//            {
+//            self.textColorDefault = .white
+//        }
+        
+        self.textColorDefault = theme.getTextColor()
         
         self.paddingEnabled = true
         self.paddingDefault = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -288,5 +290,13 @@ class StoryStyleTemplate: BlockStyleTemplate {
         self.textColorDefault = .white
         self.textColorThemeOverride = false
         self.textSizeDefault = self.textSizePoints(.base)
+    }
+}
+
+class AppealStyleTemplate: BlockStyleTemplate {
+    override init() {
+        super.init()
+        let theme = ThemeManager()
+        self.textColorDefault = theme.getSecondaryTextColor()
     }
 }

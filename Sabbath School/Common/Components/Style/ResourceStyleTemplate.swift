@@ -119,7 +119,6 @@ class ResourceTitleStyleTemplate: StyleTemplate {
         
         self.backgroundImageEnabled = false
         self.backgroundImageDefault = nil
-        
         self.roundedCornersEnabled = false
         self.roundedCornersDefault = 0
         self.roundedCornersEnabledValue = 0

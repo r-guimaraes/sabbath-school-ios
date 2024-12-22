@@ -72,12 +72,14 @@ struct BlockParagraphView: StyledBlock, View {
     @State var parentBlock: AnyBlock?
     
     var body: some View {
+        let alignment = Styler.getTextAlignment(defaultStyles, BlockStyleTemplate(), AnyBlock(block))
+        
         InlineAttributedText(
             block: AnyBlock(block),
             markdown: block.markdown,
             selectable: isSelectable()
         )
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: BlockParagraphView.convertTextAlignment(alignment))
     }
     
     private func isSelectable() -> Bool {

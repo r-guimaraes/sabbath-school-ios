@@ -836,8 +836,101 @@ struct AppStyle {
         }
         
         struct Checklist {
-            static func foregroundColor(theme: ReaderStyle.Theme) -> Color {
-                return AppStyle.Block.genericForegroundColorForInteractiveBlock(theme: theme)
+            static func checkmarkColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary500
+                let sepia = Color.sepia400
+                let dark = Color.gray800
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+            
+            static func checkmarkBackgroundColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary50
+                let sepia = Color.sepia300
+                let dark = Color.gray900
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+            
+            static func borderColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary400
+                let sepia = Color.sepia400
+                let dark = Color.primary400
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+        }
+        
+        struct Poll {
+            static func borderColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary400
+                let sepia = Color.sepia400
+                let dark = Color.primary400
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+            
+            static func resultBarColor(_ selected: Bool) -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = selected ? Color.primary : Color.gray300
+                let sepia = selected ? Color.sepia400.opacity(0.5) : Color.sepia400
+                let dark = selected ? Color.primary : Color.primary400
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
             }
         }
         
@@ -896,6 +989,65 @@ struct AppStyle {
                     return dark
                 case .auto:
                     return Helper.isDarkMode() ? dark : light
+                }
+            }
+        }
+        
+        struct MultipleChoice {
+            static func checkmarkColor(_ selected: Bool) -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = selected ? .white : Color.primary500
+                let sepia = selected ? .white : Color.sepia400
+                let dark = selected ? .white : Color.gray800
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+            
+            static func checkmarkBackgroundColor(_ selected: Bool) -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = selected ? Color.primary : Color.primary50
+                let sepia = selected ? Color.sepia400 : Color.sepia300
+                let dark = selected ? Color.primary950 : Color.gray900
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
+                }
+            }
+            
+            static func borderColor() -> Color {
+                let themeManager = ThemeManager()
+                
+                let light = Color.primary400
+                let sepia = Color.sepia400
+                let dark = Color.primary400
+                
+                switch themeManager.currentTheme {
+                case .light:
+                    return light
+                case .sepia:
+                    return sepia
+                case .dark:
+                    return dark
+                case .auto:
+                    return light | dark
                 }
             }
         }

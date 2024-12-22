@@ -56,7 +56,7 @@ struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
     @StateObject var checklistViewModel: ChecklistViewModel = ChecklistViewModel()
     
     var body: some View {
-        VStack (spacing: 15) {
+        VStack (spacing: 10) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
                     .environmentObject(checklistViewModel)
@@ -90,22 +90,76 @@ struct BlockChecklistItemView: StyledBlock, View {
     @State var checked = false
     
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        VStack {
             Button(action: {
-                checked = !checked
-                viewModel.receiveChecklistItemChange(index: block.index, checked: checked)
+                withAnimation {
+                    checked.toggle()
+                    viewModel.receiveChecklistItemChange(index: block.index, checked: checked)
+                }
             }) {
-                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(AppStyle.Block.Checklist.foregroundColor(theme: themeManager.currentTheme))
-                    .imageScale(.large)
-                    .animation(.easeInOut(duration: 0.3), value: checked)
-                    .padding(.top, 3)
+                HStack(spacing: 0) {
+                    VStack {
+                        Image(
+                            systemName: checked ? "checkmark.circle.fill" : "circle"
+                        )
+                        .renderingMode(.template)
+                        .foregroundColor(AppStyle.Block.Checklist.checkmarkColor())
+                        .frame(width: 25)
+                    }
+                    .frame(maxHeight: .infinity)
+                    .padding(10)
+                    .background(AppStyle.Block.Checklist.checkmarkBackgroundColor())
+                    
+                    Divider().background(AppStyle.Block.Checklist.borderColor()).padding(0)
+                    
+                    InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                    
+                    Spacer()
+                }
+                .fixedSize(horizontal: false, vertical: true)
             }
-            
-            InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
-        }.onChange(of: viewModel.checked) { newValue in
+        }.overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(AppStyle.Block.Checklist.borderColor(), lineWidth: 2)
+        )
+        .cornerRadius(6)
+        .onChange(of: viewModel.checked) { newValue in
             checked = newValue.contains(block.index)
         }
     }
 }
 
+
+#Preview {
+    BlockChecklistView(block:
+        Checklist(
+            id: "checklist_id",
+            type: .checklist,
+            style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+            ordered: false,
+            start: 0,
+            items: [
+                AnyBlock(ChecklistItem(
+                    id: "checklist_item_id_1",
+                    type: .checklistItem,
+                    style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+                    index: 0,
+                    markdown: "Item 1",
+                    data: nil,
+                    nested: true)),
+                AnyBlock(ChecklistItem(
+                    id: "checklist_item_id_2",
+                    type: .checklistItem,
+                    style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+                    index: 1,
+                    markdown: "Item 2",
+                    data: nil,
+                    nested: true))
+            ],
+            data: nil,
+            nested: false)
+    )
+    .environmentObject(ThemeManager())
+    .environmentObject(DocumentViewModel())
+}

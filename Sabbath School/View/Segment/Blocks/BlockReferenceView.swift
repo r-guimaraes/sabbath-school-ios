@@ -97,7 +97,8 @@ struct BlockReferenceView: StyledBlock, View {
                 }
             }
             Spacer()
-            Image(systemName: "chevron.right").foregroundColor(.black | .white)
+            Image(systemName: "chevron.right")
+                .foregroundColor(themeManager.getTextColor())
         }
         .padding(10)
         .frame(maxWidth: .infinity)

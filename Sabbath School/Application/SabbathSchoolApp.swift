@@ -215,7 +215,7 @@ struct SabbathSchoolApp: App {
   
         let urlPath = url.path
         let patternLegacy = #"^/(?<language>[a-zA-Z]{2,3})(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
-        let patternResources = #"^(/resources)?/(?<language>[a-zA-Z]{2,})(?:/(?<resourceType>aij|pm|ss|devo))?(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
+        let patternResources = #"^(/resources)?/(?<language>[a-zA-Z]{2,})(?:/(?<resourceType>aij|pm|ss|devo|explore))?(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
         var pattern = patternLegacy
         
         if let _ = url.path.range(of: "(/resources)?/(aij|ss|pm|devo|explore)", options: [.caseInsensitive, .regularExpression]) {
@@ -263,7 +263,7 @@ struct SabbathSchoolApp: App {
                             pmpath = resolvedPath
                             selected = .pm
                         } else if (resourceType == "explore") {
-                            pmpath = resolvedPath
+                            explorepath = resolvedPath
                             selected = .explore
                         }
                     }

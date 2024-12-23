@@ -45,7 +45,6 @@ struct Styler {
             }
 
             if let block = block {
-//                textColor = themeManager.getTextColor()
                 textColor = Styler.getTextColor(style, template)
                 
                 if let nested = block.nested, nested {
@@ -426,7 +425,7 @@ extension Styler {
         }
         
         if !allowColorChange && (backgroundColor != template.backgroundColorDefault) {
-            return themeManager.getBackgroundColor().opacity(0.5)
+            return AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: themeManager.currentTheme)
         }
         
         return backgroundColor

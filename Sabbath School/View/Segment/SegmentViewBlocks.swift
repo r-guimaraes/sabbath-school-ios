@@ -22,9 +22,34 @@
 
 import SwiftUI
 import NukeUI
+import Combine
 
 private enum CoordinateSpaces {
     case scrollView
+}
+
+final class KeyboardResponder: ObservableObject {
+    @Published var keyboardHeight: CGFloat = 0
+    private var cancellables: [AnyCancellable] = []
+
+    init() {
+        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+        let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+
+        willShow
+            .merge(with: willHide)
+            .sink { [weak self] notification in
+                self?.handleKeyboardNotification(notification)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleKeyboardNotification(_ notification: Notification) {
+        guard let userInfo = notification.userInfo else { return }
+        let endFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect) ?? .zero
+        let keyboardVisible = notification.name == UIResponder.keyboardWillShowNotification
+        keyboardHeight = keyboardVisible ? endFrame.height : 0
+    }
 }
 
 struct SegmentViewBlocks: View {
@@ -39,6 +64,7 @@ struct SegmentViewBlocks: View {
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     @EnvironmentObject var audioPlayback: AudioPlayback
     @EnvironmentObject var documentViewOperator: DocumentViewOperator
+    @StateObject private var keyboardResponder = KeyboardResponder()
     
     var body: some View {
         if let blocks = segment.blocks {
@@ -59,7 +85,7 @@ struct SegmentViewBlocks: View {
                     )
                 }
             }
-            .padding(.bottom, AppStyle.Segment.Spacing.verticalPaddingContent +
+            .padding(.bottom, keyboardResponder.keyboardHeight > 0 ? keyboardResponder.keyboardHeight : AppStyle.Segment.Spacing.verticalPaddingContent +
                      (audioPlayback.shouldShowMiniPlayer() || documentViewOperator.hiddenSegment != nil && !isHiddenSegment ? 80 * 2 : isHiddenSegment ? 0 : 80)
             )
             .padding(.top, AppStyle.Segment.Spacing.verticalPaddingContent)
@@ -273,6 +299,7 @@ struct SegmentViewBase<Content: View>: View {
                 }
             })
         }
+        .scrollDismissesKeyboard(.interactively)
         .background {
             if let background = segment.background ?? document.background,
                themeManager.currentTheme == .light || (

@@ -35,7 +35,7 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
     var body: some View {
         VStack (spacing: 0) {
             VStack (spacing: 0) {
-                if block.markdown.count > 0 {
+                if !block.markdown.isEmpty {
                     InlineAttributedText(
                         block: AnyBlock(block),
                         markdown: block.markdown
@@ -43,7 +43,6 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
                 }
-                Divider().background(.gray.opacity(0.4))
             }
             .padding(0)
             .background(AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: themeManager.currentTheme))
@@ -80,7 +79,7 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
             .frame(alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cornerRadius(3)
+        .cornerRadius(6)
         .padding(.vertical, 10)
         .onAppear {
             loadInputData()
@@ -88,7 +87,7 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
         .onChange(of: viewModel.documentUserInput) { newValue in
             loadInputData()
         }
-        .shadow(color: .gray.opacity(0.5), radius: 5)
+        .shadow(color: AppStyle.Block.genericBackgroundColorForInteractiveBlock(theme: themeManager.currentTheme), radius: 5)
     }
     
     func resetTypingTimer() {
@@ -104,3 +103,18 @@ struct BlockQuestionView: StyledBlock, InteractiveBlock, View {
         self.answer = getUserInputForBlock(blockId: block.id, userInput: nil)?.asType(UserInputQuestion.self)?.answer ?? ""
     }
 }
+
+#Preview {
+    BlockQuestionView(block:
+       Question(
+        id: "question_id",
+        type: .question,
+        style: BlockStyle(block: nil, wrapper: nil, image: nil, text: nil),
+        markdown: "Question",
+        data: nil,
+        nested: false)
+    )
+    .environmentObject(ThemeManager())
+    .environmentObject(DocumentViewModel())
+}
+

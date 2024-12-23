@@ -56,7 +56,7 @@ struct BlockChecklistView: StyledBlock, InteractiveBlock, View {
     @StateObject var checklistViewModel: ChecklistViewModel = ChecklistViewModel()
     
     var body: some View {
-        VStack (spacing: 10) {
+        VStack (spacing: 5) {
             ForEach(block.items) { item in
                 BlockWrapperView(block: item, parentBlock: AnyBlock(block))
                     .environmentObject(checklistViewModel)
@@ -94,6 +94,7 @@ struct BlockChecklistItemView: StyledBlock, View {
             Button(action: {
                 withAnimation {
                     checked.toggle()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     viewModel.receiveChecklistItemChange(index: block.index, checked: checked)
                 }
             }) {
@@ -110,7 +111,7 @@ struct BlockChecklistItemView: StyledBlock, View {
                     .padding(10)
                     .background(AppStyle.Block.Checklist.checkmarkBackgroundColor())
                     
-                    Divider().background(AppStyle.Block.Checklist.borderColor()).padding(0)
+                    Divider().frame(width: 1).background(AppStyle.Block.Checklist.borderColor()).padding(0)
                     
                     InlineAttributedText(block: AnyBlock(block), markdown: block.markdown).frame(maxWidth: .infinity, alignment: .leading)
                         .padding(10)
@@ -129,7 +130,6 @@ struct BlockChecklistItemView: StyledBlock, View {
         }
     }
 }
-
 
 #Preview {
     BlockChecklistView(block:

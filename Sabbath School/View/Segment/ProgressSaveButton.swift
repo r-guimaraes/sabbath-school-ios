@@ -68,6 +68,5 @@ struct ProgressSaveButton: View {
         }
         .frame(maxWidth: 500)
         .padding(.horizontal, 20)
-//        .buttonStyle(.plain)
     }
 }

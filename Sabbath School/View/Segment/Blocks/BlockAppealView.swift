@@ -39,6 +39,7 @@ struct BlockAppealView: StyledBlock, InteractiveBlock, View {
             
             Button(action: {
                 checked.toggle()
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 self.saveUserInput(AnyUserInput(UserInputAppeal(blockId: block.id, inputType: .appeal, appeal: checked)))
             }) {
                 Image(systemName: checked ? "checkmark.square.fill" : "square")

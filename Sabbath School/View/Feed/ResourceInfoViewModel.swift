@@ -60,7 +60,7 @@ class ResourceInfoViewModel: ObservableObject {
                 resourceInfoForLanguage = foundLanguage
             } else {
                 PreferencesShared.userDefaults.language = QuarterlyLanguage(code: "en", name: "English")
-                resourceInfoForLanguage = ResourceInfo(code: "en", name: "English", ss: true, aij: true, pm: true, devo: true)
+                resourceInfoForLanguage = ResourceInfo(code: "en", name: "English", ss: true, aij: true, pm: true, devo: true, explore: true)
             }
         }
     }

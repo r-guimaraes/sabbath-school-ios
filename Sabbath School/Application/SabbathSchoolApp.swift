@@ -29,6 +29,7 @@ enum TabSelection: String {
     case devo
     case pm
     case profile
+    case explore
 }
 
 let quickActionSettings = QuickActionSettings()
@@ -65,6 +66,7 @@ struct SabbathSchoolApp: App {
     @State private var aijpath: [NavigationStep] = []
     @State private var pmpath: [NavigationStep] = []
     @State private var devopath: [NavigationStep] = []
+    @State private var explorepath: [NavigationStep] = []
     
     @State private var shortcutLaunched: String = ""
     
@@ -83,7 +85,7 @@ struct SabbathSchoolApp: App {
                 if let _ = accountManager.account {
                     Group {
                         if let resourceInfo = resourceInfoViewModel.resourceInfoForLanguage {
-                            if resourceInfo.aij || resourceInfo.pm || resourceInfo.devo {
+                            if resourceInfo.aij || resourceInfo.pm || resourceInfo.devo || resourceInfo.explore {
                                 TabView(selection: $selected) {
                                     Group {
                                         FeedView(resourceType: .ss, path: $sspath)
@@ -113,6 +115,15 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
+                                        FeedView(resourceType: .explore, path: $explorepath)
+                                            .tag(TabSelection.explore)
+                                            .tabItem {
+                                                VStack {
+                                                    Text("")
+                                                    Image(uiImage: UIImage(named: "icon-navbar-explore")!)
+                                                }
+                                            }
+                                        
                                         FeedView(resourceType: .devo, path: $devopath)
                                             .tag(TabSelection.devo)
                                             .tabItem {
@@ -122,14 +133,14 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        SettingsView()
-                                            .tag(TabSelection.profile)
-                                            .tabItem {
-                                                VStack {
-                                                    Text("")
-                                                    Image(uiImage: UIImage(named: "icon-navbar-profile")!)
-                                                }
-                                            }
+//                                        SettingsView()
+//                                            .tag(TabSelection.profile)
+//                                            .tabItem {
+//                                                VStack {
+//                                                    Text("")
+//                                                    Image(uiImage: UIImage(named: "icon-navbar-profile")!)
+//                                                }
+//                                            }
                                     }
                                 }
                                 .onAppear {
@@ -207,7 +218,7 @@ struct SabbathSchoolApp: App {
         let patternResources = #"^(/resources)?/(?<language>[a-zA-Z]{2,})(?:/(?<resourceType>aij|pm|ss|devo))?(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
         var pattern = patternLegacy
         
-        if let _ = url.path.range(of: "(/resources)?/(aij|ss|pm|devo)", options: [.caseInsensitive, .regularExpression]) {
+        if let _ = url.path.range(of: "(/resources)?/(aij|ss|pm|devo|explore)", options: [.caseInsensitive, .regularExpression]) {
             pattern = patternResources
         }
 
@@ -251,6 +262,9 @@ struct SabbathSchoolApp: App {
                         } else if (resourceType == "pm") {
                             pmpath = resolvedPath
                             selected = .pm
+                        } else if (resourceType == "explore") {
+                            pmpath = resolvedPath
+                            selected = .explore
                         }
                     }
                 }

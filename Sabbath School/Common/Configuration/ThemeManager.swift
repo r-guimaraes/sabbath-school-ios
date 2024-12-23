@@ -130,10 +130,10 @@ class ThemeManager: ObservableObject {
     
     func getSecondaryBackgroundColor() -> Color {
         switch currentTheme {
-        case .light: return .primary50
+        case .light: return .gray50
         case .sepia: return Color.sepia200
         case .dark: return .gray800
-        case .auto: return .primary50 | .gray800
+        case .auto: return .gray50 | .gray800
         }
     }
     
@@ -148,10 +148,10 @@ class ThemeManager: ObservableObject {
     
     func getSecondaryTextColor() -> Color {
         switch currentTheme {
-        case .light: return Color.primary800
+        case .light: return Color.gray700
         case .sepia: return Color.sepia400
-        case .dark: return Color.primary300
-        case .auto: return Color.primary800 | Color.primary300
+        case .dark: return Color.primary400
+        case .auto: return Color.gray700 | Color.primary400
         }
     }
     

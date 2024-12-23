@@ -75,7 +75,7 @@ struct BlockReferenceView: StyledBlock, View {
     var label: some View {
         HStack {
             if let resource = block.resource, !isHiddenSegment {
-                LazyImage(url: resource.covers.square) { image in
+                LazyImage(url: resource.covers.portrait) { image in
                     image.image?.resizable()
                 }
                 .frame(width: AppStyle.Block.Reference.thumbnailSize.width, height: AppStyle.Block.Reference.thumbnailSize.height)
@@ -85,7 +85,7 @@ struct BlockReferenceView: StyledBlock, View {
             
             VStack (alignment: .leading, spacing: 5) {
                 Text(block.title)
-                    .lineLimit(1)
+                    .lineLimit(2)
                     .font(.custom("Lato-Bold", size: 16))
                     .foregroundColor(themeManager.getTextColor())
 

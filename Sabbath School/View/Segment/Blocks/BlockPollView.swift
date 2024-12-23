@@ -56,6 +56,7 @@ struct BlockPollItemView: View {
     var body: some View {
         Button(action: {
             if !pollViewModel.completed {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 pollViewModel.receiveVote(vote: block.index)
             }
         }) {

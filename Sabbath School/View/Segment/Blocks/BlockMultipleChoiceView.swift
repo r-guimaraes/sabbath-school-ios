@@ -91,6 +91,7 @@ struct BlockMultipleChoiceItemView: StyledBlock, View {
         VStack {
             Button(action: {
                 withAnimation {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     viewModel.receiveChoiceSelection(index: block.index)
                 }
             }) {
@@ -157,4 +158,3 @@ struct BlockMultipleChoiceItemView: StyledBlock, View {
     .environmentObject(ThemeManager())
     .environmentObject(DocumentViewModel())
 }
-

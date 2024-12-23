@@ -29,16 +29,18 @@ struct ResourceInfo: Codable, Hashable {
     let pm: Bool
     let devo: Bool
     let ss: Bool
+    let explore: Bool
     
     var translatedName: String? = ""
     
-    init(code: String, name: String, ss: Bool, aij: Bool, pm: Bool, devo: Bool) {
+    init(code: String, name: String, ss: Bool, aij: Bool, pm: Bool, devo: Bool, explore: Bool) {
         self.code = code
         self.name = name
         self.ss = ss
         self.aij = aij
         self.pm = pm
         self.devo = devo
+        self.explore = explore
 
         self.translatedName = Locale.current.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
     }
@@ -53,6 +55,7 @@ struct ResourceInfo: Codable, Hashable {
         self.aij = try values.decode(Bool.self, forKey: .aij)
         self.pm = try values.decode(Bool.self, forKey: .pm)
         self.devo = try values.decode(Bool.self, forKey: .devo)
+        self.explore = try values.decode(Bool.self, forKey: .explore)
         
         self.translatedName = Locale.current.localizedString(forLanguageCode: code)?.capitalized ?? name.capitalized
     }
@@ -63,6 +66,7 @@ enum ResourceType: String, Codable {
     case devo
     case aij
     case ss
+    case explore
 }
 
 enum ResourceCoverType: Codable {

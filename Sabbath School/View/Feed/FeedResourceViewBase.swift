@@ -24,7 +24,7 @@ import SwiftUI
 import NukeUI
 
 @MainActor @ViewBuilder
-func FeedResourceCoverView(_ url: URL, _ dimensions: CGSize, _ placeholderColor: String? = nil) -> some View {
+func FeedGroupItemCoverView(_ url: URL, _ dimensions: CGSize, _ placeholderColor: String? = nil, _ scaleFactor: CGFloat = 1) -> some View {
     LazyImage(url: url) { state in
         if let image = state.image {
             image.resizable().aspectRatio(contentMode: .fill)
@@ -34,22 +34,22 @@ func FeedResourceCoverView(_ url: URL, _ dimensions: CGSize, _ placeholderColor:
             Color(hex: placeholderColor ?? "#cccccc")
         }
     }
-    .frame(width: dimensions.width, height: dimensions.height)
+    .frame(width: dimensions.width * scaleFactor, height: dimensions.height * scaleFactor)
     .cornerRadius(6)
     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
 }
 
 @ViewBuilder
-func FeedResourceTitleView(_ title: String, _ subtitle: String?, _ dimensions: CGSize? = nil, _ direction: FeedGroupDirection, _ enlarge: Bool = false, externalURL: URL? = nil) -> some View {
+func FeedGroupItemTitleView(_ title: String, _ subtitle: String?, _ dimensions: CGSize? = nil, _ direction: FeedGroupDirection, _ enlarge: Bool = false, externalURL: URL? = nil, _ scaleFactor: CGFloat = 1, _ backgroundColorEnabled: Bool = false) -> some View {
     HStack {
         VStack(alignment: .leading, spacing: AppStyle.Feed.Spacing.betweenTitleAndSubtitle) {
-            Text(AppStyle.Feed.Title.text(title, enlarge))
+            Text(AppStyle.Feed.Title.text(title, enlarge, backgroundColorEnabled))
                 .lineLimit(AppStyle.Feed.Title.lineLimit)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
             
             if let subtitle = subtitle, direction == .vertical {
-                Text(AppStyle.Feed.Subtitle.text(subtitle))
+                Text(AppStyle.Feed.Subtitle.text(subtitle, false, backgroundColorEnabled))
                     .lineLimit(AppStyle.Feed.Subtitle.lineLimit)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -62,7 +62,7 @@ func FeedResourceTitleView(_ title: String, _ subtitle: String?, _ dimensions: C
                 .font(.system(size: 16, weight: .light))
                 .foregroundColor(.secondary)
         }
-    }.frame(width: dimensions?.width, alignment: .leading)
+    }.frame(width: dimensions != nil ? dimensions!.width * scaleFactor : .infinity, alignment: .leading)
 }
 
 @ViewBuilder
@@ -78,6 +78,7 @@ struct FeedResourceViewBase<Content: View>: View {
     var direction: FeedGroupDirection
     var viewType: FeedGroupViewType
     var coverType: ResourceCoverType
+    var showTitle: Bool = true
     
     @State var dimensions: CGSize = CGSizeMake(0.0, 0.0)
     
@@ -98,7 +99,8 @@ struct FeedResourceViewBase<Content: View>: View {
             coverType,
             direction,
             viewType,
-            screenSizeMonitor.screenSize.width
+            screenSizeMonitor.screenSize.width,
+            showTitle
         )
     }
 }
@@ -107,17 +109,157 @@ struct FeedResourceView: View {
     var resource: Resource
     var feedGroupViewType: FeedGroupViewType
     var feedGroupDirection: FeedGroupDirection
+    var backgroundColorEnabled: Bool = false
+    var showTitle: Bool = true
     
     var body: some View {
         switch feedGroupViewType {
         case .banner:
-            FeedResourceViewBanner(resource: resource, direction: feedGroupDirection)
+            FeedResourceViewBanner(
+                title: resource.title,
+                subtitle: resource.subtitle,
+                cover: resource.covers.landscape,
+                externalURL: resource.externalURL,
+                primaryColor: resource.primaryColor,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
         case .folio:
-            FeedResourceViewFolio(resource: resource, direction: feedGroupDirection)
+            FeedResourceViewFolio(
+                title: resource.title,
+                subtitle: resource.subtitle,
+                cover: resource.covers.portrait,
+                externalURL: resource.externalURL,
+                primaryColor: resource.primaryColor,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
         case .square:
-            FeedResourceViewSquare(resource: resource, direction: feedGroupDirection)
+            FeedResourceViewSquare(
+                title: resource.title,
+                subtitle: resource.subtitle,
+                cover: resource.covers.square,
+                externalURL: resource.externalURL,
+                primaryColor: resource.primaryColor,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
         case .tile:
-            FeedResourceViewTile(resource: resource, direction: feedGroupDirection)
+            FeedResourceViewTile(
+                title: resource.title,
+                subtitle: resource.subtitle,
+                cover: resource.covers.landscape,
+                externalURL: resource.externalURL,
+                primaryColor: resource.primaryColor,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        }
+    }
+}
+
+struct FeedAuthorView: View {
+    var author: Author
+    var feedGroupViewType: FeedGroupViewType
+    var feedGroupDirection: FeedGroupDirection
+    var backgroundColorEnabled: Bool = false
+    var showTitle: Bool = true
+    
+    var body: some View {
+        switch feedGroupViewType {
+        case .banner:
+            FeedResourceViewBanner(
+                title: author.title,
+                subtitle: nil,
+                cover: author.covers.landscape,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .folio:
+            FeedResourceViewFolio(
+                title: author.title,
+                subtitle: nil,
+                cover: author.covers.portrait,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .square:
+            FeedResourceViewSquare(
+                title: author.title,
+                subtitle: nil,
+                cover: author.covers.square,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .tile:
+            FeedResourceViewTile(
+                title: author.title,
+                subtitle: nil,
+                cover: author.covers.landscape,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        }
+    }
+}
+
+struct FeedCategoryView: View {
+    var category: Category
+    var feedGroupViewType: FeedGroupViewType
+    var feedGroupDirection: FeedGroupDirection
+    var backgroundColorEnabled: Bool = false
+    var showTitle: Bool = true
+    
+    var body: some View {
+        switch feedGroupViewType {
+        case .banner:
+            FeedResourceViewBanner(
+                title: category.title,
+                subtitle: nil,
+                cover: category.covers.landscape,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .folio:
+            FeedResourceViewFolio(
+                title: category.title,
+                subtitle: nil,
+                cover: category.covers.portrait,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .square:
+            FeedResourceViewSquare(
+                title: category.title,
+                subtitle: nil,
+                cover: category.covers.square,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
+        case .tile:
+            FeedResourceViewTile(
+                title: category.title,
+                subtitle: nil,
+                cover: category.covers.landscape,
+                externalURL: nil,
+                primaryColor: nil,
+                direction: feedGroupDirection,
+                backgroundColorEnabled: backgroundColorEnabled,
+                showTitle: showTitle)
         }
     }
 }

@@ -23,55 +23,55 @@
 import Foundation
 import Cache
 
-@MainActor class FeedViewModel: ObservableObject {
-    @Published var feed: Feed? = nil
-    @Published var feedGroup: FeedGroup? = nil
+@MainActor class ResourceFeedViewModel: ObservableObject {
+    @Published var feed: ResourceFeed? = nil
+    @Published var feedGroup: AnyFeedGroup? = nil
     
-    private static var resourceFeedStorage: Storage<String, Feed>?
-    private static var resourceSeeAllFeedStorage: Storage<String, FeedGroup>?
+    private static var resourceFeedStorage: Storage<String, ResourceFeed>?
+    private static var resourceSeeAllFeedStorage: Storage<String, AnyFeedGroup>?
     
     init() {
          self.configure()
     }
     
     func configure() {
-        FeedViewModel.resourceFeedStorage = APICache.storage?.transformCodable(ofType: Feed.self)
-        FeedViewModel.resourceSeeAllFeedStorage = APICache.storage?.transformCodable(ofType: FeedGroup.self)
+        ResourceFeedViewModel.resourceFeedStorage = APICache.storage?.transformCodable(ofType: ResourceFeed.self)
+        ResourceFeedViewModel.resourceSeeAllFeedStorage = APICache.storage?.transformCodable(ofType: AnyFeedGroup.self)
     }
     
     func retrieveFeed(resourceType: ResourceType, language: String) async {
         let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/index.json"
         
-        if (try? FeedViewModel.resourceFeedStorage?.existsObject(forKey: url)) != nil {
-            if let feed = try? FeedViewModel.resourceFeedStorage?.entry(forKey: url) {
+        if (try? ResourceFeedViewModel.resourceFeedStorage?.existsObject(forKey: url)) != nil {
+            if let feed = try? ResourceFeedViewModel.resourceFeedStorage?.entry(forKey: url) {
                 self.feed = feed.object
             }
         }
         
-        API.session.request(url).responseDecodable(of: Feed.self, decoder: Helper.SSJSONDecoder()) { response in
+        API.session.request(url).responseDecodable(of: ResourceFeed.self, decoder: Helper.SSJSONDecoder()) { response in
             guard let feed = response.value else {
                 return
             }
             self.feed = feed
-            try? FeedViewModel.resourceFeedStorage?.setObject(feed, forKey: url)
+            try? ResourceFeedViewModel.resourceFeedStorage?.setObject(feed, forKey: url)
         }
     }
     
-    func retrieveSeeAllFeed(resourceType: ResourceType, feedGroupId: String, language: String) async {
-        let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/feeds/\(feedGroupId)/index.json"
+    func retrieveSeeAllFeed(resourceType: ResourceType, feedGroupId: String, language: String, prefix: String = "") async {
+        let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/\(prefix.isEmpty ? "" : prefix + "/")feeds/\(feedGroupId)/index.json"
         
-        if (try? FeedViewModel.resourceSeeAllFeedStorage?.existsObject(forKey: url)) != nil {
-            if let feedGroup = try? FeedViewModel.resourceSeeAllFeedStorage?.entry(forKey: url) {
+        if (try? ResourceFeedViewModel.resourceSeeAllFeedStorage?.existsObject(forKey: url)) != nil {
+            if let feedGroup = try? ResourceFeedViewModel.resourceSeeAllFeedStorage?.entry(forKey: url) {
                 self.feedGroup = feedGroup.object
             }
         }
-        API.session.request(url).responseDecodable(of: FeedGroup.self, decoder: Helper.SSJSONDecoder()) { response in
+        API.session.request(url).responseDecodable(of: AnyFeedGroup.self, decoder: Helper.SSJSONDecoder()) { response in
         
             guard let feedGroup = response.value else {
                 return
             }
             self.feedGroup = feedGroup
-            try? FeedViewModel.resourceSeeAllFeedStorage?.setObject(feedGroup, forKey: url)
+            try? ResourceFeedViewModel.resourceSeeAllFeedStorage?.setObject(feedGroup, forKey: url)
         }
     }
 }

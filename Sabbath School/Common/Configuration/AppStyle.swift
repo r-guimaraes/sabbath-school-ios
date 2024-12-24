@@ -223,27 +223,27 @@ struct AppStyle {
         }
         
         struct GroupTitle {
-            static func text(_ string: String) -> AttributedString {
+            static func text(_ string: String, _ backgroundColorEnabled: Bool = false) -> AttributedString {
                 var result = AttributedString(string.uppercased())
-                result.foregroundColor = .baseBlue | .white.opacity(0.5)
+                result.foregroundColor = backgroundColorEnabled ? .white : (.baseBlue | .white.opacity(0.5))
                 result.font = Font.custom("Lato-Bold", size: 13)
                 return result
             }
         }
         
         struct SeeAllTitle {
-            static func text(_ string: String) -> AttributedString {
+            static func text(_ string: String, _ backgroundColorEnabled: Bool = false) -> AttributedString {
                 var result = AttributedString(string)
-                result.foregroundColor = .baseBlue | .white
+                result.foregroundColor = backgroundColorEnabled ? .white : (.baseBlue | .white.opacity(0.5))
                 result.font = Font.custom("Lato-Regular", size: 15)
                 return result
             }
         }
         
         struct Title {
-            static func text(_ string: String, _ larger: Bool = false) -> AttributedString {
+            static func text(_ string: String, _ larger: Bool = false, _ backgroundColorEnabled: Bool = false) -> AttributedString {
                 var result = AttributedString(string)
-                result.foregroundColor = .black | .white
+                result.foregroundColor = backgroundColorEnabled ? .white : .black | .white
                 result.font = Font.custom("Lato-Bold", size: larger ? 20 : 15)
                 return result
             }
@@ -254,9 +254,9 @@ struct AppStyle {
         }
         
         struct Subtitle {
-            static func text(_ string: String, _ larger: Bool = false) -> AttributedString {
+            static func text(_ string: String, _ larger: Bool = false, _ backgroundColorEnabled: Bool = false) -> AttributedString {
                 var result = AttributedString(string)
-                result.foregroundColor = (.black | .white).opacity(0.5)
+                result.foregroundColor = (backgroundColorEnabled ? .white : .black | .white).opacity(0.5)
                 result.font = Font.custom("Lato-Regular", size: 14)
                 return result
             }
@@ -271,12 +271,14 @@ struct AppStyle {
             static func size(_ coverType: ResourceCoverType,
                              _ direction: FeedGroupDirection,
                              _ viewType: FeedGroupViewType,
-                             _ initialWidth: CGFloat = UIScreen.main.bounds.width) -> CGSize {
+                             _ initialWidth: CGFloat = UIScreen.main.bounds.width,
+                             _ showTitle: Bool = true
+            ) -> CGSize {
                 let COVER_MAX_WIDTH = 210.0
                 var width: CGFloat = initialWidth - 40 // TODO: spacing * 2
                 var height = 200.0
                 
-                if direction == .vertical {
+                if direction == .vertical && showTitle {
                     switch coverType {
                     case .landscape:
                         if (viewType == .tile) {
@@ -296,7 +298,7 @@ struct AppStyle {
                     switch coverType {
                     case .landscape:
                         if (Helper.isPad) {
-                            width = width * 0.4
+                            width = width * 0.35
                         } else {
                             width = viewType == .banner ? width * 0.9 : width * 0.70
                         }
@@ -323,8 +325,31 @@ struct AppStyle {
         }
     }
     
+    struct Author {
+        struct Splash {
+            static var height: CGFloat {
+                return UIScreen.main.bounds.height * (Helper.isPad && Helper.isLandscape ? 0.5 : 0.3)
+            }
+            
+            static var gradientBlurHeight: CGFloat {
+                return AppStyle.Resource.Splash.height * 0.5
+            }
+        }
+    }
+    
+    struct Category {
+        struct Splash {
+            static var height: CGFloat {
+                return UIScreen.main.bounds.height * (Helper.isPad && Helper.isLandscape ? 0.5 : 0.3)
+            }
+            
+            static var gradientBlurHeight: CGFloat {
+                return AppStyle.Resource.Splash.height * 0.5
+            }
+        }
+    }
+    
     struct Resource {
-        
         struct Introduction {
             static var stylesheet: String {
                 return "body { font-size: 1.6em; line-height: 1.4em; font-family: 'Lato', sans-serif; color: \((.black | .white).hex()) }"

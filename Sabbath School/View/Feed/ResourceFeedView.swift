@@ -27,11 +27,11 @@ enum NavigationStep: Hashable {
     case document(String)
 }
 
-struct FeedView: View {
+struct ResourceFeedView: View {
     var resourceType: ResourceType
     @Binding var path: [NavigationStep]
 
-    @StateObject var viewModel: FeedViewModel = FeedViewModel()
+    @StateObject var viewModel: ResourceFeedViewModel = ResourceFeedViewModel()
     @EnvironmentObject var languageManager: LanguageManager
     
     @State var showLanguage: Bool = false
@@ -44,7 +44,7 @@ struct FeedView: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         // Adding VStack to prevent unnecessary spacing between elements in the ScrollView
                         VStack (spacing: 0) {
-                            ForEach(feed.groups, id:\.id) { group in
+                            ForEach(feed.groups, id: \.id) { group in
                                 FeedGroupView(resourceType: resourceType, feedGroup: group)
                             }
                         }
@@ -108,8 +108,8 @@ struct FeedView: View {
     }
 }
 
-struct FeedView_Previews: PreviewProvider {
+struct ResourceFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        FeedView(resourceType: .ss, path: .constant([])).environmentObject(ScreenSizeMonitor())
+        ResourceFeedView(resourceType: .ss, path: .constant([])).environmentObject(ScreenSizeMonitor())
     }
 }

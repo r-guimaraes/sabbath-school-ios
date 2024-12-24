@@ -241,9 +241,22 @@ struct ResourceView: View {
                                 .environmentObject(viewModel)
                             
                             if let feeds = resource.feeds {
-                                ForEach(feeds) { feed in
-                                    FeedGroupView(resourceType: .pm, feedGroup: feed, displaySeeAllButton: false)
+                                ForEach(feeds, id: \.id) { feed in
+                                    FeedGroupView(resourceType: .pm, feedGroup: feed)
                                 }
+                            }
+                            
+                            if let authors = resource.authors {
+                                VStack (spacing: 10) {
+                                    ForEach(authors, id: \.id) { author in
+                                        NavigationLink {
+                                            AuthorFeedView(authorId: author.id)
+                                        } label: {
+                                            FeedResourceViewSquare(title: author.title, cover: author.covers.square, direction: .vertical, scaleFactor: 0.7)
+                                        }
+                                    }
+                                }
+                                .padding(20)
                             }
                             
                             VStack (spacing: 20) {
@@ -260,8 +273,9 @@ struct ResourceView: View {
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
                                 
-                            }.padding(AppStyle.Resource.Spacing.paddingForFooter)
-                             .background(AppStyle.Resource.Footer.color)
+                            }
+                            .padding(AppStyle.Resource.Spacing.paddingForFooter)
+                            .background(AppStyle.Resource.Footer.color)
                         }
                         .background(AppStyle.Base.backgroundColor)
                         .offset(y: -10)

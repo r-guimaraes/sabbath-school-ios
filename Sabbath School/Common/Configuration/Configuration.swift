@@ -40,16 +40,19 @@ class Configuration: NSObject {
         let appearance = UINavigationBarAppearance()
         appearance.shadowColor = .clear
         appearance.backgroundColor = .white | .black
-        appearance.backgroundEffect = nil
         let attrs: [NSAttributedString.Key: Any] = [
             .font: UIFontMetrics.default.scaledFont(for: UIFont(name: "Lato-Black", size: 36)!)
         ]
         
         appearance.largeTitleTextAttributes = attrs
         
-        UINavigationBar.appearance().standardAppearance = appearance
+        let compactAppearance = UINavigationBarAppearance()
+        compactAppearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterial)
+        
+        UINavigationBar.appearance().standardAppearance = compactAppearance
         UINavigationBar.appearance().compactAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
     }
     
     static func configurePDF() {

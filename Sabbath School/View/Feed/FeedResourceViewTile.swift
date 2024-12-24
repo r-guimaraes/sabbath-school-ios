@@ -23,21 +23,31 @@
 import SwiftUI
 
 struct FeedResourceViewTile: View {
-    var resource: Resource
+    var title: String
+    var subtitle: String?
+    var cover: URL
+    var externalURL: URL?
+    var primaryColor: String?
     var direction: FeedGroupDirection
+    var scaleFactor: CGFloat = 1
+    var backgroundColorEnabled: Bool = false
+    var showTitle: Bool = true
     
     var body: some View {
         FeedResourceViewBase(direction: direction,
                              viewType: .tile,
                              coverType: .landscape,
+                             showTitle: showTitle,
                              content: { dimensions in
             VStack(spacing: 0) {
                 FeedResourceConditionalStack(
                     spacing: AppStyle.Feed.Spacing.betweenCoverAndTitle(direction),
                     direction: direction
                 ) {
-                    FeedResourceCoverView(resource.covers.landscape, dimensions, resource.primaryColor)
-                    FeedResourceTitleView(resource.title, resource.subtitle, direction == .horizontal ? dimensions : nil, direction, externalURL: resource.externalURL)
+                    FeedGroupItemCoverView(cover, dimensions, primaryColor ?? "#000000", scaleFactor)
+                    if showTitle {
+                        FeedGroupItemTitleView(title, subtitle, direction == .horizontal ? dimensions : nil, direction, externalURL: externalURL, scaleFactor, backgroundColorEnabled)
+                    }
                 }
                .frame(maxWidth: direction == .vertical ? .infinity : nil, alignment: .topLeading)
             }

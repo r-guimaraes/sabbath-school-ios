@@ -23,8 +23,15 @@
 import SwiftUI
 
 struct FeedResourceViewBanner: View {
-    var resource: Resource
+    var title: String
+    var subtitle: String?
+    var cover: URL
+    var externalURL: URL?
+    var primaryColor: String?
     var direction: FeedGroupDirection
+    var scaleFactor: CGFloat = 1
+    var backgroundColorEnabled: Bool = true
+    var showTitle: Bool = true
     
     var body: some View {
         FeedResourceViewBase(direction: direction,
@@ -32,34 +39,35 @@ struct FeedResourceViewBanner: View {
                              coverType: .landscape,
                              content: { dimensions in
             ZStack (alignment: .bottomLeading) {
-                FeedResourceCoverView(resource.covers.landscape, dimensions, resource.primaryColor)
+                FeedGroupItemCoverView(cover, dimensions, primaryColor ?? "#333333", scaleFactor)
                 
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .frame(width: dimensions.width, height: dimensions.height*0.4)
-                    .mask {
-                        VStack(spacing: 0){
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0),
-                                    Color.white.opacity(0.303),
-                                    Color.white.opacity(0.707),
-                                    Color.white.opacity(0.924),
-                                    Color.white
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            Rectangle()
-                                .frame(height: dimensions.height*0.1)
-                        }.cornerRadius(6)
-                    }
-
-                FeedResourceTitleView(resource.title, nil, dimensions, direction, false, externalURL: resource.externalURL)
-                    .frame(width: dimensions.width - AppStyle.Feed.Spacing.horizontalPadding * 2, alignment: .leading)
-                    .padding(AppStyle.Feed.Spacing.insideBanner)
-                
-            }.frame(width: dimensions.width)
+                if showTitle {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: dimensions.width * scaleFactor, height: dimensions.height*scaleFactor*0.4)
+                        .mask {
+                            VStack(spacing: 0){
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0),
+                                        Color.white.opacity(0.303),
+                                        Color.white.opacity(0.707),
+                                        Color.white.opacity(0.924),
+                                        Color.white
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                Rectangle()
+                                    .frame(height: dimensions.height*scaleFactor*0.1)
+                            }.cornerRadius(6)
+                            
+                        }
+                    FeedGroupItemTitleView(title, subtitle, dimensions, direction, false, externalURL: externalURL, scaleFactor, true)
+                        .frame(width: dimensions.width * scaleFactor - AppStyle.Feed.Spacing.horizontalPadding * 2, alignment: .leading)
+                        .padding(AppStyle.Feed.Spacing.insideBanner)
+                }
+            }.frame(width: dimensions.width * scaleFactor)
         })
     }
 }

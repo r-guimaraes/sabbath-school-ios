@@ -74,6 +74,9 @@ struct SegmentViewBlocks: View {
                         .environment(\.themeManager, themeManager)
                         .environment(\.defaultBlockStyles, defaultStyles)
                         .id(block.id)
+//                        .background(GeometryReader { geo in
+//                            Color.clear.preference(key: VisibleBlockPreferenceKey.self, value: getv(block.id, geo.frame(in: .global).minY))
+//                        })
                 }
                 
                 if let progressTrackingTitle = progressTrackingTitle,
@@ -92,6 +95,13 @@ struct SegmentViewBlocks: View {
             .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width, isHiddenSegment))
         }
     }
+    
+    // TODO: potentially implementing scrolling to the last visible block
+//    func getv(_ blockId: String, _ minY: CGFloat) -> [String: CGFloat] {
+//        var a: [String: CGFloat] = [:]
+//        a[blockId] = minY
+//        return a
+//    }
 }
 
 struct BottomClipShape: Shape {
@@ -233,6 +243,13 @@ struct SegmentHeader: View {
     }
 }
 
+struct VisibleBlockPreferenceKey: PreferenceKey {
+    static var defaultValue: [String: CGFloat] = [:]
+    static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
+        value.merge(nextValue(), uniquingKeysWith: { $1 })
+    }
+}
+
 struct SegmentViewBase<Content: View>: View {
     var resource: Resource
     var segment: Segment
@@ -254,6 +271,8 @@ struct SegmentViewBase<Content: View>: View {
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     @EnvironmentObject var audioPlayback: AudioPlayback
     
+    @State private var visibleBlockID: String?
+    
     @State var scrollOffset: CGFloat = 0
     
     private var hasCover: Bool {
@@ -261,60 +280,80 @@ struct SegmentViewBase<Content: View>: View {
     }
     
     var body: some View {
-        ScrollView (.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                content(
-                    SegmentViewCover(segment: segment, document: document, resource: resource),
-                    SegmentViewBlocks(
-                        segment: segment,
-                        isHiddenSegment: isHiddenSegment,
-                        progressTrackingTitle: progressTrackingTitle,
-                        progressTrackingSubtitle: progressTrackingSubtitle,
-                        progressNextSegmentIteratorIndex: progressNextSegmentIteratorIndex
-                    ),
-                    SegmentViewVideo(video: segment.video),
-                    SegmentHeader(segment.markdownTitle ?? segment.title,
-                                  segment.date,
-                                  segment.markdownSubtitle ?? segment.subtitle,
-                                  false,
-                                  segment.style ?? resource.style,
-                                  0,
-                                  isHiddenSegment)
-                )
-            }
-            .onChange(of: sizeCategory) { newValue in }
-            .background(GeometryReader { geometry in
-                Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
-                    if index == documentViewOperator.activeTab, segment.type != .video {
-                        self.scrollOffset = scrollOffset
-                        
-                        let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
-                        
-                        let visibility = scrollOffset <= -1 * (multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
-                        
-                        if visibility != documentViewOperator.shouldShowNavigationBar {
-                            documentViewOperator.setShowNavigationBar(visibility)
+        ScrollViewReader { proxy in
+            ScrollView (.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    content(
+                        SegmentViewCover(segment: segment, document: document, resource: resource),
+                        SegmentViewBlocks(
+                            segment: segment,
+                            isHiddenSegment: isHiddenSegment,
+                            progressTrackingTitle: progressTrackingTitle,
+                            progressTrackingSubtitle: progressTrackingSubtitle,
+                            progressNextSegmentIteratorIndex: progressNextSegmentIteratorIndex
+                        ),
+                        SegmentViewVideo(video: segment.video),
+                        SegmentHeader(segment.markdownTitle ?? segment.title,
+                                      segment.date,
+                                      segment.markdownSubtitle ?? segment.subtitle,
+                                      false,
+                                      segment.style ?? resource.style,
+                                      0,
+                                      isHiddenSegment)
+                    )
+                }
+                .onChange(of: sizeCategory) { newValue in }
+                .background(GeometryReader { geometry in
+                    Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
+                        if index == documentViewOperator.activeTab, segment.type != .video {
+                            self.scrollOffset = scrollOffset
+                            
+                            let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
+                            
+                            let visibility = scrollOffset <= -1 * (multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
+                            
+                            if visibility != documentViewOperator.shouldShowNavigationBar {
+                                documentViewOperator.setShowNavigationBar(visibility)
+                            }
                         }
                     }
-                }
-            })
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .background {
-            if let background = segment.background ?? document.background,
-               themeManager.currentTheme == .light || (
-                colorScheme == .light && themeManager.currentTheme == .auto
-               )
-            {
-                AsyncImage(url: background) { image in
-                    image.image?
-                        .resizable()
-                        .scaledToFill()
+                })
+            }
+            .scrollDismissesKeyboard(.interactively)
+//            TODO: potential visible block calculation
+//            .onPreferenceChange(VisibleBlockPreferenceKey.self) { values in
+//                updateVisibleComponentID(values: values)
+//            }
+            .background {
+                if let background = segment.background ?? document.background,
+                   themeManager.currentTheme == .light || (
+                    colorScheme == .light && themeManager.currentTheme == .auto
+                   )
+                {
+                    AsyncImage(url: background) { image in
+                        image.image?
+                            .resizable()
+                            .scaledToFill()
+                    }
                 }
             }
+            .background(themeManager.backgroundColor)
+            .clipped()
+            .id(segment.id)
         }
-        .background(themeManager.backgroundColor)
-        .clipped()
-        .id(segment.id)
     }
+    
+//  Potential visible block calc
+//    func updateVisibleComponentID(values: [String: CGFloat]) {
+//        // Determine the component closest to the top of the screen (or within a threshold)
+//        let visibleFrame = UIScreen.main.bounds // Replace with a specific ScrollView frame if needed
+//        let sortedVisibleComponents = values.filter { $0.value >= visibleFrame.minY }
+//            .sorted { abs($0.value - visibleFrame.minY) < abs($1.value - visibleFrame.minY) }
+//        
+//        if let closestComponent = sortedVisibleComponents.first {
+//            visibleBlockID = closestComponent.key
+//            print("SSDEBUG", visibleBlockID)
+//        }
+//    }
+
 }

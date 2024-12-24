@@ -28,7 +28,7 @@ struct ConditionalBackground: ViewModifier {
 
     func body(content: Content) -> some View {
         if let hex = hex {
-            content.background(Color(UIColor(hex: hex)))
+            content.background(Color(hex: hex))
         } else {
             content
         }
@@ -44,7 +44,6 @@ extension View {
 
 @ViewBuilder
 func FeedGroupConditionalStack<Content: View>(
-    resources: [Resource],
     feedGroupDirection: FeedGroupDirection,
     @ViewBuilder content: () -> Content) -> some View {
         
@@ -84,89 +83,135 @@ func ResourceLink<Destination: View, Content: View>(
 
 struct FeedGroupView: View {
     var resourceType: ResourceType
-    var feedGroup: FeedGroup
+    var feedGroup: AnyFeedGroup
     var displayFeedGroupTitle: Bool = true
-    var displaySeeAllButton: Bool = true
+    var prefix: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
-            if ((displayFeedGroupTitle || displaySeeAllButton)
+            if (displayFeedGroupTitle
                 && (feedGroup.title != nil || feedGroup.seeAll != nil)
             ) {
                 HStack {
                     if let title = feedGroup.title, displayFeedGroupTitle {
-                        Text(AppStyle.Feed.GroupTitle.text(title))
+                        Text(AppStyle.Feed.GroupTitle.text(title, feedGroup.backgroundColor != nil))
                     }
                     Spacer()
-                    if let seeAll = feedGroup.seeAll, displaySeeAllButton {
+                    if let seeAll = feedGroup.seeAll {
                         NavigationLink {
-                            FeedSeeAllView(resourceType: resourceType, feedGroupId: feedGroup.id)
+                            FeedSeeAllView(resourceType: resourceType, feedGroupId: feedGroup.id, prefix: prefix)
                         } label: {
-                            Text(AppStyle.Feed.SeeAllTitle.text("\(seeAll) ›"))
+                            Text(AppStyle.Feed.SeeAllTitle.text("\(seeAll) ›", feedGroup.backgroundColor != nil))
                         }.buttonStyle(.plain)
                     }
                     
                 }
                 .padding(AppStyle.Feed.Spacing.horizontalPadding)
             }
-            if let resources = feedGroup.resources {
-                VStack {
-                    FeedGroupConditionalStack(resources: resources, feedGroupDirection: feedGroup.direction) {
-                        ForEach(resources) { resource in
-                            ResourceLink(
-                                externalURL: resource.externalURL,
-                                destination: ResourceView(resourceIndex: resource.index)
-                            ) {
-                                FeedResourceView(resource: resource, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction)
-                            }
-                            .contextMenu {
-                                NavigationLink {
-                                    ResourceView(resourceIndex: resource.index)
-                                } label: {
-                                    Text("Read".localized())
-                                }
-                                Divider()
-                                
-                                ShareLink(
-                                    item: URL(string: "\(Constants.API.HOST)/resources/\(resource.index)")!,
-                                    subject: Text(resource.title)
-                                ) {
-                                    Text("Share".localized())
-                                }
-                            } preview: {
-                                HStack {
-                                    LazyImage(url: resource.covers.portrait) { image in
-                                        image
-                                            .image?
-                                            .resizable()
-                                            .scaledToFill()
-                                    }
-                                    .cornerRadius(5)
-                                    .frame(width: 80, height: 100)
-                                    
-                                    VStack(alignment: .leading, spacing: 10) {
-                                        if let subtitle = resource.subtitle {
-                                            Text(subtitle.uppercased())
-                                                .font(.custom("Lato-Bold", size: 10))
-                                                .foregroundColor((.black | .white).opacity(0.5))
-                                                .lineLimit(1)
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                        }
-                                        
-                                        Text(resource.title)
-                                            .font(.custom("Lato-Bold", size: 18))
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    Spacer()
-                                }
-                                .padding(20)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
+            if let resources = feedGroup.asType(FeedGroupResources.self)?.resources {
+                resourcesFeedGroupView(resources)
+            }
+            
+            if let authors = feedGroup.asType(FeedGroupAuthors.self)?.authors {
+                authorsFeedGroupView(authors)
+            }
+            
+            if let categories = feedGroup.asType(FeedGroupCategories.self)?.categories {
+                categoriesFeedGroupView(categories)
+            }
+        }
+        .padding(0)
+        .conditionalBackground(hex: feedGroup.backgroundColor)
+    }
+    
+    func resourcesFeedGroupView(_ resources: [Resource]) -> some View {
+        VStack {
+            FeedGroupConditionalStack(feedGroupDirection: feedGroup.direction) {
+                ForEach(resources) { resource in
+                    ResourceLink(
+                        externalURL: resource.externalURL,
+                        destination: ResourceView(resourceIndex: resource.index)
+                    ) {
+                        FeedResourceView(resource: resource, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction, backgroundColorEnabled: feedGroup.backgroundColor != nil)
+                    }
+                    .contextMenu {
+                        NavigationLink {
+                            ResourceView(resourceIndex: resource.index)
+                        } label: {
+                            Text("Read".localized())
                         }
+                        Divider()
+                        
+                        ShareLink(
+                            item: URL(string: "\(Constants.API.HOST)/resources/\(resource.index)")!,
+                            subject: Text(resource.title)
+                        ) {
+                            Text("Share".localized())
+                        }
+                    } preview: {
+                        HStack {
+                            LazyImage(url: resource.covers.portrait) { image in
+                                image
+                                    .image?
+                                    .resizable()
+                                    .scaledToFill()
+                            }
+                            .cornerRadius(5)
+                            .frame(width: 80, height: 100)
+                            
+                            VStack(alignment: .leading, spacing: 10) {
+                                if let subtitle = resource.subtitle {
+                                    Text(subtitle.uppercased())
+                                        .font(.custom("Lato-Bold", size: 10))
+                                        .foregroundColor((.black | .white).opacity(0.5))
+                                        .lineLimit(1)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                
+                                Text(resource.title)
+                                    .font(.custom("Lato-Bold", size: 18))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            Spacer()
+                        }
+                        .padding(20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                .padding(0)
-                .conditionalBackground(hex: feedGroup.backgroundColor)
+            }
+        }
+        .padding(0)
+    }
+    
+    func authorsFeedGroupView(_ authors: [Author]) -> some View {
+        VStack {
+            FeedGroupConditionalStack(feedGroupDirection: feedGroup.direction) {
+                ForEach(authors) { author in
+                    NavigationLink {
+                        AuthorFeedView(authorId: author.id)
+                    } label: {
+                        FeedAuthorView(author: author, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction, backgroundColorEnabled: feedGroup.backgroundColor != nil)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(0)
+    }
+    
+    func categoriesFeedGroupView(_ categories: [Category]) -> some View {
+        VStack {
+            FeedGroupConditionalStack(feedGroupDirection: feedGroup.direction) {
+                ForEach(categories) { category in
+                    NavigationLink {
+                        CategoryFeedView(categoryId: category.id)
+                    } label: {
+                        FeedCategoryView(category: category, feedGroupViewType: feedGroup.view, feedGroupDirection: feedGroup.direction, backgroundColorEnabled: feedGroup.backgroundColor != nil, showTitle: feedGroup.showTitle != false)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
         .padding(0)

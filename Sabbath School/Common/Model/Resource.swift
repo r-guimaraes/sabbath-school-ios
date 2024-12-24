@@ -67,6 +67,8 @@ enum ResourceType: String, Codable {
     case aij
     case ss
     case explore
+    case authors
+    case categories
 }
 
 enum ResourceCoverType: Codable {
@@ -150,7 +152,7 @@ struct Resource: Codable, Identifiable {
     let primaryColorDark: String
     let sections: [ResourceSection]?
     let sectionView: ResourceSectionViewType?
-    let feeds: [FeedGroup]?
+    let feeds: [AnyFeedGroup]?
     let kind: ResourceKind
     let covers: ResourceCovers
     let features: [ResourceFeature]
@@ -162,4 +164,5 @@ struct Resource: Codable, Identifiable {
     let preferredCover: ResourcePreferredCover?
     let progressTracking: ProgressTracking?
     let displayProgress: Bool?
+    let authors: [Author]?
 }

@@ -22,7 +22,19 @@
 
 import Foundation
 
-struct Feed: Codable {
+struct CategoryCovers: Codable {
+    let square: URL
+    let splash: URL?
+    let landscape: URL
+    let portrait: URL
+}
+
+struct Category: Codable, Identifiable {
+    let id: String
     let title: String
-    let groups: [FeedGroup]
+    let subtitle: String?
+    let logo: URL?
+    let primaryColor: String
+    let primaryColorDark: String
+    let covers: CategoryCovers
 }

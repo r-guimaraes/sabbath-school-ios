@@ -88,7 +88,7 @@ struct SabbathSchoolApp: App {
                             if resourceInfo.aij || resourceInfo.pm || resourceInfo.devo || resourceInfo.explore {
                                 TabView(selection: $selected) {
                                     Group {
-                                        FeedView(resourceType: .ss, path: $sspath)
+                                        ResourceFeedView(resourceType: .ss, path: $sspath)
                                             .tag(TabSelection.ss)
                                             .tabItem {
                                                 VStack {
@@ -97,7 +97,7 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        FeedView(resourceType: .aij, path: $aijpath)
+                                        ResourceFeedView(resourceType: .aij, path: $aijpath)
                                             .tag(TabSelection.aij)
                                             .tabItem {
                                                 VStack {
@@ -106,7 +106,7 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        FeedView(resourceType: .pm, path: $pmpath)
+                                        ResourceFeedView(resourceType: .pm, path: $pmpath)
                                             .tag(TabSelection.pm)
                                             .tabItem {
                                                 VStack {
@@ -115,7 +115,7 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        FeedView(resourceType: .explore, path: $explorepath)
+                                        ResourceFeedView(resourceType: .explore, path: $explorepath)
                                             .tag(TabSelection.explore)
                                             .tabItem {
                                                 VStack {
@@ -124,7 +124,7 @@ struct SabbathSchoolApp: App {
                                                 }
                                             }
                                         
-                                        FeedView(resourceType: .devo, path: $devopath)
+                                        ResourceFeedView(resourceType: .devo, path: $devopath)
                                             .tag(TabSelection.devo)
                                             .tabItem {
                                                 VStack {
@@ -132,15 +132,6 @@ struct SabbathSchoolApp: App {
                                                     Image(uiImage: UIImage(named: "icon-navbar-devo")!)
                                                 }
                                             }
-                                        
-//                                        SettingsView()
-//                                            .tag(TabSelection.profile)
-//                                            .tabItem {
-//                                                VStack {
-//                                                    Text("")
-//                                                    Image(uiImage: UIImage(named: "icon-navbar-profile")!)
-//                                                }
-//                                            }
                                     }
                                 }
                                 .onAppear {
@@ -150,7 +141,7 @@ struct SabbathSchoolApp: App {
                                 .accentColor(.black | .white)
                                 .transition(.opacity)
                             } else {
-                                FeedView(resourceType: .ss, path: $sspath)
+                                ResourceFeedView(resourceType: .ss, path: $sspath)
                                     .transition(.opacity)
                                     .accentColor(.black | .white)
                         }

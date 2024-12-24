@@ -23,11 +23,12 @@
 import SwiftUI
 
 struct FeedSeeAllView: View {
-    @StateObject var viewModel: FeedViewModel = FeedViewModel()
+    @StateObject var viewModel: ResourceFeedViewModel = ResourceFeedViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var resourceType: ResourceType
     var feedGroupId: String
+    var prefix: String = ""
     
     var btnBack: some View {
         Button(action: {
@@ -49,8 +50,7 @@ struct FeedSeeAllView: View {
                         FeedGroupView(
                             resourceType: resourceType,
                             feedGroup: feedGroup,
-                            displayFeedGroupTitle: false,
-                            displaySeeAllButton: false
+                            displayFeedGroupTitle: false
                         )
                     }
                 }
@@ -74,7 +74,8 @@ struct FeedSeeAllView: View {
         await viewModel.retrieveSeeAllFeed(
            resourceType: self.resourceType,
            feedGroupId: self.feedGroupId,
-           language: PreferencesShared.currentLanguage().code
+           language: PreferencesShared.currentLanguage().code,
+           prefix: prefix
         )
     }
 }

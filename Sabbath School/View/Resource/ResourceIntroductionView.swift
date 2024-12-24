@@ -22,6 +22,12 @@
 
 import SwiftUI
 
+extension String {
+    func splitByNewLine() -> [String] {
+        return self.split(separator: "\n\n").map { String($0) }
+    }
+}
+
 extension AttributedString {
     init(styledMarkdown markdownString: String) throws {
         var output = try AttributedString(
@@ -75,7 +81,8 @@ struct ResourceIntroductionView: View {
     
     init (introduction: String) {
         self.introduction = introduction
-        self._strings = State(initialValue: introduction.split(separator: "\n\n").map { String($0) })
+        self._strings = State(initialValue: introduction.splitByNewLine())
+        //State(initialValue: introduction.split(separator: "\n\n").map { String($0) })
     }
 
     var body: some View {

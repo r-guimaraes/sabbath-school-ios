@@ -347,22 +347,33 @@ struct SegmentViewBase<Content: View>: View {
             .id(segment.id)
             .onAppear {
                 if !savedScrollPosition.alreadyScrolled {
-                    
                     savedScrollPosition.retrieveSavedScrollPosition(segmentId: segment.id) { cachedScrollOffset in
                         if let cachedScrollOffset = cachedScrollOffset {
-                            proxy.scrollTo(cachedScrollOffset.blockId, anchor: .top)
-                            updateNavigationBar(cachedScrollOffset.scrollOffset, force: true)
-                            savedScrollPosition.alreadyScrolled = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                updateNavigationBar(cachedScrollOffset.scrollOffset, force: true)
+                                savedScrollPosition.alreadyScrolled = true
+                                proxy.scrollTo(cachedScrollOffset.blockId, anchor: .top)
+                            }
                         }
                     }
                 }
             }.onDisappear {
-                if savedScrollPosition.scrollOffset == 0.0 {
-                    try? DocumentViewModel.lastVisibleScrollOffset?.removeObject(forKey: segment.id)
-                } else if let visibleBlockID = savedScrollPosition.visibleBlockID {
-                    try? DocumentViewModel.lastVisibleScrollOffset?.setObject(SavedScrollOffset(blockId: visibleBlockID, scrollOffset: savedScrollPosition.scrollOffset), forKey: segment.id)
+                if !isHiddenSegment {
+                    saveScrollPosition()
+                }
+            }.onChange(of: documentViewOperator.shouldShowHiddenSegment) { newValue in
+                if isHiddenSegment && !newValue {
+                    saveScrollPosition()
                 }
             }
+        }
+    }
+    
+    func saveScrollPosition() {
+        if savedScrollPosition.scrollOffset == 0.0 {
+            try? DocumentViewModel.lastVisibleScrollOffset?.removeObject(forKey: segment.id)
+        } else if let visibleBlockID = savedScrollPosition.visibleBlockID {
+            try? DocumentViewModel.lastVisibleScrollOffset?.setObject(SavedScrollOffset(blockId: visibleBlockID, scrollOffset: savedScrollPosition.scrollOffset), forKey: segment.id)
         }
     }
     
@@ -382,9 +393,9 @@ struct SegmentViewBase<Content: View>: View {
     func updateVisibleBlock(values: [String: CGFloat]) {
         if savedScrollPosition.scrollOffset == 0 || savedScrollPosition.scrollOffset == -1 { return }
         
-        let sortedVisibleComponents = values.min(by: {  abs($0.value) < abs($1.value) || (abs($0.value) == abs($1.value) && $0.value > $1.value) })
+        let sortedVisibleComponents = values.sorted(by: { abs($0.value) < abs($1.value) })
         
-        if let closestComponent = sortedVisibleComponents {
+        if let closestComponent = sortedVisibleComponents.first {
             savedScrollPosition.visibleBlockID = closestComponent.key
         }
     }

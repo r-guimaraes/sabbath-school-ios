@@ -74,9 +74,11 @@ struct SegmentViewBlocks: View {
                         .environment(\.themeManager, themeManager)
                         .environment(\.defaultBlockStyles, defaultStyles)
                         .id(block.id)
-//                        .background(GeometryReader { geo in
-//                            Color.clear.preference(key: VisibleBlockPreferenceKey.self, value: getv(block.id, geo.frame(in: .global).minY))
-//                        })
+                        .if(block.nested != true) { view in
+                            view.background(GeometryReader { geo in
+                                Color.clear.preference(key: VisibleBlockPreferenceKey.self, value: [block.id: geo.frame(in: .global).minY])
+                            })
+                        }
                 }
                 
                 if let progressTrackingTitle = progressTrackingTitle,
@@ -95,13 +97,6 @@ struct SegmentViewBlocks: View {
             .padding(.horizontal, AppStyle.Segment.Spacing.horizontalPaddingContent(screenSizeMonitor.screenSize.width, isHiddenSegment))
         }
     }
-    
-    // TODO: potentially implementing scrolling to the last visible block
-//    func getv(_ blockId: String, _ minY: CGFloat) -> [String: CGFloat] {
-//        var a: [String: CGFloat] = [:]
-//        a[blockId] = minY
-//        return a
-//    }
 }
 
 struct BottomClipShape: Shape {
@@ -250,6 +245,24 @@ struct VisibleBlockPreferenceKey: PreferenceKey {
     }
 }
 
+class SegmentSavedScrollPosition: ObservableObject {
+    @Published var visibleBlockID: String?
+    @Published var scrollOffset: CGFloat = -1
+    @Published var alreadyScrolled: Bool = false
+    
+    @MainActor func retrieveSavedScrollPosition(segmentId: String, completion: ((_ visibleBlockId: String?) -> Void)? = nil) {
+        if (try? DocumentViewModel.lastVisibleBlockStorage?.existsObject(forKey: segmentId)) != nil {
+            if let lastVisibleBlockId = try? DocumentViewModel.lastVisibleBlockStorage?.entry(forKey: segmentId) {
+                completion?(lastVisibleBlockId.object)
+            } else {
+                completion?(nil)
+            }
+        } else {
+            completion?(nil)
+        }
+    }
+}
+
 struct SegmentViewBase<Content: View>: View {
     var resource: Resource
     var segment: Segment
@@ -267,13 +280,12 @@ struct SegmentViewBase<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
     
     @EnvironmentObject var documentViewOperator: DocumentViewOperator
+    @EnvironmentObject var viewModel: DocumentViewModel
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var screenSizeMonitor: ScreenSizeMonitor
     @EnvironmentObject var audioPlayback: AudioPlayback
     
-    @State private var visibleBlockID: String?
-    
-    @State var scrollOffset: CGFloat = 0
+    @StateObject var savedScrollPosition: SegmentSavedScrollPosition = SegmentSavedScrollPosition()
     
     private var hasCover: Bool {
         return segment.type == .block && (segment.cover != nil || document.cover != nil)
@@ -302,11 +314,15 @@ struct SegmentViewBase<Content: View>: View {
                                       isHiddenSegment)
                     )
                 }
+                
                 .onChange(of: sizeCategory) { newValue in }
                 .background(GeometryReader { geometry in
-                    Color.clear.onChange(of: geometry.frame(in: .named(CoordinateSpaces.scrollView)).minY) { scrollOffset in
-                        if index == documentViewOperator.activeTab, segment.type != .video {
-                            self.scrollOffset = scrollOffset
+                    
+                    Color.clear
+                        .onChange(of: geometry.frame(in: .global).minY) { scrollOffset in
+                        
+                        if index == documentViewOperator.activeTab || (index == -1 && isHiddenSegment), segment.type != .video {
+                            savedScrollPosition.scrollOffset = scrollOffset
                             
                             let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
                             
@@ -320,10 +336,9 @@ struct SegmentViewBase<Content: View>: View {
                 })
             }
             .scrollDismissesKeyboard(.interactively)
-//            TODO: potential visible block calculation
-//            .onPreferenceChange(VisibleBlockPreferenceKey.self) { values in
-//                updateVisibleComponentID(values: values)
-//            }
+            .onPreferenceChange(VisibleBlockPreferenceKey.self) { values in
+                updateVisibleBlock(values: values)
+            }
             .background {
                 if let background = segment.background ?? document.background,
                    themeManager.currentTheme == .light || (
@@ -340,20 +355,30 @@ struct SegmentViewBase<Content: View>: View {
             .background(themeManager.backgroundColor)
             .clipped()
             .id(segment.id)
+            .task {
+                savedScrollPosition.retrieveSavedScrollPosition(segmentId: segment.id) { savedBlockId in
+                    if let savedBlockId = savedBlockId, !savedScrollPosition.alreadyScrolled {
+                        proxy.scrollTo(savedBlockId, anchor: .top)
+                        savedScrollPosition.alreadyScrolled = true
+                    }
+                }
+            }.onDisappear {
+                if savedScrollPosition.scrollOffset == 0.0 {
+                    try? DocumentViewModel.lastVisibleBlockStorage?.removeObject(forKey: segment.id)
+                } else if let visibleBlockID = savedScrollPosition.visibleBlockID {
+                    try? DocumentViewModel.lastVisibleBlockStorage?.setObject(visibleBlockID, forKey: segment.id)
+                }
+            }
         }
     }
     
-//  Potential visible block calc
-//    func updateVisibleComponentID(values: [String: CGFloat]) {
-//        // Determine the component closest to the top of the screen (or within a threshold)
-//        let visibleFrame = UIScreen.main.bounds // Replace with a specific ScrollView frame if needed
-//        let sortedVisibleComponents = values.filter { $0.value >= visibleFrame.minY }
-//            .sorted { abs($0.value - visibleFrame.minY) < abs($1.value - visibleFrame.minY) }
-//        
-//        if let closestComponent = sortedVisibleComponents.first {
-//            visibleBlockID = closestComponent.key
-//            print("SSDEBUG", visibleBlockID)
-//        }
-//    }
-
+    func updateVisibleBlock(values: [String: CGFloat]) {
+        if savedScrollPosition.scrollOffset == 0 || savedScrollPosition.scrollOffset == -1 { return }
+        
+        let sortedVisibleComponents = values.min(by: {  abs($0.value) < abs($1.value) || (abs($0.value) == abs($1.value) && $0.value > $1.value) })
+        
+        if let closestComponent = sortedVisibleComponents {
+            savedScrollPosition.visibleBlockID = closestComponent.key
+        }
+    }
 }

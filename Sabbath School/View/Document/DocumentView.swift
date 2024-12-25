@@ -51,8 +51,6 @@ struct DocumentView: View {
     
     var menuItems: [MenuItemIdentifier] = [.originalPDF, .readingOptions]
     
-    @State var hiddenSegmentM: AnyView? = nil
-    
     var btnBack: some View {
         Button(action: {
             self.presentationMode.wrappedValue.dismiss()
@@ -218,7 +216,23 @@ struct DocumentView: View {
             themeManager.setTheme(to: themeManager.currentTheme)
         }
         .sheet(isPresented: $documentViewOperator.shouldShowHiddenSegment) {
-            hiddenSegment
+            ZStack(alignment: .top) {
+                hiddenSegment
+                
+                HStack {
+                    Button (action: {
+                        documentViewOperator.shouldShowHiddenSegment.toggle()
+                    }) {
+                        Image(systemName: "chevron.down.circle.fill")
+                            .renderingMode(.original)
+                            .imageScale(.large)
+                            .foregroundColor(.black | .secondary)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+            }
         }
     }
     

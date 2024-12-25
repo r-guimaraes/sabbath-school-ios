@@ -35,6 +35,8 @@ import Cache
 
     private static var documentStorage: Storage<String, ResourceDocument>?
     private static var segmentStorage: Storage<String, Segment>?
+    public static var lastVisibleBlockStorage: Storage<String, String>?
+    public static var lastVisibleScrollOffset: Storage<String, CGFloat>?
     
     init() {
          self.configure()
@@ -43,6 +45,8 @@ import Cache
     func configure() {
         DocumentViewModel.documentStorage = APICache.storage?.transformCodable(ofType: ResourceDocument.self)
         DocumentViewModel.segmentStorage = APICache.storage?.transformCodable(ofType: Segment.self)
+        DocumentViewModel.lastVisibleBlockStorage = APICache.storage?.transformCodable(ofType: String.self)
+        DocumentViewModel.lastVisibleScrollOffset = APICache.storage?.transformCodable(ofType: CGFloat.self)
     }
     
     func retrievePDFAux(resourceIndex: String, documentIndex: String) async {

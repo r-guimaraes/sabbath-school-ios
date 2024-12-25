@@ -264,7 +264,7 @@ struct AudioAuxiliaryView: View {
                 self.currentIndex = audioPlayback.player.currentIndex
             } else {
                 audioPlayback.stop()
-                try? audioPlayback.player.add(items: audioItems, playWhenReady: false)
+                audioPlayback.player.add(items: audioItems, playWhenReady: false)
                 try? audioPlayback.player.jumpToItem(atIndex: defaultIndex, playWhenReady: audioPlayback.state == .playing)
                 self.currentIndex = defaultIndex
                 audioPlayback.documentIndex = self.documentIndex

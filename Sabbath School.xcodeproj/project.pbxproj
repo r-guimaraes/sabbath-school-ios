@@ -281,10 +281,8 @@
 		FE0249EA2669C2E3006BFADC /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0249E92669C2E3006BFADC /* Helper.swift */; };
 		FE0249F8266A9068006BFADC /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0249F7266A9068006BFADC /* Configuration.swift */; };
 		FE1E34F326731A5F00DAC2D6 /* Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E34F226731A5F00DAC2D6 /* Spotlight.swift */; };
-		FE1E34FE2673C5DF00DAC2D6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE1E34FD2673C5DF00DAC2D6 /* WidgetKit.framework */; };
-		FE1E35002673C5DF00DAC2D6 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE1E34FF2673C5DF00DAC2D6 /* SwiftUI.framework */; };
 		FE1E35052673C5E300DAC2D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE1E35042673C5E300DAC2D6 /* Assets.xcassets */; };
-		FE1E35092673C5E300DAC2D6 /* WidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = FE1E34FC2673C5DF00DAC2D6 /* WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FE1E35092673C5E300DAC2D6 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FE1E34FC2673C5DF00DAC2D6 /* WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FE3FFA5426B11F4E0037539F /* QuarterlyGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5CC762268972CA00B9F061 /* QuarterlyGroup.swift */; };
 		FE5CC763268972CA00B9F061 /* QuarterlyGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5CC762268972CA00B9F061 /* QuarterlyGroup.swift */; };
 		FE611A9B2674FECA003CDDB5 /* TodayWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE611A8F2674FE8D003CDDB5 /* TodayWidgetView.swift */; };
@@ -342,15 +340,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		FE1E350D2673C5E400DAC2D6 /* Embed App Extensions */ = {
+		FE1E350D2673C5E400DAC2D6 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				FE1E35092673C5E300DAC2D6 /* WidgetExtension.appex in Embed App Extensions */,
+				FE1E35092673C5E300DAC2D6 /* WidgetExtension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -393,7 +391,6 @@
 		2F613B9C27CDC6A600A4C745 /* Lato-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-MediumItalic.ttf"; sourceTree = "<group>"; };
 		2F613B9D27CDC6A600A4C745 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
 		2F613B9E27CDC6A600A4C745 /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
-		2F61E79A27BB5CBF00F696A2 /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = usr/lib/swift/libswift_Concurrency.tbd; sourceTree = SDKROOT; };
 		2F698B442CD4794A0070FEF9 /* DocumentLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentLoadingView.swift; sourceTree = "<group>"; };
 		2F698B472CDCF4AF0070FEF9 /* PT_Sans-Web-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PT_Sans-Web-Italic.ttf"; sourceTree = "<group>"; };
 		2F698B482CDCF4AF0070FEF9 /* PT_Sans-Web-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PT_Sans-Web-Regular.ttf"; sourceTree = "<group>"; };
@@ -666,8 +663,6 @@
 		FE0C8C3F2675195F004040C5 /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetExtension.entitlements; sourceTree = "<group>"; };
 		FE1E34F226731A5F00DAC2D6 /* Spotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotlight.swift; sourceTree = "<group>"; };
 		FE1E34FC2673C5DF00DAC2D6 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		FE1E34FD2673C5DF00DAC2D6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		FE1E34FF2673C5DF00DAC2D6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		FE1E35042673C5E300DAC2D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FE1E35062673C5E300DAC2D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FE5CC762268972CA00B9F061 /* QuarterlyGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuarterlyGroup.swift; sourceTree = "<group>"; };
@@ -768,9 +763,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE1E35002673C5DF00DAC2D6 /* SwiftUI.framework in Frameworks */,
 				4E860A472B4B461D00749BC3 /* Alamofire in Frameworks */,
-				FE1E34FE2673C5DF00DAC2D6 /* WidgetKit.framework in Frameworks */,
 				2F1979402D1C694C00B08A7D /* Hue in Frameworks */,
 				4E58E7992B4B48D4004B5D64 /* Cache in Frameworks */,
 			);
@@ -1338,7 +1331,6 @@
 				4EDDA4C42A83B8F60078B29E /* SabbathSchoolTV */,
 				FE1E35012673C5DF00DAC2D6 /* Widget */,
 				7AF191A91ED7B89B000CCF0C /* Products */,
-				CABEE71BDF95136D0B5A003F /* Frameworks */,
 				1BDC81CE3CAC580E4EC0FB13 /* LICENSE.md */,
 				1BDC817E4DEE5647231E268B /* README.md */,
 			);
@@ -1364,16 +1356,6 @@
 				2F3F16852D09E8F2005E0232 /* View */,
 			);
 			path = "Sabbath School";
-			sourceTree = "<group>";
-		};
-		CABEE71BDF95136D0B5A003F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				2F61E79A27BB5CBF00F696A2 /* libswift_Concurrency.tbd */,
-				FE1E34FD2673C5DF00DAC2D6 /* WidgetKit.framework */,
-				FE1E34FF2673C5DF00DAC2D6 /* SwiftUI.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		FE1E35012673C5DF00DAC2D6 /* Widget */ = {
@@ -1461,7 +1443,7 @@
 				7AF191A41ED7B89B000CCF0C /* Sources */,
 				7AF191A51ED7B89B000CCF0C /* Frameworks */,
 				7AF191A61ED7B89B000CCF0C /* Resources */,
-				FE1E350D2673C5E400DAC2D6 /* Embed App Extensions */,
+				FE1E350D2673C5E400DAC2D6 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -1515,8 +1497,9 @@
 		7AF191A01ED7B89B000CCF0C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = Adventech;
 				TargetAttributes = {
 					4E80B41F2AC0A2D9002B6FBF = {
@@ -2217,6 +2200,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2228,6 +2212,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2279,6 +2264,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2290,6 +2276,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2503,7 +2490,7 @@
 				CODE_SIGN_ENTITLEMENTS = Widget/Resources/WidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2516,7 +2503,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.5.0;
+				MARKETING_VERSION = 4.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = (
@@ -2549,7 +2536,7 @@
 				CODE_SIGN_ENTITLEMENTS = Widget/Resources/WidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2562,7 +2549,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.5.0;
+				MARKETING_VERSION = 4.0.0;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

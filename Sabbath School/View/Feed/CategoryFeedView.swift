@@ -138,6 +138,8 @@ struct CategoryFeedView: View {
         .toolbarColorScheme(colorScheme == .dark ? .dark : (showNavigationBar ? .light : .dark), for: .navigationBar)
         .task {
             await retrieveContent()
+            
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
     }
     

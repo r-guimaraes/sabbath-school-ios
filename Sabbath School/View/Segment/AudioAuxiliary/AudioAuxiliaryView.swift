@@ -21,7 +21,7 @@
  */
 
 import SwiftUI
-import SwiftAudio
+import SwiftAudioEx
 import MediaPlayer
 import AVKit
 import NukeUI

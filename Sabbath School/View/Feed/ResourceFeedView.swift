@@ -68,7 +68,8 @@ struct ResourceFeedView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
-                        showSettings = true
+                        showSettings.toggle()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     }) {
                         Image(systemName: "gearshape")
                             .imageScale(.medium)
@@ -77,7 +78,8 @@ struct ResourceFeedView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        showLanguage = true
+                        showLanguage.toggle()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     }) {
                         Image("icon-navbar-language")
                             .renderingMode(.template)

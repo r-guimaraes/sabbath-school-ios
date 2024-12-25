@@ -39,6 +39,11 @@ import Cache
         ResourceFeedViewModel.resourceSeeAllFeedStorage = APICache.storage?.transformCodable(ofType: AnyFeedGroup.self)
     }
     
+    public static func clearAllCache() {
+        try? ResourceFeedViewModel.resourceFeedStorage?.removeAll()
+        try? ResourceFeedViewModel.resourceSeeAllFeedStorage?.removeAll()
+    }
+    
     func retrieveFeed(resourceType: ResourceType, language: String) async {
         let url = "\(Constants.API.URLv3)/\(language)/\(resourceType)/index.json"
         

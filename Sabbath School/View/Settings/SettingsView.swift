@@ -28,6 +28,7 @@ struct SettingsView: View {
     @State private var reminderEnabled = Preferences.reminderStatus()
     @State private var showAboutUs = false
     @State private var showAccountRemovalAlert = false
+    @State private var showRemoveDownloadsAlert = false
     
     @EnvironmentObject var accountManager: AccountManager
     
@@ -102,8 +103,24 @@ struct SettingsView: View {
                         Text("Log out".localized())
                     }
                     
+                    Button(role: .destructive, action: {
+                        showRemoveDownloadsAlert = true
+                    }) {
+                        Text("Remove all downloads".localized())
+                    }.alert(isPresented: $showRemoveDownloadsAlert) {
+                        Alert(
+                            title: Text("Remove all downloads".localized()),
+                            message: Text("By removing all downloads you will lose all the lessons content currently saved offline. Are you sure you want to proceed?".localized()),
+                            primaryButton: .destructive(Text("Yes".localized())) {
+                                Configuration.clearAllCache()
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
+                    
                     if let isAnonymous = accountManager.account?.isAnonymous,
                        !isAnonymous {
+                        
                         Button(role: .destructive, action: {
                             showAccountRemovalAlert = true
                         }) {
@@ -120,10 +137,7 @@ struct SettingsView: View {
                         }
                     }
                     
-                    // TODO: use when implementing download for v3 api
-//                    Button(role: .destructive, action: {}) {
-//                        Text("Remove all downloads".localized())
-//                    }
+                    
                 }
             }
             .navigationBarTitleDisplayMode(.large)
@@ -151,7 +165,7 @@ struct SettingsView: View {
     }
 }
 
-struct SettingsViewV2_Previews: PreviewProvider {
+struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
     }

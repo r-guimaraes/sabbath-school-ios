@@ -36,6 +36,10 @@ import Cache
         AuthorFeedViewModel.authorFeedStorage = APICache.storage?.transformCodable(ofType: AuthorFeed.self)
     }
     
+    public static func clearAllCache() {
+        try? AuthorFeedViewModel.authorFeedStorage?.removeAll()
+    }
+    
     func retrieveAuthor(authorId: String, language: String) async {
         let url = "\(Constants.API.URLv3)/\(language)/authors/\(authorId)/index.json"
         
@@ -62,6 +66,10 @@ import Cache
     
     init() {
          self.configure()
+    }
+    
+    public static func clearAllCache() {
+        try? CategoryFeedViewModel.categoryFeedStorage?.removeAll()
     }
     
     func configure() {

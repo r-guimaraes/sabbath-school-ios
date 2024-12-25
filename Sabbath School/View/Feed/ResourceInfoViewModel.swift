@@ -43,6 +43,10 @@ class ResourceInfoViewModel: ObservableObject {
         }
     }
     
+    public static func clearAllCache() {
+        try? ResourceInfoViewModel.resourceInfoStorage?.removeAll()
+    }
+    
     public var resourceInfoEndpoint: String {
         return "\(Constants.API.URLv3)/resources/index.json"
     }

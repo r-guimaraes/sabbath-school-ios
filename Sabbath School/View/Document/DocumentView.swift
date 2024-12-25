@@ -23,7 +23,7 @@
 import SwiftUI
 import PSPDFKit
 import PSPDFKitUI
-import SwiftAudio
+import SwiftAudioEx
 import NukeUI
 
 struct DocumentView: View {

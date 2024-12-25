@@ -7,10 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A8E4A6ACD4052E52188A566 /* Pods_Sabbath_School.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9539E61BEEC72B127723245 /* Pods_Sabbath_School.framework */; };
 		2F0EB50D2C12814800ADBD9D /* FeedSeeAllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0EB50C2C12814800ADBD9D /* FeedSeeAllView.swift */; };
 		2F0EB51D2C13A0FD00ADBD9D /* ResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0EB51C2C13A0FD00ADBD9D /* ResourceView.swift */; };
 		2F0EB51F2C13A48F00ADBD9D /* ResourceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0EB51E2C13A48E00ADBD9D /* ResourceViewModel.swift */; };
+		2F19792B2D1C668D00B08A7D /* FontBlaster in Frameworks */ = {isa = PBXBuildFile; productRef = 2F19792A2D1C668D00B08A7D /* FontBlaster */; };
+		2F19792E2D1C66BC00B08A7D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2F19792D2D1C66BC00B08A7D /* GoogleSignIn */; };
+		2F1979312D1C66EC00B08A7D /* SwiftAudioEx in Frameworks */ = {isa = PBXBuildFile; productRef = 2F1979302D1C66EC00B08A7D /* SwiftAudioEx */; };
+		2F1979342D1C672000B08A7D /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = 2F1979332D1C672000B08A7D /* Hue */; };
+		2F1979372D1C675F00B08A7D /* SwiftEntryKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F1979362D1C675F00B08A7D /* SwiftEntryKit */; };
+		2F19793A2D1C678D00B08A7D /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = 2F1979392D1C678D00B08A7D /* SwiftDate */; };
+		2F19793E2D1C678D00B08A7D /* SwiftDateStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 2F19793D2D1C678D00B08A7D /* SwiftDateStatic */; };
+		2F1979402D1C694C00B08A7D /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = 2F19793F2D1C694C00B08A7D /* Hue */; };
 		2F1C33BC2D00CF0A008D30C0 /* LanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1C33BB2D00CF0A008D30C0 /* LanguageView.swift */; };
 		2F1C33BF2D021034008D30C0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1C33BE2D021034008D30C0 /* SettingsView.swift */; };
 		2F1E105F2D06835D004CF872 /* SegmentViewVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1E105E2D068357004CF872 /* SegmentViewVideo.swift */; };
@@ -37,6 +44,7 @@
 		2F3F16CB2D1A6123005E0232 /* AuthorFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16CA2D1A611E005E0232 /* AuthorFeedView.swift */; };
 		2F3F16CD2D1B2257005E0232 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16CC2D1B2256005E0232 /* Category.swift */; };
 		2F3F16CF2D1B25E9005E0232 /* CategoryFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F16CE2D1B25E6005E0232 /* CategoryFeedView.swift */; };
+		2F3F16D22D1C657E005E0232 /* PSPDFKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3F16D12D1C657E005E0232 /* PSPDFKit */; };
 		2F4420A72CEFD585004A793E /* VideoAux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A62CEFD585004A793E /* VideoAux.swift */; };
 		2F4420AA2CEFDE24004A793E /* VideoAuxiliaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */; };
 		2F5C48F726F2AEB6002C4C83 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C48F626F2AEB6002C4C83 /* PDF.swift */; };
@@ -148,7 +156,7 @@
 		2F7622582C1F5A1900CB7C33 /* UserInputMultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7622572C1F5A1900CB7C33 /* UserInputMultipleChoice.swift */; };
 		2F8C3A332D07F06D001F7A62 /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8C3A322D07F068001F7A62 /* PagingScrollView.swift */; };
 		2F8C3A3F2D08F91D001F7A62 /* AudioPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8C3A3E2D08F918001F7A62 /* AudioPlayback.swift */; };
-		2F8C3A412D0903F5001F7A62 /* VideoPlaybackV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8C3A402D0903F2001F7A62 /* VideoPlaybackV2.swift */; };
+		2F8C3A412D0903F5001F7A62 /* VideoPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8C3A402D0903F2001F7A62 /* VideoPlayback.swift */; };
 		2F95D39E26C0B2E8008E6666 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F95D39D26C0B2E8008E6666 /* Audio.swift */; };
 		2F95D39F26C0B2E8008E6666 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F95D39D26C0B2E8008E6666 /* Audio.swift */; };
 		2F96B6912D022EC700FD5CEF /* ScreenSizeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F96B6902D022EC700FD5CEF /* ScreenSizeMonitor.swift */; };
@@ -203,7 +211,6 @@
 		2FC6F69F27A8E35C00BBC4A9 /* APICache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC6F69D27A8E35C00BBC4A9 /* APICache.swift */; };
 		2FEB5D032CBCDC54002D5C4C /* ShimmeringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEB5D022CBCDC54002D5C4C /* ShimmeringView.swift */; };
 		2FEB5D052CBDA0F5002D5C4C /* ResourceInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEB5D042CBDA0F5002D5C4C /* ResourceInfoViewModel.swift */; };
-		44F42BD67818F032A1C862E3 /* Pods_WidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 409B5B73C5388ECFA0B0538E /* Pods_WidgetExtension.framework */; };
 		4E149B712814CCCE0014A070 /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7B098B2814CA8A00687C33 /* Comparable.swift */; };
 		4E149B722814CCDE0014A070 /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7B09882814CA3D00687C33 /* Encodable.swift */; };
 		4E2882CA280CCB7000AB8C31 /* PublishingInfoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2882C9280CCB7000AB8C31 /* PublishingInfoData.swift */; };
@@ -377,8 +384,6 @@
 		2F3F16CE2D1B25E6005E0232 /* CategoryFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFeedView.swift; sourceTree = "<group>"; };
 		2F4420A62CEFD585004A793E /* VideoAux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAux.swift; sourceTree = "<group>"; };
 		2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAuxiliaryView.swift; sourceTree = "<group>"; };
-		2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKit.xcframework; sourceTree = "<group>"; };
-		2F487E8326D879D100B4AA7A /* PSPDFKitUI.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = PSPDFKitUI.xcframework; sourceTree = "<group>"; };
 		2F5C48F626F2AEB6002C4C83 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		2F613B9727CDC6A600A4C745 /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
 		2F613B9827CDC6A600A4C745 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
@@ -486,7 +491,7 @@
 		2F7622572C1F5A1900CB7C33 /* UserInputMultipleChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInputMultipleChoice.swift; sourceTree = "<group>"; };
 		2F8C3A322D07F068001F7A62 /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		2F8C3A3E2D08F918001F7A62 /* AudioPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayback.swift; sourceTree = "<group>"; };
-		2F8C3A402D0903F2001F7A62 /* VideoPlaybackV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlaybackV2.swift; sourceTree = "<group>"; };
+		2F8C3A402D0903F2001F7A62 /* VideoPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayback.swift; sourceTree = "<group>"; };
 		2F95D39D26C0B2E8008E6666 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		2F96B6902D022EC700FD5CEF /* ScreenSizeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSizeMonitor.swift; sourceTree = "<group>"; };
 		2F96FF4F26C724050045DC6D /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
@@ -533,9 +538,6 @@
 		2FC6F69D27A8E35C00BBC4A9 /* APICache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICache.swift; sourceTree = "<group>"; };
 		2FEB5D022CBCDC54002D5C4C /* ShimmeringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmeringView.swift; sourceTree = "<group>"; };
 		2FEB5D042CBDA0F5002D5C4C /* ResourceInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceInfoViewModel.swift; sourceTree = "<group>"; };
-		3653664986DDFB50AC3B917B /* Pods-WidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		3F4AE71B119E4E74F7E63CD8 /* Pods-Sabbath School.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sabbath School.release.xcconfig"; path = "Pods/Target Support Files/Pods-Sabbath School/Pods-Sabbath School.release.xcconfig"; sourceTree = "<group>"; };
-		409B5B73C5388ECFA0B0538E /* Pods_WidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E2882C9280CCB7000AB8C31 /* PublishingInfoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishingInfoData.swift; sourceTree = "<group>"; };
 		4E2882CB280CCBB600AB8C31 /* PublishingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishingInfo.swift; sourceTree = "<group>"; };
 		4E5947692AEEF04D00EFBEEF /* ClipJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipJSON.swift; sourceTree = "<group>"; };
@@ -571,7 +573,6 @@
 		4EA3D7C22AEEDD5E00F08AFD /* ShimmerEffectBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerEffectBox.swift; sourceTree = "<group>"; };
 		4EA3D7C42AEEDDFD00F08AFD /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		4EA3D7C62AEEDF3100F08AFD /* PlainNavigationLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainNavigationLinkButton.swift; sourceTree = "<group>"; };
-		4EA5967A2AC0A451001EC32F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC9EB482A83BD61000E012D /* DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
 		4EC9EB4B2A83D5CE000E012D /* VideoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListView.swift; sourceTree = "<group>"; };
 		4EC9EB4D2A83D777000E012D /* VideoItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoItemView.swift; sourceTree = "<group>"; };
@@ -610,8 +611,6 @@
 		7A955F261F103EE100AA5DE4 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7A955F271F103EF500AA5DE4 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7A955F281F103EF500AA5DE4 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Localizable.strings; sourceTree = "<group>"; };
-		7AC26AE21EE48925003F946C /* Appfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Appfile; sourceTree = "<group>"; };
-		7AC26AE31EE48925003F946C /* Fastfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Fastfile; sourceTree = "<group>"; };
 		7AC26AE81EE5EB63003F946C /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		7AC26AEB1EE5EBDE003F946C /* BibleVerses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BibleVerses.swift; sourceTree = "<group>"; };
 		7AC26AEC1EE5EBDE003F946C /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -644,9 +643,6 @@
 		7AF371681EF9CB6D00547916 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		7AF371691EF9CB6F00547916 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7AF3716A1EF9CB7100547916 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8875F32FDAE0121349EE0A37 /* Pods-WidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
-		933858DCED8C4612BB78B07A /* Pods-Sabbath School.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sabbath School.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Sabbath School/Pods-Sabbath School.debug.xcconfig"; sourceTree = "<group>"; };
-		B9539E61BEEC72B127723245 /* Pods_Sabbath_School.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sabbath_School.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE002A5B200C89D6009CE4DF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FE002A5C200C89D6009CE4DF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FE002A5D200C89F3009CE4DF /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -753,11 +749,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F1979312D1C66EC00B08A7D /* SwiftAudioEx in Frameworks */,
 				2F7526642CCB09890027FD1E /* NukeUI in Frameworks */,
+				2F19792E2D1C66BC00B08A7D /* GoogleSignIn in Frameworks */,
+				2F1979342D1C672000B08A7D /* Hue in Frameworks */,
+				2F3F16D22D1C657E005E0232 /* PSPDFKit in Frameworks */,
 				4E58E7972B4B48CA004B5D64 /* Cache in Frameworks */,
+				2F19793E2D1C678D00B08A7D /* SwiftDateStatic in Frameworks */,
 				4E860A452B4B461200749BC3 /* Alamofire in Frameworks */,
-				2A8E4A6ACD4052E52188A566 /* Pods_Sabbath_School.framework in Frameworks */,
+				2F19793A2D1C678D00B08A7D /* SwiftDate in Frameworks */,
+				2F19792B2D1C668D00B08A7D /* FontBlaster in Frameworks */,
 				2F7526622CCB09890027FD1E /* Nuke in Frameworks */,
+				2F1979372D1C675F00B08A7D /* SwiftEntryKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -768,8 +771,8 @@
 				FE1E35002673C5DF00DAC2D6 /* SwiftUI.framework in Frameworks */,
 				4E860A472B4B461D00749BC3 /* Alamofire in Frameworks */,
 				FE1E34FE2673C5DF00DAC2D6 /* WidgetKit.framework in Frameworks */,
+				2F1979402D1C694C00B08A7D /* Hue in Frameworks */,
 				4E58E7992B4B48D4004B5D64 /* Cache in Frameworks */,
-				44F42BD67818F032A1C862E3 /* Pods_WidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -810,7 +813,7 @@
 		2F4420A82CEFDE0E004A793E /* VideoAuxiliary */ = {
 			isa = PBXGroup;
 			children = (
-				2F8C3A402D0903F2001F7A62 /* VideoPlaybackV2.swift */,
+				2F8C3A402D0903F2001F7A62 /* VideoPlayback.swift */,
 				2F4420A92CEFDE24004A793E /* VideoAuxiliaryView.swift */,
 			);
 			path = VideoAuxiliary;
@@ -934,22 +937,22 @@
 		2F7621CA2C1F3BC400CB7C33 /* Segment */ = {
 			isa = PBXGroup;
 			children = (
-				2F3F16C12D167A27005E0232 /* ResourceCompletionView.swift */,
-				2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */,
 				2FBF2B082D029320007F5615 /* AudioAuxiliary */,
 				2F76222A2C1F439D00CB7C33 /* Blocks */,
-				2F4420A82CEFDE0E004A793E /* VideoAuxiliary */,
 				2F698B632CDF61E10070FEF9 /* PDFAuxiliary */,
+				2F4420A82CEFDE0E004A793E /* VideoAuxiliary */,
+				2F99F6022C32427700FCB05F /* ExternalLinkView.swift */,
+				2F3F16BD2D14C9E1005E0232 /* ProgressSaveButton.swift */,
 				2F7622472C1F454400CB7C33 /* ResourceBibleView.swift */,
 				2F3F16B32D129C39005E0232 /* ResourceCommentView.swift */,
+				2F3F16C12D167A27005E0232 /* ResourceCompletionView.swift */,
 				2F3F16B52D129C5D005E0232 /* ResourceEGWView.swift */,
-				2F99F6022C32427700FCB05F /* ExternalLinkView.swift */,
+				2FBF2AF82D0277E8007F5615 /* SegmentChip.swift */,
 				2F7622242C1F42FB00CB7C33 /* SegmentViewBlocks.swift */,
 				2FAC63A52C2336E5002C5093 /* SegmentViewPDF.swift */,
 				2FAC63A72C235BB3002C5093 /* SegmentViewStory.swift */,
 				2F1E105E2D068357004CF872 /* SegmentViewVideo.swift */,
 				2F7526802CD0663C0027FD1E /* ThemeAuxiliaryView.swift */,
-				2FBF2AF82D0277E8007F5615 /* SegmentChip.swift */,
 			);
 			path = Segment;
 			sourceTree = "<group>";
@@ -1301,15 +1304,6 @@
 			path = Library;
 			sourceTree = "<group>";
 		};
-		7AC26AE11EE48925003F946C /* Fastlane */ = {
-			isa = PBXGroup;
-			children = (
-				7AC26AE21EE48925003F946C /* Appfile */,
-				7AC26AE31EE48925003F946C /* Fastfile */,
-			);
-			path = Fastlane;
-			sourceTree = "<group>";
-		};
 		7AC26AEA1EE5EBDE003F946C /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -1344,7 +1338,6 @@
 				4EDDA4C42A83B8F60078B29E /* SabbathSchoolTV */,
 				FE1E35012673C5DF00DAC2D6 /* Widget */,
 				7AF191A91ED7B89B000CCF0C /* Products */,
-				C6B7EC586755A52E1EB59B9D /* Pods */,
 				CABEE71BDF95136D0B5A003F /* Frameworks */,
 				1BDC81CE3CAC580E4EC0FB13 /* LICENSE.md */,
 				1BDC817E4DEE5647231E268B /* README.md */,
@@ -1373,29 +1366,12 @@
 			path = "Sabbath School";
 			sourceTree = "<group>";
 		};
-		C6B7EC586755A52E1EB59B9D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				7AC26AE11EE48925003F946C /* Fastlane */,
-				933858DCED8C4612BB78B07A /* Pods-Sabbath School.debug.xcconfig */,
-				3F4AE71B119E4E74F7E63CD8 /* Pods-Sabbath School.release.xcconfig */,
-				3653664986DDFB50AC3B917B /* Pods-WidgetExtension.debug.xcconfig */,
-				8875F32FDAE0121349EE0A37 /* Pods-WidgetExtension.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		CABEE71BDF95136D0B5A003F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4EA5967A2AC0A451001EC32F /* Alamofire.framework */,
 				2F61E79A27BB5CBF00F696A2 /* libswift_Concurrency.tbd */,
-				2F487E8226D879D100B4AA7A /* PSPDFKit.xcframework */,
-				2F487E8326D879D100B4AA7A /* PSPDFKitUI.xcframework */,
 				FE1E34FD2673C5DF00DAC2D6 /* WidgetKit.framework */,
 				FE1E34FF2673C5DF00DAC2D6 /* SwiftUI.framework */,
-				B9539E61BEEC72B127723245 /* Pods_Sabbath_School.framework */,
-				409B5B73C5388ECFA0B0538E /* Pods_WidgetExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1482,12 +1458,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7AF191BA1ED7B89B000CCF0C /* Build configuration list for PBXNativeTarget "Sabbath School" */;
 			buildPhases = (
-				2DC53C2AA936625F90A785BF /* [CP] Check Pods Manifest.lock */,
 				7AF191A41ED7B89B000CCF0C /* Sources */,
 				7AF191A51ED7B89B000CCF0C /* Frameworks */,
 				7AF191A61ED7B89B000CCF0C /* Resources */,
 				FE1E350D2673C5E400DAC2D6 /* Embed App Extensions */,
-				1D12A69D7E8D1A692F87A628 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1500,6 +1474,14 @@
 				4E58E7962B4B48CA004B5D64 /* Cache */,
 				2F7526612CCB09890027FD1E /* Nuke */,
 				2F7526632CCB09890027FD1E /* NukeUI */,
+				2F3F16D12D1C657E005E0232 /* PSPDFKit */,
+				2F19792A2D1C668D00B08A7D /* FontBlaster */,
+				2F19792D2D1C66BC00B08A7D /* GoogleSignIn */,
+				2F1979302D1C66EC00B08A7D /* SwiftAudioEx */,
+				2F1979332D1C672000B08A7D /* Hue */,
+				2F1979362D1C675F00B08A7D /* SwiftEntryKit */,
+				2F1979392D1C678D00B08A7D /* SwiftDate */,
+				2F19793D2D1C678D00B08A7D /* SwiftDateStatic */,
 			);
 			productName = "Sabbath School";
 			productReference = 7AF191A81ED7B89B000CCF0C /* Sabbath School.app */;
@@ -1509,7 +1491,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FE1E350A2673C5E400DAC2D6 /* Build configuration list for PBXNativeTarget "WidgetExtension" */;
 			buildPhases = (
-				D6674F819C74B808FB056C9C /* [CP] Check Pods Manifest.lock */,
 				FE1E34F82673C5DF00DAC2D6 /* Sources */,
 				FE1E34F92673C5DF00DAC2D6 /* Frameworks */,
 				FE1E34FA2673C5DF00DAC2D6 /* Resources */,
@@ -1522,6 +1503,7 @@
 			packageProductDependencies = (
 				4E860A462B4B461D00749BC3 /* Alamofire */,
 				4E58E7982B4B48D4004B5D64 /* Cache */,
+				2F19793F2D1C694C00B08A7D /* Hue */,
 			);
 			productName = WidgetExtension;
 			productReference = FE1E34FC2673C5DF00DAC2D6 /* WidgetExtension.appex */;
@@ -1616,6 +1598,13 @@
 				4E853EB62ADC6C5800A46546 /* XCRemoteSwiftPackageReference "Cache" */,
 				4E860A432B4B45FF00749BC3 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				2F7526602CCB09890027FD1E /* XCRemoteSwiftPackageReference "Nuke" */,
+				2F3F16D02D1C657E005E0232 /* XCRemoteSwiftPackageReference "PSPDFKit-SP" */,
+				2F1979292D1C668D00B08A7D /* XCRemoteSwiftPackageReference "FontBlaster" */,
+				2F19792C2D1C66BC00B08A7D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				2F19792F2D1C66EC00B08A7D /* XCRemoteSwiftPackageReference "SwiftAudio" */,
+				2F1979322D1C672000B08A7D /* XCRemoteSwiftPackageReference "Hue" */,
+				2F1979352D1C675F00B08A7D /* XCRemoteSwiftPackageReference "SwiftEntryKit" */,
+				2F1979382D1C678D00B08A7D /* XCRemoteSwiftPackageReference "SwiftDate" */,
 			);
 			productRefGroup = 7AF191A91ED7B89B000CCF0C /* Products */;
 			projectDirPath = "";
@@ -1682,93 +1671,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1D12A69D7E8D1A692F87A628 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Sabbath School/Pods-Sabbath School-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
-				"${BUILT_PRODUCTS_DIR}/FontBlaster/FontBlaster.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleSignIn/GoogleSignIn.framework",
-				"${BUILT_PRODUCTS_DIR}/Hue/Hue.framework",
-				"${BUILT_PRODUCTS_DIR}/QuickLayout/QuickLayout.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftAudio/SwiftAudio.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftEntryKit/SwiftEntryKit.framework",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/PSPDFKit/Core/PSPDFKit.framework/PSPDFKit",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/PSPDFKit/Core/PSPDFKitUI.framework/PSPDFKitUI",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontBlaster.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleSignIn.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hue.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QuickLayout.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftAudio.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftEntryKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PSPDFKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PSPDFKitUI.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sabbath School/Pods-Sabbath School-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2DC53C2AA936625F90A785BF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Sabbath School-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D6674F819C74B808FB056C9C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-WidgetExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4E80B41C2AC0A2D9002B6FBF /* Sources */ = {
@@ -1843,7 +1745,7 @@
 				2F3F16A82D12125F005E0232 /* UserInputComment.swift in Sources */,
 				4E7B09892814CA3D00687C33 /* Encodable.swift in Sources */,
 				2F7621DB2C1F3D7B00CB7C33 /* AnyBlock.swift in Sources */,
-				2F8C3A412D0903F5001F7A62 /* VideoPlaybackV2.swift in Sources */,
+				2F8C3A412D0903F5001F7A62 /* VideoPlayback.swift in Sources */,
 				2F7622382C1F449200CB7C33 /* BlockImageView.swift in Sources */,
 				2F7622092C1F40F100CB7C33 /* FeedResourceViewBase.swift in Sources */,
 				FE863F6426657E1800ADCA36 /* AppStyle.swift in Sources */,
@@ -2409,7 +2311,6 @@
 		};
 		7AF191BB1ED7B89B000CCF0C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 933858DCED8C4612BB78B07A /* Pods-Sabbath School.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Sabbath School/Resources/Sabbath School.entitlements";
@@ -2441,8 +2342,6 @@
 					"-framework",
 					"\"Accelerate\"",
 					"-framework",
-					"\"AppAuth\"",
-					"-framework",
 					"\"AssetsLibrary\"",
 					"-framework",
 					"\"AudioToolbox\"",
@@ -2461,17 +2360,7 @@
 					"-framework",
 					"\"CoreText\"",
 					"-framework",
-					"\"FontBlaster\"",
-					"-framework",
 					"\"Foundation\"",
-					"-framework",
-					"\"GTMAppAuth\"",
-					"-framework",
-					"\"GTMSessionFetcher\"",
-					"-framework",
-					"\"GoogleSignIn\"",
-					"-framework",
-					"\"Hue\"",
 					"-framework",
 					"\"ImageIO\"",
 					"-framework",
@@ -2485,27 +2374,15 @@
 					"-framework",
 					"\"MobileCoreServices\"",
 					"-framework",
-					"\"PSPDFKit\"",
-					"-framework",
-					"\"PSPDFKitUI\"",
-					"-framework",
 					"\"Photos\"",
 					"-framework",
 					"\"QuartzCore\"",
-					"-framework",
-					"\"QuickLayout\"",
 					"-framework",
 					"\"QuickLook\"",
 					"-framework",
 					"\"SafariServices\"",
 					"-framework",
 					"\"Security\"",
-					"-framework",
-					"\"SwiftAudio\"",
-					"-framework",
-					"\"SwiftDate\"",
-					"-framework",
-					"\"SwiftEntryKit\"",
 					"-framework",
 					"\"SystemConfiguration\"",
 					"-framework",
@@ -2526,7 +2403,6 @@
 		};
 		7AF191BC1ED7B89B000CCF0C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F4AE71B119E4E74F7E63CD8 /* Pods-Sabbath School.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Sabbath School/Resources/Sabbath School.entitlements";
@@ -2557,8 +2433,6 @@
 					"-framework",
 					"\"Accelerate\"",
 					"-framework",
-					"\"AppAuth\"",
-					"-framework",
 					"\"AssetsLibrary\"",
 					"-framework",
 					"\"AudioToolbox\"",
@@ -2577,17 +2451,7 @@
 					"-framework",
 					"\"CoreText\"",
 					"-framework",
-					"\"FontBlaster\"",
-					"-framework",
 					"\"Foundation\"",
-					"-framework",
-					"\"GTMAppAuth\"",
-					"-framework",
-					"\"GTMSessionFetcher\"",
-					"-framework",
-					"\"GoogleSignIn\"",
-					"-framework",
-					"\"Hue\"",
 					"-framework",
 					"\"ImageIO\"",
 					"-framework",
@@ -2601,27 +2465,15 @@
 					"-framework",
 					"\"MobileCoreServices\"",
 					"-framework",
-					"\"PSPDFKit\"",
-					"-framework",
-					"\"PSPDFKitUI\"",
-					"-framework",
 					"\"Photos\"",
 					"-framework",
 					"\"QuartzCore\"",
-					"-framework",
-					"\"QuickLayout\"",
 					"-framework",
 					"\"QuickLook\"",
 					"-framework",
 					"\"SafariServices\"",
 					"-framework",
 					"\"Security\"",
-					"-framework",
-					"\"SwiftAudio\"",
-					"-framework",
-					"\"SwiftDate\"",
-					"-framework",
-					"\"SwiftEntryKit\"",
 					"-framework",
 					"\"SystemConfiguration\"",
 					"-framework",
@@ -2642,7 +2494,6 @@
 		};
 		FE1E350B2673C5E400DAC2D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3653664986DDFB50AC3B917B /* Pods-WidgetExtension.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
@@ -2655,7 +2506,9 @@
 				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Widget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2673,10 +2526,9 @@
 					"-framework",
 					"\"Foundation\"",
 					"-framework",
-					"\"Hue\"",
-					"-framework",
 					"\"UIKit\"",
 				);
+				OTHER_MODULE_VERIFIER_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cryart.SabbathSchool.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2688,7 +2540,6 @@
 		};
 		FE1E350C2673C5E400DAC2D6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8875F32FDAE0121349EE0A37 /* Pods-WidgetExtension.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
@@ -2701,7 +2552,9 @@
 				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = XVGX5G4YQ9;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Widget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2718,10 +2571,9 @@
 					"-framework",
 					"\"Foundation\"",
 					"-framework",
-					"\"Hue\"",
-					"-framework",
 					"\"UIKit\"",
 				);
+				OTHER_MODULE_VERIFIER_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cryart.SabbathSchool.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2773,6 +2625,62 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2F1979292D1C668D00B08A7D /* XCRemoteSwiftPackageReference "FontBlaster" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ArtSabintsev/FontBlaster.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.0;
+			};
+		};
+		2F19792C2D1C66BC00B08A7D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = exactVersion;
+				version = 6.0.0;
+			};
+		};
+		2F19792F2D1C66EC00B08A7D /* XCRemoteSwiftPackageReference "SwiftAudio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/doublesymmetry/SwiftAudio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+		2F1979322D1C672000B08A7D /* XCRemoteSwiftPackageReference "Hue" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zenangst/Hue";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+		2F1979352D1C675F00B08A7D /* XCRemoteSwiftPackageReference "SwiftEntryKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huri000/SwiftEntryKit";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.7;
+			};
+		};
+		2F1979382D1C678D00B08A7D /* XCRemoteSwiftPackageReference "SwiftDate" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/malcommac/SwiftDate";
+			requirement = {
+				kind = exactVersion;
+				version = 6.3.1;
+			};
+		};
+		2F3F16D02D1C657E005E0232 /* XCRemoteSwiftPackageReference "PSPDFKit-SP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PSPDFKit/PSPDFKit-SP";
+			requirement = {
+				kind = exactVersion;
+				version = 14.2.1;
+			};
+		};
 		2F7526602CCB09890027FD1E /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke?tab=readme-ov-file";
@@ -2800,6 +2708,46 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2F19792A2D1C668D00B08A7D /* FontBlaster */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979292D1C668D00B08A7D /* XCRemoteSwiftPackageReference "FontBlaster" */;
+			productName = FontBlaster;
+		};
+		2F19792D2D1C66BC00B08A7D /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F19792C2D1C66BC00B08A7D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		2F1979302D1C66EC00B08A7D /* SwiftAudioEx */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F19792F2D1C66EC00B08A7D /* XCRemoteSwiftPackageReference "SwiftAudio" */;
+			productName = SwiftAudioEx;
+		};
+		2F1979332D1C672000B08A7D /* Hue */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979322D1C672000B08A7D /* XCRemoteSwiftPackageReference "Hue" */;
+			productName = Hue;
+		};
+		2F1979362D1C675F00B08A7D /* SwiftEntryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979352D1C675F00B08A7D /* XCRemoteSwiftPackageReference "SwiftEntryKit" */;
+			productName = SwiftEntryKit;
+		};
+		2F1979392D1C678D00B08A7D /* SwiftDate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979382D1C678D00B08A7D /* XCRemoteSwiftPackageReference "SwiftDate" */;
+			productName = SwiftDate;
+		};
+		2F19793D2D1C678D00B08A7D /* SwiftDateStatic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979382D1C678D00B08A7D /* XCRemoteSwiftPackageReference "SwiftDate" */;
+			productName = SwiftDateStatic;
+		};
+		2F19793F2D1C694C00B08A7D /* Hue */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F1979322D1C672000B08A7D /* XCRemoteSwiftPackageReference "Hue" */;
+			productName = Hue;
+		};
 		2F3F16812D09E3FB005E0232 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2F7526602CCB09890027FD1E /* XCRemoteSwiftPackageReference "Nuke" */;
@@ -2809,6 +2757,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F7526602CCB09890027FD1E /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
+		};
+		2F3F16D12D1C657E005E0232 /* PSPDFKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F3F16D02D1C657E005E0232 /* XCRemoteSwiftPackageReference "PSPDFKit-SP" */;
+			productName = PSPDFKit;
 		};
 		2F7526612CCB09890027FD1E /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

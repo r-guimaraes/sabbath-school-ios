@@ -1,1 +1,0 @@
-Legger til lyd- og videofunksjonalitet. Lytt til leksjonen mens du er på farten med lydversjonen, og se den ukentlige leksjonens diskusjon for å utdype studiet ditt

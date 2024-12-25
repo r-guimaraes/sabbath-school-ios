@@ -67,6 +67,7 @@ struct FeedSeeAllView: View {
         .navigationBarTitleDisplayMode(.large)
         .task {
             await retrieveContent()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
     }
     

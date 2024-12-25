@@ -46,6 +46,12 @@ struct SavedScrollOffset: Codable {
          self.configure()
     }
     
+    public static func clearAllCache() {
+        try? DocumentViewModel.documentStorage?.removeAll()
+        try? DocumentViewModel.segmentStorage?.removeAll()
+        try? DocumentViewModel.lastVisibleScrollOffset?.removeAll()
+    }
+    
     func configure() {
         DocumentViewModel.documentStorage = APICache.storage?.transformCodable(ofType: ResourceDocument.self)
         DocumentViewModel.segmentStorage = APICache.storage?.transformCodable(ofType: Segment.self)

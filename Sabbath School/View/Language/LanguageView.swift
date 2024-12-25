@@ -31,6 +31,7 @@ struct LanguageItemView: View {
         VStack {
             Button(action: {
                 DispatchQueue.main.async {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     languageManager.language = QuarterlyLanguage(code: resourceInfo.code, name: resourceInfo.name)
                 }
             }) {

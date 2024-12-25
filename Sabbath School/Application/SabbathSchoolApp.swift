@@ -152,6 +152,9 @@ struct SabbathSchoolApp: App {
                     .task {
                         await resourceInfoViewModel.retrieveResourceInfo()
                     }
+                    .onChange(of: selected) { _ in
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    }
                     .id(shortcutLaunched)
                 } else {
                     LoginView(accountManager: accountManager)

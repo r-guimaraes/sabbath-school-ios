@@ -77,6 +77,26 @@ class Configuration: NSObject {
         }
     }
     
+    static func clearAllCache() {
+        UIApplication.shared.shortcutItems = []
+        Spotlight.clearSpotlight()
+        
+        URLCache.shared.removeAllCachedResponses()
+        ImageCache.shared.removeAll()
+        
+        if let dataCache = try? DataCache(name: Constants.DefaultKey.appGroupName) {
+            dataCache.removeAll()
+        }
+
+        DispatchQueue.main.async {
+            ResourceInfoViewModel.clearAllCache()
+            ResourceFeedViewModel.clearAllCache()
+            AuthorFeedViewModel.clearAllCache()
+            CategoryFeedViewModel.clearAllCache()
+            DocumentViewModel.clearAllCache()
+        }
+    }
+    
     static func configureFontblaster() {
         FontBlaster.blast()
     }

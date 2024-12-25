@@ -21,6 +21,7 @@
  */
 
 import SwiftUI
+import Nuke
 
 class AccountManager: ObservableObject {
     @Published var account: Account? {
@@ -34,8 +35,7 @@ class AccountManager: ObservableObject {
     }
     
     func logOut() {
-        UIApplication.shared.shortcutItems = []
-        Spotlight.clearSpotlight()
+        Configuration.clearAllCache()
         
         Preferences.userDefaults.removeObject(forKey: Constants.DefaultKey.accountObject)
         Preferences.userDefaults.set(nil, forKey: Constants.DefaultKey.appleAuthorizedUserIdKey)

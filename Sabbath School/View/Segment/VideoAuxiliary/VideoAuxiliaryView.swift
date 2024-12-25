@@ -130,7 +130,7 @@ struct VideoAuxiliaryView: View {
             VStack (spacing: 20) {
                 VStack (spacing: 10) {
                     Button(action: {
-                        VideoPlaybackV2.shared.play(featuredVideo)
+                        VideoPlayback.shared.play(featuredVideo)
                     }) {
                         thumbnailView(featuredVideo.thumbnail)
                     }
@@ -144,7 +144,7 @@ struct VideoAuxiliaryView: View {
                 
                 ForEach(Array(featuredArtist.clips.enumerated().filter { $0.offset != featuredIndex }), id: \.offset) { index, clip in
                     Button(action: {
-                        VideoPlaybackV2.shared.play(clip)
+                        VideoPlayback.shared.play(clip)
                     }) {
                         HStack (spacing: 10) {
                             thumbnailView(clip.thumbnail, AppStyle.VideoAux.Size.thumbnail(viewMode: .vertical))
@@ -177,7 +177,7 @@ struct VideoAuxiliaryView: View {
                     HStack {
                         ForEach(video.clips, id: \.self) { clip in
                             Button(action: {
-                                VideoPlaybackV2.shared.play(clip)
+                                VideoPlayback.shared.play(clip)
                             }) {
                                 VStack (spacing: 10) {
                                     thumbnailView(clip.thumbnail, AppStyle.VideoAux.Size.thumbnail())

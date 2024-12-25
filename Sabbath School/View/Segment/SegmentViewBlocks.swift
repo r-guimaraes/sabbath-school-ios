@@ -248,6 +248,8 @@ struct VisibleBlockPreferenceKey: PreferenceKey {
 class SegmentSavedScrollPosition: ObservableObject {
     @Published var visibleBlockID: String?
     @Published var scrollOffset: CGFloat = -1
+    @Published var frameHeight: CGFloat = -1
+    @Published var cachedScrollOffset: SavedScrollOffset?
     @Published var alreadyScrolled: Bool = false
     
     @MainActor func retrieveSavedScrollPosition(segmentId: String, completion: ((_ cachedScrollOffset: SavedScrollOffset?) -> Void)? = nil) {
@@ -317,8 +319,15 @@ struct SegmentViewBase<Content: View>: View {
                 
                 .onChange(of: sizeCategory) { newValue in }
                 .background(GeometryReader { geometry in
-                    Color.clear.onChange(of: geometry.frame(in: .global).minY) { scrollOffset in
+                    Color.clear.onChange(of: geometry.frame(in: .global)) { frame in
+                        let scrollOffset = frame.minY
+                        let height = frame.size.height
+                        
                         if index == documentViewOperator.activeTab || (index == -1 && isHiddenSegment), segment.type != .video {
+                            if height != savedScrollPosition.frameHeight, abs(height - savedScrollPosition.frameHeight) > 50 {
+                                scrollToLastSavedPosition(proxy: proxy)
+                                savedScrollPosition.frameHeight = height
+                            }
                             savedScrollPosition.scrollOffset = scrollOffset
                             updateNavigationBar(scrollOffset)
                         }
@@ -348,13 +357,8 @@ struct SegmentViewBase<Content: View>: View {
             .onAppear {
                 if !savedScrollPosition.alreadyScrolled {
                     savedScrollPosition.retrieveSavedScrollPosition(segmentId: segment.id) { cachedScrollOffset in
-                        if let cachedScrollOffset = cachedScrollOffset {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                updateNavigationBar(cachedScrollOffset.scrollOffset, force: true)
-                                savedScrollPosition.alreadyScrolled = true
-                                proxy.scrollTo(cachedScrollOffset.blockId, anchor: .top)
-                            }
-                        }
+                        savedScrollPosition.cachedScrollOffset = cachedScrollOffset
+                        scrollToLastSavedPosition(proxy: proxy)
                     }
                 }
             }.onDisappear {
@@ -366,6 +370,14 @@ struct SegmentViewBase<Content: View>: View {
                     saveScrollPosition()
                 }
             }
+        }
+    }
+    
+    func scrollToLastSavedPosition(proxy: ScrollViewProxy) {
+        if let cachedScrollOffset = savedScrollPosition.cachedScrollOffset {
+            updateNavigationBar(cachedScrollOffset.scrollOffset, force: true)
+            savedScrollPosition.alreadyScrolled = true
+            proxy.scrollTo(cachedScrollOffset.blockId, anchor: .top)
         }
     }
     

@@ -45,14 +45,6 @@ Make sure you have the latest version of the Xcode command line tools installed:
 
 `xcode-select --install`
 
-`bundle install` ([Bundler](https://bundler.io/))
-
-`pod install` ([CocoaPods](https://cocoapods.org/))
-
-In case you are contributor and you have been added to repository with certificates, please use
-
-`bundle exec fastlane match_sync`
-
 ## License
 
 >You can check out the full license [here](./LICENSE.md)

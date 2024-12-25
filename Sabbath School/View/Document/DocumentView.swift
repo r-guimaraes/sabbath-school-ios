@@ -28,6 +28,7 @@ import NukeUI
 
 struct DocumentView: View {
     var documentIndex: String
+    var segmentName: String? = nil
     
     @State var showThemeAux = false
     @State var showVideoAux = false
@@ -256,6 +257,10 @@ struct DocumentView: View {
 
     func setup() async {
         if viewModel.document != nil { return }
+        
+        if let segmentName = segmentName {
+            viewModel.selectedSegmentName = segmentName
+        }
         
         await viewModel.retrieveDocument(documentIndex: documentIndex, completion: {
             Task {

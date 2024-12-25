@@ -24,7 +24,7 @@ import SwiftUI
 
 enum NavigationStep: Hashable {
     case resource(String)
-    case document(String)
+    case document(String, String? = nil)
 }
 
 struct ResourceFeedView: View {
@@ -61,7 +61,7 @@ struct ResourceFeedView: View {
                case .resource(let resourceIndex):
                    ResourceView(resourceIndex: resourceIndex)
                case .document(let documentIndex):
-                   DocumentView(documentIndex: documentIndex)
+                   DocumentView(documentIndex: documentIndex.0, segmentName: documentIndex.1)
                }
             }
             .navigationBarTitleDisplayMode(.large)

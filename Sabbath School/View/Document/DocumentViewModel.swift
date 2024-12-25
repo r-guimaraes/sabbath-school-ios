@@ -37,6 +37,7 @@ struct SavedScrollOffset: Codable {
     
     @Published var documentUserInput: [AnyUserInput] = []
     @Published var selectedSegmentIndex: Int? = nil
+    @Published var selectedSegmentName: String? = nil
 
     private static var documentStorage: Storage<String, ResourceDocument>?
     private static var segmentStorage: Storage<String, Segment>?
@@ -180,8 +181,22 @@ struct SavedScrollOffset: Codable {
         }
     }
     
-    func setSelectedSegmentIndex () {
+    func setSelectedSegmentIndex() {
+        
+        
         if let segments = self.document?.segments {
+            if let selectedSegmentName = selectedSegmentName {
+                segments.enumerated().forEach { segmentIndex, segment in
+                    if segment.name == selectedSegmentName {
+                        self.selectedSegmentIndex = segmentIndex
+                    }
+                }
+            }
+            
+            if self.selectedSegmentIndex != nil {
+                return
+            }
+                
             let today = Date()
             let cal = Calendar.current
             

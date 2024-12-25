@@ -36,7 +36,6 @@ extension DocumentView {
                 }
             }
         }
-//        .padding(.top, documentViewOperator.chipsTopPadding)
         .background(documentViewOperator.shouldShowNavigationBar ? (.white | .black) : .clear)
         .overlay(
             Rectangle()

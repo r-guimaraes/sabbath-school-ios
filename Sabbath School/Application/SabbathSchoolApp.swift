@@ -208,8 +208,8 @@ struct SabbathSchoolApp: App {
         shortcutLaunched = url.absoluteString
   
         let urlPath = url.path
-        let patternLegacy = #"^/(?<language>[a-zA-Z]{2,3})(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
-        let patternResources = #"^(/resources)?/(?<language>[a-zA-Z]{2,})(?:/(?<resourceType>aij|pm|ss|devo|explore))?(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentId>[^/]+))?$"#
+        let patternLegacy = #"^/(?<language>[a-zA-Z]{2,3})(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentName>[^/]+))?$"#
+        let patternResources = #"^(/resources)?/(?<language>[a-zA-Z]{2,})(?:/(?<resourceType>aij|pm|ss|devo|explore))?(?:/(?<resourceId>[^/]+))?(?:/(?<documentId>[^/]+))?(?:/(?<segmentName>[^/]+))?$"#
         var pattern = patternLegacy
         
         if let _ = url.path.range(of: "(/resources)?/(aij|ss|pm|devo|explore)", options: [.caseInsensitive, .regularExpression]) {
@@ -228,6 +228,7 @@ struct SabbathSchoolApp: App {
                 let resourceType = match.range(withName: "resourceType").location != NSNotFound ? String(urlPath[Range(match.range(withName: "resourceType"), in: urlPath)!]) : "ss"
                 let resourceId = match.range(withName: "resourceId").location != NSNotFound ? String(urlPath[Range(match.range(withName: "resourceId"), in: urlPath)!]) : nil
                 let documentId = match.range(withName: "documentId").location != NSNotFound ? String(urlPath[Range(match.range(withName: "documentId"), in: urlPath)!]) : nil
+                let segmentName = match.range(withName: "segmentName").location != NSNotFound ? String(urlPath[Range(match.range(withName: "segmentName"), in: urlPath)!]) : nil
                 
                 if let language = language {
                     if language != languageManager.language?.code {
@@ -238,7 +239,7 @@ struct SabbathSchoolApp: App {
                         resolvedPath.append(.resource("\(language)/\(resourceType)/\(resourceId)"))
                         
                         if let documentId = documentId {
-                            resolvedPath.append(.document("\(language)/\(resourceType)/\(resourceId)/\(documentId)"))
+                            resolvedPath.append(.document("\(language)/\(resourceType)/\(resourceId)/\(documentId)", segmentName))
                         }
                     }
                     

@@ -250,10 +250,10 @@ class SegmentSavedScrollPosition: ObservableObject {
     @Published var scrollOffset: CGFloat = -1
     @Published var alreadyScrolled: Bool = false
     
-    @MainActor func retrieveSavedScrollPosition(segmentId: String, completion: ((_ visibleBlockId: String?) -> Void)? = nil) {
-        if (try? DocumentViewModel.lastVisibleBlockStorage?.existsObject(forKey: segmentId)) != nil {
-            if let lastVisibleBlockId = try? DocumentViewModel.lastVisibleBlockStorage?.entry(forKey: segmentId) {
-                completion?(lastVisibleBlockId.object)
+    @MainActor func retrieveSavedScrollPosition(segmentId: String, completion: ((_ cachedScrollOffset: SavedScrollOffset?) -> Void)? = nil) {
+        if (try? DocumentViewModel.lastVisibleScrollOffset?.existsObject(forKey: segmentId)) != nil {
+            if let cachedScrollOffset = try? DocumentViewModel.lastVisibleScrollOffset?.entry(forKey: segmentId) {
+                completion?(cachedScrollOffset.object)
             } else {
                 completion?(nil)
             }
@@ -317,20 +317,10 @@ struct SegmentViewBase<Content: View>: View {
                 
                 .onChange(of: sizeCategory) { newValue in }
                 .background(GeometryReader { geometry in
-                    
-                    Color.clear
-                        .onChange(of: geometry.frame(in: .global).minY) { scrollOffset in
-                        
+                    Color.clear.onChange(of: geometry.frame(in: .global).minY) { scrollOffset in
                         if index == documentViewOperator.activeTab || (index == -1 && isHiddenSegment), segment.type != .video {
                             savedScrollPosition.scrollOffset = scrollOffset
-                            
-                            let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
-                            
-                            let visibility = scrollOffset <= -1 * (multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
-                            
-                            if visibility != documentViewOperator.shouldShowNavigationBar {
-                                documentViewOperator.setShowNavigationBar(visibility)
-                            }
+                            updateNavigationBar(scrollOffset)
                         }
                     }
                 })
@@ -355,19 +345,36 @@ struct SegmentViewBase<Content: View>: View {
             .background(themeManager.backgroundColor)
             .clipped()
             .id(segment.id)
-            .task {
-                savedScrollPosition.retrieveSavedScrollPosition(segmentId: segment.id) { savedBlockId in
-                    if let savedBlockId = savedBlockId, !savedScrollPosition.alreadyScrolled {
-                        proxy.scrollTo(savedBlockId, anchor: .top)
-                        savedScrollPosition.alreadyScrolled = true
+            .onAppear {
+                if !savedScrollPosition.alreadyScrolled {
+                    
+                    savedScrollPosition.retrieveSavedScrollPosition(segmentId: segment.id) { cachedScrollOffset in
+                        if let cachedScrollOffset = cachedScrollOffset {
+                            proxy.scrollTo(cachedScrollOffset.blockId, anchor: .top)
+                            updateNavigationBar(cachedScrollOffset.scrollOffset, force: true)
+                            savedScrollPosition.alreadyScrolled = true
+                        }
                     }
                 }
             }.onDisappear {
                 if savedScrollPosition.scrollOffset == 0.0 {
-                    try? DocumentViewModel.lastVisibleBlockStorage?.removeObject(forKey: segment.id)
+                    try? DocumentViewModel.lastVisibleScrollOffset?.removeObject(forKey: segment.id)
                 } else if let visibleBlockID = savedScrollPosition.visibleBlockID {
-                    try? DocumentViewModel.lastVisibleBlockStorage?.setObject(visibleBlockID, forKey: segment.id)
+                    try? DocumentViewModel.lastVisibleScrollOffset?.setObject(SavedScrollOffset(blockId: visibleBlockID, scrollOffset: savedScrollPosition.scrollOffset), forKey: segment.id)
                 }
+            }
+        }
+    }
+    
+    func updateNavigationBar(_ scrollOffset: CGFloat, force: Bool = false) {
+        let multiplier = screenSizeMonitor.screenSize.height * AppStyle.Segment.Cover.percentageOfScreen(hasCover)
+        let visibility = scrollOffset <= -1 * (multiplier - documentViewOperator.topSafeAreaInset - documentViewOperator.navigationBarHeight - documentViewOperator.chipsBarHeight)
+        if visibility != documentViewOperator.shouldShowNavigationBar {
+            
+            if force {
+                documentViewOperator.setShowNavigationBar(visibility, tab: index)
+            } else {
+                documentViewOperator.setShowNavigationBar(visibility)
             }
         }
     }

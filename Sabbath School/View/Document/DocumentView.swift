@@ -44,6 +44,8 @@ struct DocumentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    @State var ready: Bool = false
+    
     enum MenuItemIdentifier: String, Hashable {
         case originalPDF
         case readingOptions
@@ -87,7 +89,7 @@ struct DocumentView: View {
             if resourceViewModel.fontsDownloaded {
                 if let resource = resourceViewModel.resource,
                    let document = viewModel.document,
-                   let segments = viewModel.document?.segments {
+                   let segments = viewModel.document?.segments, ready {
                     ZStack(alignment: .bottom) {
                         ScrollView(.init()) {
                             pagerView(resource, document, segments)
@@ -123,6 +125,7 @@ struct DocumentView: View {
         }
         .onChange(of: documentViewOperator.activeTab) { newValue in
             documentViewOperator.setShowTabBar(documentViewOperator.shouldShowTabBar(), tab: newValue, force: true)
+            documentViewOperator.setShowNavigationBar(documentViewOperator.shouldShowNavigationBar, tab: newValue)
         }
         .onChange(of: documentViewOperator.hiddenSegmentIterator) { _ in
             if let hiddenSegmentID = documentViewOperator.hiddenSegmentID, !hiddenSegmentID.isEmpty {
@@ -268,6 +271,7 @@ struct DocumentView: View {
                             documentViewOperator.setShowCovers(segment.type == .block && ((document.cover != nil) || (segment.cover != nil)), tab: index)
                             documentViewOperator.setShowNavigationBar(segment.type == .pdf || segment.type == .video, tab: index)
                         }
+                        ready = true
                     }
                     await resourceViewModel.downloadFonts(resourceIndex: document.resourceIndex)
                     Configuration.configureFontblaster()

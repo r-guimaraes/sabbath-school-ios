@@ -24,6 +24,11 @@ import Alamofire
 import Foundation
 import Cache
 
+struct SavedScrollOffset: Codable {
+    let blockId: String
+    let scrollOffset: CGFloat
+}
+
 @MainActor class DocumentViewModel: ObservableObject {
     @Published var document: ResourceDocument? = nil
     @Published var pdfAuxiliary: [PDFAux]? = nil
@@ -35,8 +40,7 @@ import Cache
 
     private static var documentStorage: Storage<String, ResourceDocument>?
     private static var segmentStorage: Storage<String, Segment>?
-    public static var lastVisibleBlockStorage: Storage<String, String>?
-    public static var lastVisibleScrollOffset: Storage<String, CGFloat>?
+    public static var lastVisibleScrollOffset: Storage<String, SavedScrollOffset>?
     
     init() {
          self.configure()
@@ -45,8 +49,7 @@ import Cache
     func configure() {
         DocumentViewModel.documentStorage = APICache.storage?.transformCodable(ofType: ResourceDocument.self)
         DocumentViewModel.segmentStorage = APICache.storage?.transformCodable(ofType: Segment.self)
-        DocumentViewModel.lastVisibleBlockStorage = APICache.storage?.transformCodable(ofType: String.self)
-        DocumentViewModel.lastVisibleScrollOffset = APICache.storage?.transformCodable(ofType: CGFloat.self)
+        DocumentViewModel.lastVisibleScrollOffset = APICache.storage?.transformCodable(ofType: SavedScrollOffset.self)
     }
     
     func retrievePDFAux(resourceIndex: String, documentIndex: String) async {
